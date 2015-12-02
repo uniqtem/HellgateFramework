@@ -1,0 +1,17 @@
+{
+    "sprite": [
+        "Elements_Life",
+        "Elements_Nature",
+        "Elements_Water",
+        "Equipment_Boots",
+        "Equipment_Gloves",
+        "Equipment_Helmet",
+        "Equipment_Pants",
+        "Equipment_Shield",
+        "Equipment_Vest"
+    ],
+    "prefab": [
+        "CubeBlue",
+        "CubeRed"
+    ]
+}

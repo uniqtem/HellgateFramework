@@ -1,0 +1,14 @@
+{
+    "sprite": [
+        "Inventory_PotionSmall",
+        "Inventory_Steak",
+        "Modifiers_Accuracy",
+        "Modifiers_BoostSpeed",
+        "Modifiers_LevelUp",
+        "Modifiers_Luck",
+        "Modifiers_Silence",
+        "Modifiers_Sleep",
+        "Modifiers_Time",
+        "Rewards_Coins"
+    ]
+}

@@ -58,8 +58,7 @@ public class GcmActivity {
 			protected String doInBackground(Void... params) {
 				try {
 					regId = gcm.register(senderIds);
-					Util.sendMessage(Config.DEVICE_TOKEN_RECEIVED, regId);
-
+					Util.sendMessage(Config.DEVICE_PUSH_ID_RECEIVED, regId);
 				} catch (IOException ex) {
 					Log.e(Config.HELLGATE, ex.getMessage());
 				}
@@ -83,7 +82,6 @@ public class GcmActivity {
 			protected String doInBackground(Void... params) {
 				try {
 					gcm.unregister();
-					Log.d(Config.HELLGATE, regId);
 				} catch (IOException ex) {
 					Log.e(Config.HELLGATE, ex.getMessage());
 				}

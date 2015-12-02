@@ -9,12 +9,12 @@ import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ScheduleLocalNotification {
-	private List<PendingIntent> pendingIntentList;
+	private final static String DIVISION = "||";
 	private AlarmManager alarmManager;
 	private Activity activity;
 	private SharedPreferences sharedPreferences;
@@ -24,12 +24,11 @@ public class ScheduleLocalNotification {
 		activity = UnityPlayer.currentActivity;
 		sharedPreferences = activity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
 		editor = sharedPreferences.edit();
-		pendingIntentList = new ArrayList<PendingIntent>();
 		alarmManager = null;
 	}
 
-	public void register(String time, String title, String text) {
-		Log.d(Config.HELLGATE, "register : " + time + "|" + title + "|" + text);
+	public void register(String time, String title, String text, String id) {
+		Log.d(Config.HELLGATE, "register : " + time + "|" + title + "|" + text + "|" + id);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
 		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.substring(6, 8)));
@@ -37,47 +36,81 @@ public class ScheduleLocalNotification {
 		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(10, 12)));
 		calendar.set(Calendar.SECOND, Integer.parseInt(time.substring(12, 14)));
 
+		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
+		int requestCode = -1;
+		if (stringSet.size() > 0) {
+			for (String s : stringSet) {
+				String[] parts = s.split(DIVISION);
+				int code = Integer.valueOf(parts[1]);
+				if (code > requestCode) {
+					requestCode = code;
+				}
+			}
+		}
+		requestCode++;
+
 		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
 		intent.putExtra(Config.SCHEDULE_LOCAL_NOTIFICATION, true);
 		intent.putExtra("title", title);
 		intent.putExtra("text", text);
+		intent.putExtra("requestCode", requestCode);
 
-		int requestCode = sharedPreferences.getInt(Config.LOCAL_NOTIFICATION_RECEIVED, 0);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
 		alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
 		alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-		requestCode++;
-		editor.putInt(Config.LOCAL_NOTIFICATION_RECEIVED, requestCode);
+		stringSet.add(id + "||" + requestCode);
+		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
 		editor.commit();
-
-		pendingIntentList.add(pendingIntent);
 	}
 
-	public void unregister() {
-		Log.d(Config.HELLGATE, "unregister " + pendingIntentList.size());
-		if (pendingIntentList.size() <= 0) {
-			return;
-		}
+	public void unregister(String id) {
+		Log.d(Config.HELLGATE, "unregister " + id);
 
-		alarmManager.cancel(pendingIntentList.get(0));
-		pendingIntentList.remove(0);
-
-	}
-
-	public void allUnregister() {
-		int requestCode = sharedPreferences.getInt(Config.LOCAL_NOTIFICATION_RECEIVED, 0);
-		Log.d(Config.HELLGATE, "allUnregister " + requestCode);
-		if (requestCode <= 0) {
+		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
+		if (stringSet.size() <= 0) {
 			return;
 		}
 
 		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
-		for (int i = 0; i < requestCode; i++) {
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0);
+		for (String s : stringSet) {
+			String[] parts = s.split(DIVISION);
+			if (id != "" && parts [0] != id) {
+				continue;
+			}
+
+			int requestCode = Integer.valueOf(parts[1]);
+			Log.d(Config.HELLGATE, "unregister Good " + requestCode);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
 			alarmManager.cancel(pendingIntent);
+
+			stringSet.remove(s);
 		}
 
-		pendingIntentList.clear();
+		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+		editor.commit();
+	}
+
+	public void allUnregister() {
+		Log.d(Config.HELLGATE, "allUnregister");
+		unregister("");
+	}
+
+	public static void unregister(int registerCode)
+	{
+		Log.d(Config.HELLGATE, "unregister static " + registerCode);
+		ScheduleLocalNotification scheduleLocalNotification = new ScheduleLocalNotification();
+		Set<String> stringSet = scheduleLocalNotification.sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED,
+			new HashSet<String>());
+		for (String s: stringSet) {
+			String[] parts = s.split(DIVISION);
+			int code = Integer.valueOf(parts[1]);
+			if (code == registerCode) {
+				Log.d(Config.HELLGATE, "unregister static Good ");
+				stringSet.remove(s);
+				scheduleLocalNotification.editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+				scheduleLocalNotification.editor.commit();
+			}
+		}
 	}
 }

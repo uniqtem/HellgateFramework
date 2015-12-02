@@ -22,8 +22,9 @@ namespace Hellgate
 				if (instance == null) {
 					GameObject gObj = new GameObject ();
 					instance = gObj.AddComponent<NotificationManager> ();
-					gObj.name = NOTIFICATION_MANAGER;
+					instance.Awake ();
 
+					gObj.name = NOTIFICATION_MANAGER;
 					DontDestroyOnLoad (gObj);
 				}
 				
@@ -32,22 +33,24 @@ namespace Hellgate
 		}
 #endregion
 
-		public event Action<string> deviceTokenReceivedEvent;
+		public event Action<string> devicePushIdReceivedEvent;
 		public event Action<string> localNotificationReceivedEvent;
 		public event Action<string> remoteNotificationReceivedEvent;
 
-		protected virtual void Awake ()
+		protected override void Awake ()
 		{
 			if (instance == null) {
+				base.Awake ();
+
 				instance = this;
 				DontDestroyOnLoad (this.gameObject);
 			}
 		}
 
-		protected override void DeviceTokenReceived (string tokenID)
+		protected override void DevicePushIdReceived (string id)
 		{
-			if (deviceTokenReceivedEvent != null) {
-				deviceTokenReceivedEvent (tokenID);
+			if (devicePushIdReceivedEvent != null) {
+				devicePushIdReceivedEvent (id);
 			}
 		}
 
@@ -75,14 +78,14 @@ namespace Hellgate
 			return base.GetRegistrationId();
 		}
 
-		public override void ScheduleLocalNotification (DateTime dateTime, string text, string title = "")
+		public override void ScheduleLocalNotification (DateTime dateTime, string text, string id = "", string title = "")
 		{
-			base.ScheduleLocalNotification (dateTime, text, title);
+			base.ScheduleLocalNotification (dateTime, text, id, title);
 		}
 
-		public override void CancelLocalNotification ()
+		public override void CancelLocalNotification (string id)
 		{
-			base.CancelLocalNotification ();
+			base.CancelLocalNotification (id);
 		}
 
 		public override void CancelAllLocalNotifications ()
@@ -99,6 +102,11 @@ namespace Hellgate
 		public override void SetNotificationsEnabled (bool enabled)
 		{
 			base.SetNotificationsEnabled (enabled);
+		}
+
+		public override bool GetNotificationsEnabled ()
+		{
+			return base.GetNotificationsEnabled ();
 		}
 #endif
 	}

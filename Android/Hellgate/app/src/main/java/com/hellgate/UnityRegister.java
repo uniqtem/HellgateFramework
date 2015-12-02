@@ -37,23 +37,28 @@ public class UnityRegister {
 
 	public static void setNotificationsEnabled(boolean enabled) {
 		Log.v(Config.HELLGATE, "setNotificationsEnabled: " + enabled);
-		Util.notificatoinEnabled = enabled;
+		Util.notificationsEnabled(enabled);
 	}
 
-	public static void scheduleLocalNotification(String time, String title, String text) {
+	public static boolean getNotificationsEnabled() {
+		Log.d(Config.HELLGATE, "UnityRegister.notificationsEnabled");
+		return Util.notificationsEnabled();
+	}
+
+	public static void scheduleLocalNotification(String time, String title, String text, String id) {
 		if (scheduleLocalNotification == null) {
 			scheduleLocalNotification = new ScheduleLocalNotification();
 		}
 
-		scheduleLocalNotification.register(time, title, text);
+		scheduleLocalNotification.register(time, title, text, id);
 	}
 
-	public static void cancelLocalNotification() {
+	public static void cancelLocalNotification(String id) {
 		if (scheduleLocalNotification == null) {
 			scheduleLocalNotification = new ScheduleLocalNotification();
 		}
 
-		scheduleLocalNotification.unregister();
+		scheduleLocalNotification.unregister(id);
 	}
 
 	public static void cancelAllLocalNotification() {

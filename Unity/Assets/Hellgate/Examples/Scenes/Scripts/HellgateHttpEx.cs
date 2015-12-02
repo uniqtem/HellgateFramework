@@ -66,7 +66,7 @@ public class HellgateHttpEx : SceneController
 			} else if (status == LoadingJobStatus.HttpError) {
 				SceneManager.Instance.Close (delegate() {
 					SceneManager.Instance.PopUp ("Network Error.", PopUpType.Ok, delegate(PopUpYNType type) {
-						SceneManager.Instance.Restert ();
+						SceneManager.Instance.Restart ();
 					});
 				});
 			}

@@ -6,16 +6,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.unity3d.player.UnityPlayer;
 import com.unity3d.player.UnityPlayerProxyActivity;
 
 public class Util {
-	public static boolean notificatoinEnabled = true;
 	public static void sendMessage(final String method, final String message) {
 		try {
 			if (TextUtils.isEmpty(message)) {
@@ -38,7 +39,9 @@ public class Util {
 	}
 
 	public static void showNotification(Context context, String title, String text, String ticker) {
-		if (!notificatoinEnabled) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
+		boolean bool = sharedPreferences.getBoolean(Config.NOTIFICATION_ENABLED, true);
+		if (!bool) {
 			return;
 		}
 
@@ -77,17 +80,18 @@ public class Util {
 		} else {
 			return true;
 		}
-//		if (activity != null) {
-//			ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//			List<ActivityManager.RunningAppProcessInfo> task = manager.getRunningAppProcesses();
-//			ComponentName componentInfo = task.get(0).importanceReasonComponent;
-//			Log.d(Config.HELLGATE, String.valueOf(componentInfo));
-//
-//			if (componentInfo.getPackageName().equals(activity.getPackageName())) {
-//				return true;
-//			}
-//		}
-//
-//		return false;
+	}
+
+	public  static boolean notificationsEnabled() {
+		Log.d(Config.HELLGATE, "Util.notificationsEnabled");
+		SharedPreferences sharedPreferences = UnityPlayer.currentActivity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
+		return sharedPreferences.getBoolean(Config.NOTIFICATION_ENABLED, true);
+	}
+
+	public static void notificationsEnabled(boolean enabled) {
+		SharedPreferences sharedPreferences = UnityPlayer.currentActivity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean(Config.NOTIFICATION_ENABLED, enabled);
+		editor.commit();
 	}
 }

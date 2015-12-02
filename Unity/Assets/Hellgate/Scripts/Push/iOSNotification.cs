@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 #if UNITY_IOS
 using NotificationServices = UnityEngine.iOS.NotificationServices;
 using NotificationType = UnityEngine.iOS.NotificationType;
@@ -13,13 +14,11 @@ namespace Hellgate
 	public abstract partial class Notification : MonoBehaviour
 	{
 #if UNITY_IOS
-		private List<LocalNotification> notifications;
 		protected bool tokenSent;
 		protected string hexToken;
 
-		protected virtual void Start ()
+		protected virtual void Awake ()
 		{
-			notifications = null;
 			tokenSent = false;
 			hexToken = "";
 		}
@@ -30,7 +29,7 @@ namespace Hellgate
 				byte[] token = NotificationServices.deviceToken;
 				if (token != null) {
 					hexToken = "%" + System.BitConverter.ToString(token).Replace('-', '%');
-					DeviceTokenReceived (hexToken);
+					DevicePushIdReceived (hexToken);
 
 					tokenSent = true;
 				}
@@ -60,28 +59,31 @@ namespace Hellgate
 			return hexToken;
 		}
 
-		public virtual void ScheduleLocalNotification (DateTime date, string text, string title = "")
+		public virtual void ScheduleLocalNotification (DateTime date, string text, string id = "", string title = "")
 		{
-			if (notifications == null) {
-				notifications = new List<LocalNotification> ();
-			}
-
 			LocalNotification notif = new LocalNotification ();
 			notif.fireDate = date;
 			notif.alertBody = text;
-			NotificationServices.ScheduleLocalNotification (notif);
 
-			notifications.Add (notif);
-		}
-
-		public virtual void CancelLocalNotification ()
-		{
-			if (notifications == null || notifications.Count <= 0) {
-				return;
+			if (id != "") {
+				Dictionary<string, string> userInfo = new Dictionary<string, string> (1);
+				userInfo ["id"] = id;
+				notif.userInfo = userInfo;
 			}
 
-			NotificationServices.CancelLocalNotification (notifications [0]);
-			notifications.RemoveAt (0);
+			NotificationServices.ScheduleLocalNotification (notif);
+
+		}
+
+		public virtual void CancelLocalNotification (string id)
+		{
+			int numNotif = NotificationServices.localNotificationCount;
+			for (int i = 0; i < numNotif; i++) {
+				LocalNotification notif = NotificationServices.GetLocalNotification (i);
+				if (notif.userInfo ["id"] == id) {
+					NotificationServices.CancelLocalNotification (notif);
+				}
+			}
 		}
 
 		public virtual void CancelAllLocalNotifications ()
@@ -89,7 +91,7 @@ namespace Hellgate
 			NotificationServices.CancelAllLocalNotifications ();
 		}
 
-		protected abstract void DeviceTokenReceived (string tokenID);
+		protected abstract void DevicePushIdReceived (string tokenID);
 		protected abstract void LocalNotificationReceived (string message);
 		protected abstract void RemoteNotificationReceived (string message);
 #endif

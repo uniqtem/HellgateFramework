@@ -12,6 +12,10 @@ public class HellgateNotificationEx : SceneController
 	[SerializeField]
 	private UILabel
 		title;
+	[SerializeField]
+	private GameObject
+		gcmOnOff;
+	private UILabel OnOffLabel;
 
 	public static void GoNotification ()
 	{
@@ -29,6 +33,46 @@ public class HellgateNotificationEx : SceneController
 
 		Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
 		title.text = intent ["title"].ToString ();
+
+#if UNITY_ANDROID
+		OnOffLabel = gcmOnOff.GetComponentInChildren<UILabel> ();
+		bool flag = NotificationManager.Instance.GetNotificationsEnabled ();
+		if (flag) {
+			OnOffLabel.text = "Noti OFF";
+		} else {
+			OnOffLabel.text = "Noti On";
+		}
+#else
+		gcmOnOff.SetActive (false);
+#endif
+
+		NotificationManager.Instance.devicePushIdReceivedEvent += DevicePushIdReceived;
+		NotificationManager.Instance.localNotificationReceivedEvent += LocalNotificationReceived;
+		NotificationManager.Instance.remoteNotificationReceivedEvent += RemoteNotificationReceived;
+	}
+
+	public override void OnDisable ()
+	{
+		base.OnDisable ();
+
+		NotificationManager.Instance.devicePushIdReceivedEvent -= DevicePushIdReceived;
+		NotificationManager.Instance.localNotificationReceivedEvent -= LocalNotificationReceived;
+		NotificationManager.Instance.remoteNotificationReceivedEvent -= RemoteNotificationReceived;
+	}
+	
+	private void DevicePushIdReceived (string token)
+	{
+		Debug.Log ("DevicePushIdReceived : " + token);
+	}
+
+	private void LocalNotificationReceived (string text)
+	{
+		Debug.Log ("LocalNotificationReceived : " + text);
+	}
+
+	private void RemoteNotificationReceived (string text)
+	{
+		Debug.Log ("RemoteNotificationReceived : " + text);
 	}
 
 	public override void OnKeyBack ()
@@ -51,18 +95,21 @@ public class HellgateNotificationEx : SceneController
 		Debug.Log (id);
 	}
 
-	public void OnClickTest ()
+	public void OnClickGcmOnOff ()
 	{
-		Debug.Log ("Debug.Log");
+#if UNITY_ANDROID
+		bool flag = NotificationManager.Instance.GetNotificationsEnabled ();
+		if (flag) {
+			OnOffLabel.text = "Noti On";
+		} else {
+			OnOffLabel.text = "Noti Off";
+		}
+
+		NotificationManager.Instance.SetNotificationsEnabled (!flag);
+#endif
 	}
 
-	public void OnClickTest2 ()
+	public void OnClickLocalNoti30Second ()
 	{
-		Debug.LogWarning ("Debug.LogWarning");
-	}
-
-	public void OnClickTest3 ()
-	{
-		Debug.LogError ("Debug.LogError");
 	}
 }

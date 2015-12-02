@@ -31,17 +31,7 @@ public class UnityIntentService extends IntentService {
 				Util.showNotification(this, title, text, title);
 			}
 
-			Activity activity = UnityPlayer.currentActivity;
-			SharedPreferences sharedPreferences = activity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
-			int requestCode = sharedPreferences.getInt(Config.LOCAL_NOTIFICATION_RECEIVED, 0);
-			Log.d(Config.HELLGATE, "onHandleIntent " + requestCode);
-			if (requestCode > 0) {
-				requestCode--;
-				SharedPreferences.Editor editor = sharedPreferences.edit();
-				editor.putInt(Config.LOCAL_NOTIFICATION_RECEIVED, requestCode);
-				editor.commit();
-			}
-
+			ScheduleLocalNotification.unregister(intent.getIntExtra("requestCode", -1));
 			return;
 		}
 

@@ -302,7 +302,7 @@ namespace Hellgate
 		/// <summary>
 		/// Restert this instance.
 		/// </summary>
-		public virtual void Restert ()
+		public virtual void Restart ()
 		{
 			DestoryMainMenu ();
 			OnFirstSceneLoad ();

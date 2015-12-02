@@ -11,9 +11,11 @@ namespace Hellgate
 		private const string DATE_TIME = "yyyyMMddHHmmss";
 		protected AndroidJavaClass android;
 
-		protected virtual void Start ()
+		protected virtual void Awake ()
 		{
-			android = new AndroidJavaClass (CLASS_NAME);
+			if (Application.platform == RuntimePlatform.Android) {
+				android = new AndroidJavaClass (CLASS_NAME);
+			}
 		}
 
 		protected virtual void Update ()
@@ -53,7 +55,17 @@ namespace Hellgate
 			}
 		}
 
-		public virtual void ScheduleLocalNotification (DateTime dateTime, string text, string title = "")
+		public virtual bool GetNotificationsEnabled ()
+		{
+			if (Application.platform == RuntimePlatform.Android) {
+				bool flag = android.CallStatic<bool> ("getNotificationsEnabled");
+				return flag;
+			}
+
+			return true;
+		}
+
+		public virtual void ScheduleLocalNotification (DateTime dateTime, string text, string id = "", string title = "")
 		{
 			if (Application.platform == RuntimePlatform.Android) {
 				string time = dateTime.ToString (DATE_TIME);
@@ -61,14 +73,14 @@ namespace Hellgate
 					title = Application.productName;
 				}
 
-				android.CallStatic ("scheduleLocalNotification", time, text, title);
+				android.CallStatic ("scheduleLocalNotification", time, text, title, id);
 			}
 		}
 		
-		public virtual void CancelLocalNotification ()
+		public virtual void CancelLocalNotification (string id)
 		{
 			if (Application.platform == RuntimePlatform.Android) {
-				android.CallStatic ("cancelLocalNotification");
+				android.CallStatic ("cancelLocalNotification", id);
 			}
 		}
 		
@@ -79,7 +91,7 @@ namespace Hellgate
 			}
 		}
 		
-		protected abstract void DeviceTokenReceived (string gcmID);
+		protected abstract void DevicePushIdReceived (string gcmID);
 		protected abstract void LocalNotificationReceived (string text);
 		protected abstract void RemoteNotificationReceived (string text);
 #endif

@@ -254,7 +254,6 @@ namespace Hellgate
 			}
 
 			LoadMenu (menuSceneName, null, delegate(SSceneController ctrl) {
-				Debug.Log (ctrl);
 				mainMenu = ctrl;
 				if (active != null) {
 					active (ctrl);

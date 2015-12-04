@@ -86,7 +86,7 @@ namespace Hellgate
 				return instance;
 			}
 		}
-#region
+#endregion
 
 #region SerializeField
 		/// <summary>

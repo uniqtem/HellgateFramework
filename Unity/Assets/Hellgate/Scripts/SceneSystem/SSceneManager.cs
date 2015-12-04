@@ -26,24 +26,25 @@ namespace Hellgate
 		{
 			public string sceneName;
 			public object data;
-			public SceneCallbackDelegate onActive;
-			public SceneCallbackDelegate onDeactive;
+			public SceneCallbackDelegate active;
+			public SceneCallbackDelegate deactive;
 			public CallbackDelegate callback = null;
 			public SceneType type = SceneType.SCENE;
 
-			public LoadLevelData (string sceneName, object data, SceneCallbackDelegate onActive, SceneCallbackDelegate onDeactive)
+			public LoadLevelData (string sceneName, object data, SceneCallbackDelegate active, SceneCallbackDelegate deactive)
 			{
 				this.sceneName = sceneName;
 				this.data = data;
-				this.onActive = onActive;
-				this.onDeactive = onDeactive;
+				this.active = active;
+				this.deactive = deactive;
 			}
 		}
 
 		protected const int DISTANCE = 10;
 		protected const int POPUP_DEPTH = 100;
 
-		public delegate void ScreenStartChangeDelegate(string sceneName);
+		public delegate void ScreenStartChangeDelegate (string sceneName);
+
 		public delegate void SceneActivedDelegate (string sceneName);
 
 		protected static SSceneManager instance;
@@ -56,7 +57,6 @@ namespace Hellgate
 
 		public ScreenStartChangeDelegate screenStartChange;
 		public SceneActivedDelegate sceneOnActive;
-		
 		[SerializeField]
 		protected Color
 			defaultShieldColor = new Color (0, 0, 0, 0.25f);
@@ -195,15 +195,11 @@ namespace Hellgate
 
 				SSceneController ctrl = root.GetComponent<SSceneController> ();
 				ctrl.OnSet (loadLevelData.data);
-				ctrl.active = loadLevelData.onActive;
-				ctrl.deactive = loadLevelData.onDeactive;
+				ctrl.active = loadLevelData.active;
+				ctrl.deactive = loadLevelData.deactive;
 
 				if (loadLevelData.callback != null) {
 					loadLevelData.callback ();
-				}
-
-				if (ctrl.active != null) {
-					ctrl.active (ctrl);
 				}
 
 				if (screenStartChange != null) {
@@ -220,11 +216,6 @@ namespace Hellgate
 		{
 			GameObject scene = null;
 			System.Action innerDestoryScene = () => {
-				SSceneController ctrl = scene.GetComponent<SSceneController> ();
-				if (ctrl.deactive != null) {
-					ctrl.deactive (ctrl);
-				}
-				
 				SSceneApplication.Unloaded (scene);
 				Destroy (scene);
 			};
@@ -252,7 +243,7 @@ namespace Hellgate
 
 				SSceneController ctrl = pair.Value.GetComponent<SSceneController> ();
 				if (ctrl.IsCache) {
-					pair.Value.SetActive (false);
+					OnDeativeScreen (pair.Value);
 				} else {
 					keys.Add (pair.Key);
 				}
@@ -271,7 +262,7 @@ namespace Hellgate
 			foreach (string popup in popups) {
 				SSceneController ctrl = scenes [popup].GetComponent<SSceneController> ();
 				if (ctrl.IsCache) {
-					scenes [popup].SetActive (false);
+					OnDeativeScreen (scenes [popup]);
 				} else {
 					DestroyScene (popup);
 				}
@@ -287,7 +278,7 @@ namespace Hellgate
 			foreach (var pair in menus) {
 				SSceneController ctrl = pair.Value.GetComponent<SSceneController> ();
 				if (ctrl.IsCache) {
-					pair.Value.SetActive (false);
+					OnDeativeScreen (pair.Value);
 				} else {
 					keys.Add (pair.Key);
 				}
@@ -300,13 +291,19 @@ namespace Hellgate
 
 		protected virtual GameObject LastShield (bool flag)
 		{
+			float depth = 0;
+			GameObject shield = null;
 			for (int i = shields.Count - 1; i >= 0; i--) {
 				if (shields [i].activeSelf == flag) {
-					return shields [i];
+					Camera cam = Util.FindChildObject (shields [i], "Camera").GetComponent<Camera> ();
+					if (cam.depth > depth) {
+						depth = cam.depth;
+						shield = shields [i];
+					}
 				}
 			}
 			
-			return null;
+			return shield;
 		}
 		
 		protected virtual void ClearShield ()
@@ -318,8 +315,6 @@ namespace Hellgate
 
 		protected virtual void DistancePopUp (GameObject root)
 		{
-			root.SetActive (true);
-
 			int x = (popups.Count + 1) * DISTANCE;
 			root.transform.localPosition = new Vector3 (x, 0, 0);
 
@@ -336,10 +331,7 @@ namespace Hellgate
 				d++;
 				cam.depth = d;
 				if (cam.GetComponent<UICamera> () != null) {
-					cam.clearFlags = CameraClearFlags.Nothing;
-					MonoBehaviour uicam = cam.GetComponent<MonoBehaviour> ();
-					uicam.enabled = false;
-					uicam.enabled = true;
+					cam.clearFlags = CameraClearFlags.Depth;
 				}
 			}
 
@@ -356,33 +348,49 @@ namespace Hellgate
 				gShield = Instantiate (Resources.Load ("nGUIShield")) as GameObject;
 				gShield.name = "Shield" + shields.Count;
 				gShield.transform.parent = shield.transform;
+				gShield.GetComponentInChildren<Camera> ().gameObject.AddComponent<UICamera> ();
 				shields.Add (gShield);
 			} else {
 				gShield = LastShield (false);
-				gShield.SetActive (true);
+				if (gShield != null) {
+					gShield.SetActive (true);
+				}
 			}
 			
 			gShield.transform.localPosition = new Vector3 (x, -DISTANCE, 0);
 			Camera sCam = gShield.GetComponentInChildren<Camera> ();
 			sCam.depth = depth;
+
+			MeshRenderer mesh = gShield.GetComponentInChildren<MeshRenderer> ();
+			mesh.material.color = defaultShieldColor;
 		}
 
-		public virtual void Screen (string sceneName, object data = null, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
+		protected virtual void OnActiveScreen (GameObject root)
+		{
+			root.SetActive (true);
+
+			if (sceneOnActive != null) {
+				sceneOnActive (root.name);
+			}
+		}
+
+		protected virtual void OnDeativeScreen (GameObject root)
+		{
+			root.SetActive (false);
+		}
+
+		public virtual void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (scenes.ContainsKey (sceneName)) {
-				GameObject gObj = scenes [sceneName];
-				if (!gObj.activeSelf) {
-					gObj.SetActive (true);
-
-					if (sceneOnActive != null) {
-						sceneOnActive (sceneName);
-					}
+				GameObject root = scenes [sceneName];
+				if (!root.activeSelf) {
+					OnActiveScreen (root);
 
 					return;
 				}
 			}
 
-			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, onActive, onDeactive);
+			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
 			loadLevel.callback = delegate() {
 				ClearScene (sceneName);
 			};
@@ -390,7 +398,7 @@ namespace Hellgate
 			LoadLevel (loadLevel);
 		}
 
-		public virtual void PopUp (string sceneName, object data = null, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
+		public virtual void PopUp (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (scenes.ContainsKey (sceneName)) {
 				GameObject root = scenes [sceneName];
@@ -401,39 +409,31 @@ namespace Hellgate
 				} else {
 					DistancePopUp (root);
 					popups.Push (sceneName);
-
-					if (sceneOnActive != null) {
-						sceneOnActive (sceneName);
-					}
+					OnActiveScreen (root);
 					
 					return;
 				}
 			}
 
-			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, onActive, onDeactive);
+			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
 			loadLevel.type = SceneType.POPUP;
 
 			LoadLevel (loadLevel);
 		}
 
-		public virtual void LoadMenu (string sceneName, object data = null, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
+		public virtual void LoadMenu (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (menus.ContainsKey (sceneName)) {
 				GameObject root = menus [sceneName];
 				if (root.activeSelf) {
 					DestroyScene (sceneName);
 				} else {
-					root.SetActive (true);
-
-					if (sceneOnActive != null) {
-						sceneOnActive (sceneName);
-					}
-
+					OnActiveScreen (root);
 					return;
 				}
 			}
 		
-			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, onActive, onDeactive);
+			LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
 			loadLevel.type = SceneType.MENU;
 
 			LoadLevel (loadLevel);
@@ -456,14 +456,16 @@ namespace Hellgate
 			GameObject root = scenes [sceneName];
 			SSceneController ctrl = root.GetComponent<SSceneController> ();
 			if (ctrl.IsCache) {
-				root.SetActive (false);
+				OnDeativeScreen (root);
 			} else {
 				DestroyScene (sceneName);
 			}
 			popups.Pop ();
 
-			GameObject sh = LastShield (true);
-			sh.SetActive (false);
+			GameObject shield = LastShield (true);
+			if (shield != null) {
+				shield.SetActive (false);
+			}
 		}
 
 		public virtual void DestroyScenesFrom (string sceneName)

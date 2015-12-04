@@ -14,33 +14,42 @@ namespace Hellgate
 		public FinishedDelegate finishedDelegate;
 		[SerializeField]
 		private GameObject
-			m_Text;
+			text;
 		[SerializeField]
 		GameObject
-			m_ButtonOk;
+			buttonOk;
 		[SerializeField]
 		GameObject
-			m_ButtonYes;
+			buttonYes;
 		[SerializeField]
 		GameObject
-			m_ButtonNo;
-		PopUpType m_Type = PopUpType.Ok;
+			buttonNo;
+		private PopUpType type;
+		private PopUpYNType ynType;
 		
 		public override void OnSet (object data)
 		{
 			PopUpData popupData = (PopUpData)data;
 			
-			SetText (m_Text, popupData.Title);
-			m_Type = popupData.Type;
+			SetText (text, popupData.Title);
+			type = popupData.Type;
 			
-			m_ButtonYes.SetActive (m_Type == PopUpType.YesAndNo);
-			m_ButtonNo.SetActive (m_Type == PopUpType.YesAndNo);
-			m_ButtonOk.SetActive (m_Type == PopUpType.Ok);
+			buttonYes.SetActive (type == PopUpType.YesAndNo);
+			buttonNo.SetActive (type == PopUpType.YesAndNo);
+			buttonOk.SetActive (type == PopUpType.Ok);
+		}
+
+		public override void OnDestroy ()
+		{
+			base.OnDestroy ();
+			if (finishedDelegate != null) {
+				finishedDelegate (ynType);
+			}
 		}
 
 		public override void OnKeyBack ()
 		{
-			if (m_Type == PopUpType.Ok) {
+			if (type == PopUpType.Ok) {
 				OnOkButtonTap ();
 			} else {
 				OnNoButtonTap ();
@@ -49,26 +58,20 @@ namespace Hellgate
 		
 		public void OnYesButtonTap ()
 		{
+			ynType = PopUpYNType.Yes;
 			SceneManager.Instance.Close ();
-			if (finishedDelegate != null) {
-				finishedDelegate (PopUpYNType.Yes);
-			}
 		}
 		
 		public void OnNoButtonTap ()
 		{
+			ynType = PopUpYNType.No;
 			SceneManager.Instance.Close ();
-			if (finishedDelegate != null) {
-				finishedDelegate (PopUpYNType.No);
-			}
 		}
 		
 		public void OnOkButtonTap ()
 		{
+			ynType = default (PopUpYNType);
 			SceneManager.Instance.Close ();
-			if (finishedDelegate != null) {
-				finishedDelegate (default (PopUpYNType));
-			}
 		}
 		
 		private void SetText (GameObject go, string text)

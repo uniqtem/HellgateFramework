@@ -9,6 +9,7 @@ namespace Hellgate
 		public SceneCallbackDelegate active;
 		public SceneCallbackDelegate deactive;
 		protected bool isCache;
+		private SSceneController ctrl;
 
 		public bool IsCache {
 			get {
@@ -19,22 +20,35 @@ namespace Hellgate
 		public virtual void Awake ()
 		{
 			isCache = false;
+			ctrl = this;
 		}
 
 		public virtual void Start ()
 		{
+			if (active != null) {
+				active (ctrl);
+			}
 		}
 
 		public virtual void OnEnable ()
 		{
+			if (active != null) {
+				active (ctrl);
+			}
 		}
 
 		public virtual void OnDisable ()
 		{
+			if (deactive != null) {
+				deactive (ctrl);
+			}
 		}
 
 		public virtual void OnDestroy ()
 		{
+			if (deactive != null) {
+				deactive (ctrl);
+			}
 		}
 
 		public virtual void OnSet (object data)

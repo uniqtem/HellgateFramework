@@ -42,7 +42,7 @@ namespace Hellgate
 		{
 			base.OnDestroy ();
 
-			if (jobData.popUp) {
+			if (jobData != null && jobData.popUp) {
 				OnNextScene ();
 			}
 		}
@@ -58,9 +58,9 @@ namespace Hellgate
 					SceneManager.Instance.ShieldAlpha = jobData.shieldAlpha;
 				}
 				
-				SceneManager.Instance.PopUp (nextSceneName, datas);
+				SceneManager.Instance.PopUp (nextSceneName, datas, active, deactive);
 			} else {
-				SceneManager.Instance.Screen (nextSceneName, datas);
+				SceneManager.Instance.Screen (nextSceneName, datas, active, deactive);
 
 				if (jobData.status == MainMenuStatus.Show) {
 					if (MenuController.Instance == null) {

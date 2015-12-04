@@ -49,29 +49,26 @@ namespace Hellgate
 		
 		public void OnYesButtonTap ()
 		{
-			SceneManager.Instance.Close (delegate () {
-				if (finishedDelegate != null) {
-					finishedDelegate (PopUpYNType.Yes);
-				}
-			});
+			SceneManager.Instance.Close ();
+			if (finishedDelegate != null) {
+				finishedDelegate (PopUpYNType.Yes);
+			}
 		}
 		
 		public void OnNoButtonTap ()
 		{
-			SceneManager.Instance.Close (delegate () {
-				if (finishedDelegate != null) {
-					finishedDelegate (PopUpYNType.No);
-				}
-			});
+			SceneManager.Instance.Close ();
+			if (finishedDelegate != null) {
+				finishedDelegate (PopUpYNType.No);
+			}
 		}
 		
 		public void OnOkButtonTap ()
 		{
-			SceneManager.Instance.Close (delegate () {
-				if (finishedDelegate != null) {
-					finishedDelegate (default (PopUpYNType));
-				}
-			});
+			SceneManager.Instance.Close ();
+			if (finishedDelegate != null) {
+				finishedDelegate (default (PopUpYNType));
+			}
 		}
 		
 		private void SetText (GameObject go, string text)
@@ -84,7 +81,7 @@ namespace Hellgate
 		
 		private void SetColorReflection (Component comp, string text)
 		{
-			SSReflection.SetPropValue (comp, "text", text);
+			SSceneReflection.SetPropValue (comp, "text", text);
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class HellgateQuestEx : SceneController
 	public override void OnSet (object data)
 	{
 		base.OnSet (data);
-
+		Debug.Log ("OnSet" + gameObject.name);
 		List<object> objs = data as List<object>;
 		Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
 		List<GameObject> prefabs = Util.GetListObjects<GameObject> (objs);

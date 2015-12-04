@@ -36,7 +36,7 @@ namespace Hellgate
 		}
 #endregion
 
-		protected SSController popUp;
+		protected SSceneController popUp;
 
 		protected virtual void Awake ()
 		{
@@ -56,11 +56,11 @@ namespace Hellgate
 		protected virtual void CallbackRequest (HttpData data, WWW www)
 		{
 			if (popUp != null) {
-				SceneManager.Instance.Close (false, delegate () {
-					if (data.finishedDelegate != null) {
-						data.finishedDelegate (www);
-					}
-				});
+				SceneManager.Instance.Close ();
+
+				if (data.finishedDelegate != null) {
+					data.finishedDelegate (www);
+				}
 			} else {
 				if (data.finishedDelegate != null) {
 					data.finishedDelegate (www);
@@ -143,7 +143,7 @@ namespace Hellgate
 
 			if (data.popUp) {
 				if (SceneManager.Instance.DefaultLoadingJobSceneName != "") {
-					SceneManager.Instance.PopUp (SceneManager.Instance.DefaultLoadingJobSceneName, null, delegate(SSController ctrl) {
+					SceneManager.Instance.PopUp (SceneManager.Instance.DefaultLoadingJobSceneName, null, delegate(SSceneController ctrl) {
 						popUp = ctrl;
 						innerRequest ();
 					});

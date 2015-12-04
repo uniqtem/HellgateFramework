@@ -29,7 +29,7 @@ namespace Hellgate
 		{
 			if (!Application.isPlaying)
 			{
-				string emptyScene = SSFile.GetPathTemplateFile("HellgateEmpty.unity");
+				string emptyScene = Util.GetPathTemplateFile("HellgateEmpty.unity");
 				emptyScene = emptyScene.Replace(System.IO.Path.DirectorySeparatorChar, '/');
 				
 				var scenes = EditorBuildSettings.scenes;

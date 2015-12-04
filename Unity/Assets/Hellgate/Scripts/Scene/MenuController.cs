@@ -36,11 +36,6 @@ namespace Hellgate
 			}
 		}
 
-		protected virtual void OnDestroy ()
-		{
-			instance = null;
-		}
-
 		public override void Awake ()
 		{
 			base.Awake ();
@@ -52,8 +47,8 @@ namespace Hellgate
 		{
 			base.OnEnable ();
 			
-			if (SSSceneManager.Instance != null) {
-				SceneManager.Instance.onScreenStartChange += OnScreenStartChange;
+			if (SSceneManager.Instance != null) {
+				SceneManager.Instance.screenStartChange += OnScreenStartChange;
 			}
 		}
 		
@@ -61,9 +56,14 @@ namespace Hellgate
 		{
 			base.OnDisable ();
 			
-			if (SSSceneManager.Instance != null) {
-				SceneManager.Instance.onScreenStartChange -= OnScreenStartChange;
+			if (SSceneManager.Instance != null) {
+				SceneManager.Instance.screenStartChange -= OnScreenStartChange;
 			}
+		}
+
+		public override void OnDestroy ()
+		{
+			instance = null;
 		}
 
 		/// <summary>

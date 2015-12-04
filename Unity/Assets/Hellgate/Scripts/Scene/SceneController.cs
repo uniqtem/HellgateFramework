@@ -8,15 +8,8 @@ using System.Collections.Generic;
 
 namespace Hellgate
 {
-	public class SceneController : SSController
+	public class SceneController : SSceneController
 	{
-		public override void Awake ()
-		{
-			base.Awake ();
-			
-			IsCache = false;
-		}
-
 		/// <summary>
 		/// Quit the specified message.
 		/// </summary>

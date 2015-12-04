@@ -13,24 +13,18 @@ namespace Hellgate
 		/// <summary>
 		/// The name of the next scene.
 		/// </summary>
-		public string nextSceneName;
+		[HideInInspector]
+		public string
+			nextSceneName;
 		protected List<object> datas;
 		protected Dictionary<string, object> httpData;
 		protected Dictionary<string, object> assetBundleData;
 		protected LoadingJobData jobData;
 		protected int index;
-		
-		public override void Awake ()
-		{
-			base.Awake ();
-			
-			IsCache = true;
-		}
-		
+
 		public override void OnSet (object data)
 		{
 			base.OnSet (data);
-			
 			jobData = null;
 			if ((jobData = data as LoadingJobData) != null) {
 				nextSceneName = jobData.nextSceneName;
@@ -44,8 +38,40 @@ namespace Hellgate
 			}
 		}
 
+		public override void OnDestroy ()
+		{
+			base.OnDestroy ();
+
+			if (jobData.popUp) {
+				OnNextScene ();
+			}
+		}
+
 		public override void OnKeyBack ()
 		{
+		}
+
+		private void OnNextScene ()
+		{
+			if (jobData.nextScenePopUp) {
+				if (jobData.shieldAlpha != 1f) {
+					SceneManager.Instance.ShieldAlpha = jobData.shieldAlpha;
+				}
+				
+				SceneManager.Instance.PopUp (nextSceneName, datas);
+			} else {
+				SceneManager.Instance.Screen (nextSceneName, datas);
+
+				if (jobData.status == MainMenuStatus.Show) {
+					if (MenuController.Instance == null) {
+						SceneManager.Instance.LoadMainMenu ();
+					} else {
+						SceneManager.Instance.ShowMainMenu ();
+					}
+				} else {
+					SceneManager.Instance.HideMainMenu ();
+				}
+			}
 		}
 
 		/// <summary>
@@ -182,34 +208,10 @@ namespace Hellgate
 				datas.Add (jobData.intent);
 			}
 
-			System.Action innerGoNextScene = () => {
-				if (jobData.nextScenePopUp) {
-					if (jobData.shieldAlpha != 1f) {
-						SceneManager.Instance.ShieldAlpha = jobData.shieldAlpha;
-					}
-
-					SceneManager.Instance.PopUp (nextSceneName, datas);
-				} else {
-					if (jobData.status == MainMenuStatus.Show) {
-						if (MenuController.Instance == null) {
-							SceneManager.Instance.LoadMainMenu ();
-						} else {
-							SceneManager.Instance.ShowMainMenu ();
-						}
-					} else {
-						SceneManager.Instance.HideMainMenu ();
-					}
-
-					SceneManager.Instance.Screen (nextSceneName, datas);
-				}
-			};
-
 			if (jobData.popUp) {
-				SceneManager.Instance.Close (delegate() {
-					innerGoNextScene ();
-				});
+				SceneManager.Instance.Close ();
 			} else {
-				innerGoNextScene ();
+				OnNextScene ();
 			}
 		}
 	}

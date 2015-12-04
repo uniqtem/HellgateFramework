@@ -56,18 +56,16 @@ public class HellgateHttpEx : SceneController
 
 		data.lEvent = delegate(LoadingJobStatus status, LoadingJobController job) {
 			if (status == LoadingJobStatus.HttpTimeover) { // Time over.
-				SceneManager.Instance.Close (delegate() {
-					SceneManager.Instance.PopUp ("Replay ?", PopUpType.YesAndNo, delegate(PopUpYNType type) {
-						if (type == PopUpYNType.Yes) {
-							SceneManager.Instance.LoadingJob (data);
-						}
-					});
+				SceneManager.Instance.Close ();
+				SceneManager.Instance.PopUp ("Replay ?", PopUpType.YesAndNo, delegate(PopUpYNType type) {
+					if (type == PopUpYNType.Yes) {
+						SceneManager.Instance.LoadingJob (data);
+					}
 				});
 			} else if (status == LoadingJobStatus.HttpError) {
-				SceneManager.Instance.Close (delegate() {
-					SceneManager.Instance.PopUp ("Network Error.", PopUpType.Ok, delegate(PopUpYNType type) {
-						SceneManager.Instance.Restart ();
-					});
+				SceneManager.Instance.Close ();
+				SceneManager.Instance.PopUp ("Network Error.", PopUpType.Ok, delegate(PopUpYNType type) {
+					SceneManager.Instance.Reboot ();
 				});
 			}
 		};

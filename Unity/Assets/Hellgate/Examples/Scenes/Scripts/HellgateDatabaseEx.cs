@@ -87,6 +87,12 @@ public class HellgateDatabaseEx : SceneController
 
 		query = new Query ("Hellgate.db");
 		temp.SetActive (false);
+	}
+
+	public override void Start ()
+	{
+		base.Start ();
+
 		ListView ();
 	}
 

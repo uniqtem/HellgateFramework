@@ -8,10 +8,10 @@ using System.Collections;
 namespace Hellgate
 {
 	[RequireComponent(typeof(AutoSceneManager))]
-	public class SceneManager : SSSceneManager
+	public class SceneManager : SSceneManager
 	{
 #region Singleton
-		private static SceneManager instance;
+		private static new SceneManager instance;
 
 		/// <summary>
 		/// Gets the instance.
@@ -26,27 +26,6 @@ namespace Hellgate
 
 #region Delegate
 		public delegate void FinishedDelegate ();
-#endregion
-
-#region show Debug
-		/// <summary>
-		/// The debug flag.
-		/// </summary>
-		[SerializeField]
-		private bool
-			showDebug = false;
-
-		void Start ()
-		{
-			GameObject gObj = gameObject;
-			if (showDebug) {
-				if (!gObj.GetComponent<Logger> ()) {
-					gObj.AddComponent<Logger> ();
-				}
-			} else {
-				Destroy (gObj.GetComponent<Logger> ());
-			}
-		}
 #endregion
 
 #region SerializeField
@@ -70,7 +49,28 @@ namespace Hellgate
 			menuSceneName;
 #endregion
 
-		protected SSController mainMenu;
+#region show Debug
+		/// <summary>
+		/// The debug flag.
+		/// </summary>
+		[SerializeField]
+		private bool
+			showDebug = false;
+		
+		void Start ()
+		{
+			GameObject gObj = gameObject;
+			if (showDebug) {
+				if (!gObj.GetComponent<Logger> ()) {
+					gObj.AddComponent<Logger> ();
+				}
+			} else {
+				Destroy (gObj.GetComponent<Logger> ());
+			}
+		}
+#endregion
+
+		protected SSceneController mainMenu;
 		protected float defaultShieldAlpha;
 		protected float shieldAlpha;
 		protected string nowSceneName;
@@ -126,7 +126,7 @@ namespace Hellgate
 				instance = this;
 
 //				m_UIType = UIType.nGUI;
-				defaultShieldAlpha = m_DefaultShieldColor.a;
+				defaultShieldAlpha = defaultShieldColor.a;
 				shieldAlpha = defaultShieldAlpha;
 			}
 		}
@@ -144,18 +144,18 @@ namespace Hellgate
 		/// <param name="data">Data.</param>
 		/// <param name="onActive">On active.</param>
 		/// <param name="onDeactive">On deactive.</param>
-		public override void Screen (string sceneName, object data = null, SSCallBackDelegate onActive = null, SSCallBackDelegate onDeactive = null)
+		public override void Screen (string sceneName, object data = null, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
 		{
 			if (nowSceneName == sceneName) {
-				base.Screen ("HellgateEmpty", null, delegate(SSController ctrl) {
+				base.Screen ("HellgateEmpty", null, delegate(SSceneController ctrl) {
 					nowSceneName = "";
-					Screen (sceneName, data, onActive, onDeactive);
+					base.Screen (sceneName, data, onActive, onDeactive);
 				});
-
+				
 				return;
 			}
 			nowSceneName = sceneName;
-
+			
 			base.Screen (sceneName, data, onActive, onDeactive);
 		}
 
@@ -166,22 +166,13 @@ namespace Hellgate
 		/// <param name="data">Data.</param>
 		/// <param name="onActive">On active.</param>
 		/// <param name="onDeactive">On deactive.</param>
-		public override void PopUp (string sceneName, object data = null, SSCallBackDelegate onActive = null, SSCallBackDelegate onDeactive = null)
+		public override void PopUp (string sceneName, object data = null, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
 		{
-			m_DefaultShieldColor.a = shieldAlpha;
+			defaultShieldColor.a = shieldAlpha;
 
 			base.PopUp (sceneName, data, onActive, onDeactive);
 
 			shieldAlpha = defaultShieldAlpha;
-		}
-
-		/// <summary>
-		/// Close the specified callback.
-		/// </summary>
-		/// <param name="callback">Callback.</param>
-		public virtual void Close (NoParamCallback callback = null)
-		{
-			Close (false, callback);
 		}
 
 		/// <summary>
@@ -200,7 +191,7 @@ namespace Hellgate
 				return;
 			}
 
-			PopUp (popUpSceneName, new PopUpData (text, type), delegate(SSController ctrl) {
+			PopUp (popUpSceneName, new PopUpData (text, type), delegate(SSceneController ctrl) {
 				PopUpController popUp = (PopUpController)ctrl;
 				popUp.finishedDelegate = finished;
 			});
@@ -213,7 +204,7 @@ namespace Hellgate
 		/// <param name="popUp">If set to <c>true</c> pop up.</param>
 		/// <param name="onActive">On active.</param>
 		/// <param name="onDeactive">On deactive.</param>
-		public virtual void LoadingJob (LoadingJobData data, bool popUp, SSCallBackDelegate onActive = null, SSCallBackDelegate onDeactive = null)
+		public virtual void LoadingJob (LoadingJobData data, bool popUp, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
 		{
 			if (LoadingJobSceneName == "") {
 				Debug.LogWarning ("The default loading job scene is not set");
@@ -224,7 +215,6 @@ namespace Hellgate
 			if (popUp) {
 				PopUp (LoadingJobSceneName, data, onActive, onDeactive);
 			} else {
-				HideMainMenu ();
 				Screen (LoadingJobSceneName, data, onActive, onDeactive);
 			}
 		}
@@ -235,7 +225,7 @@ namespace Hellgate
 		/// <param name="data">Data.</param>
 		/// <param name="onActive">On active.</param>
 		/// <param name="onDeactive">On deactive.</param>
-		public virtual void LoadingJob (LoadingJobData data, SSCallBackDelegate onActive = null, SSCallBackDelegate onDeactive = null)
+		public virtual void LoadingJob (LoadingJobData data, SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
 		{
 			LoadingJob (data, data.popUp, onActive, onDeactive);
 		}
@@ -245,19 +235,19 @@ namespace Hellgate
 		/// </summary>
 		/// <param name="onActive">On active.</param>
 		/// <param name="onDeactive">On deactive.</param>
-		public virtual void LoadMainMenu (SSCallBackDelegate onActive = null, SSCallBackDelegate onDeactive = null)
+		public virtual void LoadMainMenu (SceneCallbackDelegate onActive = null, SceneCallbackDelegate onDeactive = null)
 		{
 			if (menuSceneName == "") {
 				Debug.LogWarning ("The default menu scene is not set");
 				return;
 			}
 
-			LoadMenu (menuSceneName, null, delegate(SSController ctrl) {
+			LoadMenu (menuSceneName, null, delegate(SSceneController ctrl) {
 				mainMenu = ctrl;
 				if (onActive != null) {
 					onActive (ctrl);
 				}
-			}, delegate(SSController ctrl) {
+			}, delegate(SSceneController ctrl) {
 				mainMenu = null;
 				if (onDeactive != null) {
 					onDeactive (ctrl);
@@ -297,15 +287,6 @@ namespace Hellgate
 			if (mainMenu != null) {
 				mainMenu.gameObject.SetActive (true);
 			}
-		}
-
-		/// <summary>
-		/// Restert this instance.
-		/// </summary>
-		public virtual void Restart ()
-		{
-			DestoryMainMenu ();
-			OnFirstSceneLoad ();
 		}
 
 		/// <summary>

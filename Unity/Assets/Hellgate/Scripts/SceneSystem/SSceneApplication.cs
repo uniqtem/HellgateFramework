@@ -20,6 +20,12 @@ namespace Hellgate
 			return true;
 		}
 
+		/// <summary>
+		/// Loads the level.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
+		/// <param name="onLoaded">On loaded.</param>
+		/// <param name="isAdditive">If set to <c>true</c> is additive.</param>
 		public static void LoadLevel (string sceneName, OnLoadDelegate onLoaded = null, bool isAdditive = false)
 		{
 			if (AddScene (sceneName, onLoaded)) {
@@ -31,6 +37,12 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Loads the level async.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
+		/// <param name="onLoaded">On loaded.</param>
+		/// <param name="isAdditive">If set to <c>true</c> is additive.</param>
 		public static void LoadLevelAsync (string sceneName, OnLoadDelegate onLoaded = null, bool isAdditive = false)
 		{
 			if (AddScene (sceneName, onLoaded)) {
@@ -42,6 +54,10 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Loaded the specified root.
+		/// </summary>
+		/// <param name="root">Root.</param>
 		public static void Loaded (GameObject root)
 		{
 			if (onLoadeds [root.name] != null) {
@@ -49,6 +65,10 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Unloaded the specified root.
+		/// </summary>
+		/// <param name="root">Root.</param>
 		public static void Unloaded (GameObject root)
 		{
 			if (onLoadeds.ContainsKey (root.name)) {

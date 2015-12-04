@@ -70,9 +70,21 @@ namespace Hellgate
 		}
 #endregion
 
+		/// <summary>
+		/// The main menu.
+		/// </summary>
 		protected SSceneController mainMenu;
+		/// <summary>
+		/// The default shield alpha.
+		/// </summary>
 		protected float defaultShieldAlpha;
+		/// <summary>
+		/// The shield alpha.
+		/// </summary>
 		protected float shieldAlpha;
+		/// <summary>
+		/// The name of the now scene.
+		/// </summary>
 		protected string nowSceneName;
 
 		/// <summary>
@@ -137,12 +149,12 @@ namespace Hellgate
 		}
 
 		/// <summary>
-		/// Screen the specified sceneName, data, onActive and onDeactive.
+		/// Screen the specified sceneName, data, active and deactive.
 		/// </summary>
 		/// <param name="sceneName">Scene name.</param>
 		/// <param name="data">Data.</param>
-		/// <param name="onActive">On active.</param>
-		/// <param name="onDeactive">On deactive.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public override void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (nowSceneName == sceneName) {
@@ -163,8 +175,8 @@ namespace Hellgate
 		/// </summary>
 		/// <param name="sceneName">Scene name.</param>
 		/// <param name="data">Data.</param>
-		/// <param name="onActive">On active.</param>
-		/// <param name="onDeactive">On deactive.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public override void PopUp (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			defaultShieldColor.a = shieldAlpha;
@@ -201,8 +213,8 @@ namespace Hellgate
 		/// </summary>
 		/// <param name="data">Data.</param>
 		/// <param name="popUp">If set to <c>true</c> pop up.</param>
-		/// <param name="onActive">On active.</param>
-		/// <param name="onDeactive">On deactive.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void LoadingJob (LoadingJobData data, bool popUp, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (LoadingJobSceneName == "") {
@@ -222,8 +234,8 @@ namespace Hellgate
 		/// Loadings the job.
 		/// </summary>
 		/// <param name="data">Data.</param>
-		/// <param name="onActive">On active.</param>
-		/// <param name="onDeactive">On deactive.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void LoadingJob (LoadingJobData data, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			LoadingJob (data, data.popUp, active, deactive);
@@ -232,8 +244,8 @@ namespace Hellgate
 		/// <summary>
 		/// Loads the main menu.
 		/// </summary>
-		/// <param name="onActive">On active.</param>
-		/// <param name="onDeactive">On deactive.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void LoadMainMenu (SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (menuSceneName == "") {

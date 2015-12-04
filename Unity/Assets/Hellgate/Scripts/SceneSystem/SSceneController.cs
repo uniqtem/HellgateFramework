@@ -6,8 +6,17 @@ namespace Hellgate
 	[RequireComponent(typeof(SSceneRoot))]
 	public class SSceneController : MonoBehaviour
 	{
+		/// <summary>
+		/// The active event.
+		/// </summary>
 		public SceneCallbackDelegate active;
+		/// <summary>
+		/// The deactive event.
+		/// </summary>
 		public SceneCallbackDelegate deactive;
+		/// <summary>
+		/// The is cache.
+		/// </summary>
 		protected bool isCache;
 		private SSceneController ctrl;
 
@@ -16,6 +25,7 @@ namespace Hellgate
 				return isCache;
 			}
 		}
+
 
 		public virtual void Awake ()
 		{
@@ -51,10 +61,17 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Raises the set event.
+		/// </summary>
+		/// <param name="data">Data.</param>
 		public virtual void OnSet (object data)
 		{
 		}
 
+		/// <summary>
+		/// Raises the key back event.
+		/// </summary>
 		public virtual void OnKeyBack ()
 		{
 			SSceneManager.Instance.Close ();

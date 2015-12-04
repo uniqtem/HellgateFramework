@@ -6,18 +6,30 @@ namespace Hellgate
 {
 	public class SSceneReflection
 	{
-		public static object GetPropValue(object src, string propName)
+		/// <summary>
+		/// Gets the property value.
+		/// </summary>
+		/// <returns>The property value.</returns>
+		/// <param name="obj">Object.</param>
+		/// <param name="propName">Property name.</param>
+		public static object GetPropValue(object obj, string propName)
 		{
-			return src.GetType().GetProperty(propName).GetValue(src, null);
+			return obj.GetType().GetProperty(propName).GetValue(obj, null);
 		}
-		
-		public static void SetPropValue(object src, string propName, object data)
+
+		/// <summary>
+		/// Sets the property value.
+		/// </summary>
+		/// <param name="obj">Object.</param>
+		/// <param name="propName">Property name.</param>
+		/// <param name="data">Data.</param>
+		public static void SetPropValue(object obj, string propName, object data)
 		{
-			src.GetType().InvokeMember (
+			obj.GetType().InvokeMember (
 				propName, 
 				BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty,
 				System.Type.DefaultBinder,
-				src,
+				obj,
 				new object[] {data}
 			);
 		}

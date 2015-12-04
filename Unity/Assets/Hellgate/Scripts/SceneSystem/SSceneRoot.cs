@@ -12,9 +12,15 @@ namespace Hellgate
 	[ExecuteInEditMode]
 	public class SSceneRoot : MonoBehaviour
 	{
+		/// <summary>
+		/// The cameras.
+		/// </summary>
 		[SerializeField]
 		protected Camera[] cameras;
-
+		/// <summary>
+		/// Gets the cameras.
+		/// </summary>
+		/// <value>The cameras.</value>
 		public Camera[] Cameras {
 			get {
 				return cameras;

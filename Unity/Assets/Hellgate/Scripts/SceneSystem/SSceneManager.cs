@@ -9,19 +9,28 @@ using UnityEditor;
 
 namespace Hellgate
 {
+	/// <summary>
+	/// Scene callback delegate.
+	/// </summary>
 	public delegate void SceneCallbackDelegate (SSceneController ctrl);
 
+	/// <summary>
+	/// Callback delegate.
+	/// </summary>
 	public delegate void CallbackDelegate ();
 
 	public class SSceneManager : MonoBehaviour
 	{
+#region Enum
 		protected enum SceneType
 		{
 			SCENE,
 			POPUP,
 			MENU
 		}
+#endregion
 
+#region Class
 		protected class LoadLevelData
 		{
 			public string sceneName;
@@ -39,39 +48,99 @@ namespace Hellgate
 				this.deactive = deactive;
 			}
 		}
+#endregion
 
+#region Const
+		/// <summary>
+		/// Used for the calculation position.
+		/// </summary>
 		protected const int DISTANCE = 10;
+		/// <summary>
+		/// Used for the calculation popUp depth.
+		/// </summary>
 		protected const int POPUP_DEPTH = 100;
+#endregion
 
+#region Delegate
 		public delegate void ScreenStartChangeDelegate (string sceneName);
 
 		public delegate void SceneActivedDelegate (string sceneName);
+		/// <summary>
+		/// The screen start change event.
+		/// </summary>
+		public ScreenStartChangeDelegate screenStartChange;
+		/// <summary>
+		/// The scene on active event.
+		/// </summary>
+		public SceneActivedDelegate sceneOnActive;
+#endregion
 
+#region Singleton
 		protected static SSceneManager instance;
-
+		/// <summary>
+		/// Gets the instance.
+		/// </summary>
+		/// <value>The instance.</value>
 		public static SSceneManager Instance {
 			get {
 				return instance;
 			}
 		}
+#region
 
-		public ScreenStartChangeDelegate screenStartChange;
-		public SceneActivedDelegate sceneOnActive;
+#region SerializeField
+		/// <summary>
+		/// The default color of the shield.
+		/// </summary>
 		[SerializeField]
 		protected Color
 			defaultShieldColor = new Color (0, 0, 0, 0.25f);
+		/// <summary>
+		/// The first name of the scene.
+		/// </summary>
 		[SerializeField]
 		protected string
 			firstSceneName;
+#endregion
+		/// <summary>
+		/// The scenes.
+		/// </summary>
 		protected Dictionary<string, GameObject> scenes;
+		/// <summary>
+		/// The menus.
+		/// </summary>
 		protected Dictionary<string, GameObject> menus;
+		/// <summary>
+		/// The popups.
+		/// </summary>
 		protected Stack<string> popups;
+		/// <summary>
+		/// The shields.
+		/// </summary>
 		protected List<GameObject> shields;
+		/// <summary>
+		/// The scene.
+		/// </summary>
 		protected GameObject scene;
+		/// <summary>
+		/// The shield.
+		/// </summary>
 		protected GameObject shield;
+		/// <summary>
+		/// The camera.
+		/// </summary>
 		protected GameObject gCamera;
+		/// <summary>
+		/// The menu.
+		/// </summary>
 		protected GameObject menu;
+		/// <summary>
+		/// The solid camera.
+		/// </summary>
 		protected GameObject solidCamera;
+		/// <summary>
+		/// The user interface camera.
+		/// </summary>
 		protected GameObject uiCamera;
 
 		protected virtual void Awake ()
@@ -134,6 +203,9 @@ namespace Hellgate
 		}
 #endif
 
+		/// <summary>
+		/// Firsts the scene load.
+		/// </summary>
 		protected virtual void FirstSceneLoad ()
 		{
 			if (firstSceneName == "") {
@@ -143,6 +215,10 @@ namespace Hellgate
 			Screen (firstSceneName);
 		}
 
+		/// <summary>
+		/// Loads the level.
+		/// </summary>
+		/// <param name="loadLevelData">Load level data.</param>
 		protected virtual void LoadLevel (LoadLevelData loadLevelData)
 		{
 			bool isAddtive = false;
@@ -212,6 +288,10 @@ namespace Hellgate
 			}, isAddtive);
 		}
 
+		/// <summary>
+		/// Destroies the scene.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
 		protected virtual void DestroyScene (string sceneName)
 		{
 			GameObject scene = null;
@@ -233,6 +313,10 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Clears the scene.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
 		protected virtual void ClearScene (string sceneName = "")
 		{
 			List<string> keys = new List<string> ();
@@ -257,6 +341,9 @@ namespace Hellgate
 			ClearShield ();
 		}
 
+		/// <summary>
+		/// Clears the pop up.
+		/// </summary>
 		protected virtual void ClearPopUp ()
 		{
 			foreach (string popup in popups) {
@@ -272,6 +359,9 @@ namespace Hellgate
 			ClearShield ();
 		}
 
+		/// <summary>
+		/// Clears the menu.
+		/// </summary>
 		protected virtual void ClearMenu ()
 		{
 			List<string> keys = new List<string> ();
@@ -289,6 +379,11 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Lasts the shield.
+		/// </summary>
+		/// <returns>The shield.</returns>
+		/// <param name="flag">If set to <c>true</c> flag.</param>
 		protected virtual GameObject LastShield (bool flag)
 		{
 			float depth = 0;
@@ -305,7 +400,10 @@ namespace Hellgate
 			
 			return shield;
 		}
-		
+
+		/// <summary>
+		/// Clears the shield.
+		/// </summary>
 		protected virtual void ClearShield ()
 		{
 			foreach (GameObject sh in shields) {
@@ -313,6 +411,10 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Distances the pop up.
+		/// </summary>
+		/// <param name="root">Root.</param>
 		protected virtual void DistancePopUp (GameObject root)
 		{
 			int x = (popups.Count + 1) * DISTANCE;
@@ -365,6 +467,10 @@ namespace Hellgate
 			mesh.material.color = defaultShieldColor;
 		}
 
+		/// <summary>
+		/// Raises the active screen event.
+		/// </summary>
+		/// <param name="root">Root.</param>
 		protected virtual void OnActiveScreen (GameObject root)
 		{
 			root.SetActive (true);
@@ -374,11 +480,22 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Raises the deative screen event.
+		/// </summary>
+		/// <param name="root">Root.</param>
 		protected virtual void OnDeativeScreen (GameObject root)
 		{
 			root.SetActive (false);
 		}
 
+		/// <summary>
+		/// Screen the specified sceneName, data, active and deactive.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
+		/// <param name="data">Data.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (scenes.ContainsKey (sceneName)) {
@@ -398,6 +515,13 @@ namespace Hellgate
 			LoadLevel (loadLevel);
 		}
 
+		/// <summary>
+		/// Pops up.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
+		/// <param name="data">Data.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void PopUp (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (scenes.ContainsKey (sceneName)) {
@@ -421,6 +545,13 @@ namespace Hellgate
 			LoadLevel (loadLevel);
 		}
 
+		/// <summary>
+		/// Loads the menu.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
+		/// <param name="data">Data.</param>
+		/// <param name="active">Active.</param>
+		/// <param name="deactive">Deactive.</param>
 		public virtual void LoadMenu (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (menus.ContainsKey (sceneName)) {
@@ -439,6 +570,9 @@ namespace Hellgate
 			LoadLevel (loadLevel);
 		}
 
+		/// <summary>
+		/// Reboot this game.
+		/// </summary>
 		public virtual void Reboot ()
 		{
 			ClearMenu ();
@@ -446,6 +580,9 @@ namespace Hellgate
 			FirstSceneLoad ();
 		}
 
+		/// <summary>
+		/// Close this pop up.
+		/// </summary>
 		public virtual void Close ()
 		{
 			if (popups.Count <= 0) {
@@ -468,6 +605,10 @@ namespace Hellgate
 			}
 		}
 
+		/// <summary>
+		/// Destroies the scenes from.
+		/// </summary>
+		/// <param name="sceneName">Scene name.</param>
 		public virtual void DestroyScenesFrom (string sceneName)
 		{
 			if (popups.Contains (sceneName)) {

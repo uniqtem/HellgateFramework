@@ -36,6 +36,8 @@ public class ScheduleLocalNotification {
 		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(10, 12)));
 		calendar.set(Calendar.SECOND, Integer.parseInt(time.substring(12, 14)));
 
+		unregister(id);
+		
 		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
 		int requestCode = -1;
 		if (stringSet.size() > 0) {
@@ -78,6 +80,7 @@ public class ScheduleLocalNotification {
 
 			Log.d(Config.HELLGATE, "String : " + s);
 			Log.d(Config.HELLGATE, "id : " + parts [0]);
+			Log.d(Config.HELLGATE, "value : " + parts [2]);
 			if (id != "") {
 				if (!parts [0].equals(id)) {
 					Log.d(Config.HELLGATE, "continute ");
@@ -86,7 +89,9 @@ public class ScheduleLocalNotification {
 			}
 
 			int requestCode = Integer.valueOf(parts[2]);
+			Log.d(Config.HELLGATE, "requestCode : " + requestCode);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
+			Log.d(Config.HELLGATE, "pendingIntent : " + pendingIntent.toString());
 			alarmManager.cancel(pendingIntent);
 
 			stringSet.remove(s);

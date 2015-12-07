@@ -63,7 +63,6 @@ namespace Hellgate
 		
 		public virtual void ScheduleLocalNotification (DateTime date, string text, string id = "", string title = "")
 		{
-			Debug.Log ("ScheduleLocalNotification : " + date + " | " + text + " | " + id + " | " + title);
 			LocalNotification notif = new LocalNotification ();
 			notif.fireDate = date;
 			notif.alertBody = text;
@@ -77,12 +76,9 @@ namespace Hellgate
 		
 		public virtual void CancelLocalNotification (string id)
 		{
-			Debug.Log ("CancelLocalNotification : " + id);
 			LocalNotification[] notifis = NotificationServices.scheduledLocalNotifications;
-			Debug.Log ("CancelLocalNotification count : " + notifis.Length);
 			for (int i = 0; i < notifis.Length; i++) {
 				if (notifis [i].userInfo ["id"].ToString() == id) {
-					Debug.Log ("CancelLocalNotification clear : " + id);
 					NotificationServices.CancelLocalNotification (notifis[i]);
 				}
 			}

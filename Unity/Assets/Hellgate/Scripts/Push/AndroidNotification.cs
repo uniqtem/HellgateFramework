@@ -73,7 +73,7 @@ namespace Hellgate
 					title = Application.productName;
 				}
 
-				android.CallStatic ("scheduleLocalNotification", time, text, title, id);
+				android.CallStatic ("scheduleLocalNotification", time, title, text, id);
 			}
 		}
 		

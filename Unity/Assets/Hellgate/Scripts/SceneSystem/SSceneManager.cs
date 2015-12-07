@@ -581,7 +581,7 @@ namespace Hellgate
 		}
 
 		/// <summary>
-		/// Close this pop up.
+		/// Close this pop up only.
 		/// </summary>
 		public virtual void Close ()
 		{
@@ -606,7 +606,7 @@ namespace Hellgate
 		}
 
 		/// <summary>
-		/// Destroies the scenes from.
+		/// Destroies the scenes from.(Except popup)
 		/// </summary>
 		/// <param name="sceneName">Scene name.</param>
 		public virtual void DestroyScenesFrom (string sceneName)

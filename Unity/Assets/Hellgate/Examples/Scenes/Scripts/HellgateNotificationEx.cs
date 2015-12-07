@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Hellgate;
@@ -46,8 +47,11 @@ public class HellgateNotificationEx : SceneController
 		gcmOnOff.SetActive (false);
 #endif
 
+		// android/ios register id receiver(param string)
 		NotificationManager.Instance.devicePushIdReceivedEvent += DevicePushIdReceived;
+		// android/ios local notification receiver(param string)
 		NotificationManager.Instance.localNotificationReceivedEvent += LocalNotificationReceived;
+		// android/ios remote(server) notification receiver(param string)
 		NotificationManager.Instance.remoteNotificationReceivedEvent += RemoteNotificationReceived;
 	}
 
@@ -111,5 +115,37 @@ public class HellgateNotificationEx : SceneController
 
 	public void OnClickLocalNoti30Second ()
 	{
+		DateTime date = DateTime.Now.AddSeconds (30);
+		Debug.Log ("register time : " + date);
+		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 30 second", "HellgateNoti30Sec");
+	}
+
+	public void OnClickLocalNoti1Min ()
+	{
+		DateTime date = DateTime.Now.AddMinutes (1);
+		Debug.Log ("register time : " + date);
+		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 1 minute", "HellgateNoti1Min");
+	}
+
+	public void OnClickLocalNoti5Min ()
+	{
+		DateTime date = DateTime.Now.AddMinutes (5);
+		Debug.Log ("register time : " + date);
+		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 5 minute");
+	}
+
+	public void OnClickLocalNoti30SecondCancel ()
+	{
+		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti30Sec");
+	}
+
+	public void OnClickLocalNoti1MinCancel ()
+	{
+		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti1Min");
+	}
+
+	public void OnClickLocalNotiAllCancel ()
+	{
+		NotificationManager.Instance.CancelAllLocalNotifications ();
 	}
 }

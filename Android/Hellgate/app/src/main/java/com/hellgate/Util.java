@@ -38,7 +38,7 @@ public class Util {
 		});
 	}
 
-	public static void showNotification(Context context, String title, String text, String ticker) {
+	public static void showNotification(Context context, String title, String text, String ticker, int notificationId) {
 		SharedPreferences sharedPreferences = context.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
 		boolean bool = sharedPreferences.getBoolean(Config.NOTIFICATION_ENABLED, true);
 		if (!bool) {
@@ -51,20 +51,19 @@ public class Util {
 			.setTicker(ticker)
 			.setContentTitle(title)
 			.setContentText(text)
-			.setDefaults(Notification.DEFAULT_ALL)
+			.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
 			.setAutoCancel(true);
 
 		Intent resultIntent = new Intent(context, UnityPlayerProxyActivity.class);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
-			0,
+			Config.REQUEST_CODE_UNITY_ACTIVITY,
 			resultIntent,
 			PendingIntent.FLAG_UPDATE_CURRENT);
 
 		mBuilder.setContentIntent(resultPendingIntent);
 
-		int mNotificationId = 001;
 		NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotifyMgr.notify(mNotificationId, mBuilder.build());
+		mNotifyMgr.notify(notificationId, mBuilder.build());
 	}
 
 	public static void clearAllNotifications() {
@@ -83,7 +82,6 @@ public class Util {
 	}
 
 	public  static boolean notificationsEnabled() {
-		Log.d(Config.HELLGATE, "Util.notificationsEnabled");
 		SharedPreferences sharedPreferences = UnityPlayer.currentActivity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
 		return sharedPreferences.getBoolean(Config.NOTIFICATION_ENABLED, true);
 	}

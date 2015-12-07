@@ -3,6 +3,7 @@ package com.hellgate;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -28,7 +29,6 @@ public class ScheduleLocalNotification {
 	}
 
 	public void register(String time, String title, String text, String id) {
-		Log.d(Config.HELLGATE, "register : " + time + "|" + title + "|" + text + "|" + id);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
 		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.substring(6, 8)));
@@ -40,8 +40,8 @@ public class ScheduleLocalNotification {
 		int requestCode = -1;
 		if (stringSet.size() > 0) {
 			for (String s : stringSet) {
-				String[] parts = s.split(DIVISION);
-				int code = Integer.valueOf(parts[1]);
+				String[] parts = s.split("[" + DIVISION + "]");
+				int code = Integer.valueOf(parts[2]);
 				if (code > requestCode) {
 					requestCode = code;
 				}
@@ -59,57 +59,61 @@ public class ScheduleLocalNotification {
 		alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
 		alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-		stringSet.add(id + "||" + requestCode);
+		stringSet.add(id + DIVISION + requestCode);
 		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
 		editor.commit();
 	}
 
 	public void unregister(String id) {
 		Log.d(Config.HELLGATE, "unregister " + id);
-
 		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
 		if (stringSet.size() <= 0) {
 			return;
 		}
 
+		Log.d(Config.HELLGATE, "stringSet : " + stringSet.size());
 		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
 		for (String s : stringSet) {
-			String[] parts = s.split(DIVISION);
-			if (id != "" && parts [0] != id) {
-				continue;
+			String[] parts = s.split("[" + DIVISION + "]");
+
+			Log.d(Config.HELLGATE, "String : " + s);
+			Log.d(Config.HELLGATE, "id : " + parts [0]);
+			if (id != "") {
+				if (!parts [0].equals(id)) {
+					Log.d(Config.HELLGATE, "continute ");
+					continue;
+				}
 			}
 
-			int requestCode = Integer.valueOf(parts[1]);
-			Log.d(Config.HELLGATE, "unregister Good " + requestCode);
+			int requestCode = Integer.valueOf(parts[2]);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
 			alarmManager.cancel(pendingIntent);
 
 			stringSet.remove(s);
 		}
 
+		Log.d(Config.HELLGATE, "after remove " + stringSet.size());
+
 		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
 		editor.commit();
 	}
 
 	public void allUnregister() {
-		Log.d(Config.HELLGATE, "allUnregister");
 		unregister("");
 	}
 
-	public static void unregister(int registerCode)
+	public static void unregister(int registerCode, SharedPreferences sharedPreferences)
 	{
-		Log.d(Config.HELLGATE, "unregister static " + registerCode);
-		ScheduleLocalNotification scheduleLocalNotification = new ScheduleLocalNotification();
-		Set<String> stringSet = scheduleLocalNotification.sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED,
-			new HashSet<String>());
+		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
 		for (String s: stringSet) {
-			String[] parts = s.split(DIVISION);
-			int code = Integer.valueOf(parts[1]);
+			String[] parts = s.split("[" + DIVISION + "]");
+			int code = Integer.valueOf(parts[2]);
 			if (code == registerCode) {
-				Log.d(Config.HELLGATE, "unregister static Good ");
 				stringSet.remove(s);
-				scheduleLocalNotification.editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
-				scheduleLocalNotification.editor.commit();
+
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+				editor.commit();
 			}
 		}
 	}

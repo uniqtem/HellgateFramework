@@ -5,6 +5,7 @@ public class Config {
 	public static final String RECEIVER_NAME = "NotificationManager";
 	public static final String SCHEDULE_LOCAL_NOTIFICATION = "ScheduleLocalNotification";
 	public static final String NOTIFICATION_ENABLED = "notificationEnabled";
+	public static final int REQUEST_CODE_UNITY_ACTIVITY = 1001;
 	// receive
 	public static final String DEVICE_PUSH_ID_RECEIVED = "DevicePushIdReceived";
 	public static final String REMOTE_NOTIFICATION_RECEIVED = "RemoteNotificationReceived";

@@ -36,12 +36,10 @@ public class UnityRegister {
 	}
 
 	public static void setNotificationsEnabled(boolean enabled) {
-		Log.v(Config.HELLGATE, "setNotificationsEnabled: " + enabled);
 		Util.notificationsEnabled(enabled);
 	}
 
 	public static boolean getNotificationsEnabled() {
-		Log.d(Config.HELLGATE, "UnityRegister.notificationsEnabled");
 		return Util.notificationsEnabled();
 	}
 
@@ -61,7 +59,7 @@ public class UnityRegister {
 		scheduleLocalNotification.unregister(id);
 	}
 
-	public static void cancelAllLocalNotification() {
+	public static void cancelAllLocalNotifications() {
 		if (scheduleLocalNotification == null) {
 			scheduleLocalNotification = new ScheduleLocalNotification();
 		}

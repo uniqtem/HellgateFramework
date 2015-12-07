@@ -1,0 +1,41 @@
+ManifestFileVersion: 0
+CRC: 2427917939
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: cc64717160b53c9aa9d9b272fb4c6550
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 89cf98f76100f90a0d8293b5da3ce726
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5706a480649e941de82c87ea332b5d0a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 36be00fe0c01745929cb93e979a97f1f, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Quest/MissileRed.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Quest/MissileBlue.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Quest/User.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Quest/MissileYellow.prefab
+Dependencies: []

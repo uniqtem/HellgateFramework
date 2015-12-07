@@ -136,16 +136,19 @@ public class HellgateNotificationEx : SceneController
 
 	public void OnClickLocalNoti30SecondCancel ()
 	{
+		Debug.Log ("Cacenl HellgateNoti30Sec");
 		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti30Sec");
 	}
 
 	public void OnClickLocalNoti1MinCancel ()
 	{
+		Debug.Log ("Cacenl HellgateNoti1Min");
 		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti1Min");
 	}
 
 	public void OnClickLocalNotiAllCancel ()
 	{
+		Debug.Log ("All Cacenl");
 		NotificationManager.Instance.CancelAllLocalNotifications ();
 	}
 }

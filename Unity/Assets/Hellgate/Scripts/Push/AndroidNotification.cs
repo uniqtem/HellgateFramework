@@ -6,7 +6,7 @@ namespace Hellgate
 {
 	public abstract partial class Notification : MonoBehaviour
 	{
-#if UNITY_ANDROID || UNITY_PC
+#if UNITY_ANDROID || UNITY_EDITOR || UNITY_PC
 		private const string CLASS_NAME = "com.hellgate.UnityRegister";
 		private const string DATE_TIME = "yyyyMMddHHmmss";
 		protected AndroidJavaClass android;

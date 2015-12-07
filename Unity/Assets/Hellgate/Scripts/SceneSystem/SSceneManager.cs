@@ -170,7 +170,7 @@ namespace Hellgate
 			DontDestroyOnLoad (scene);
 			DontDestroyOnLoad (shield);
 
-			solidCamera = Instantiate (Resources.Load ("SolidCamera")) as GameObject;
+			solidCamera = Instantiate (Resources.Load ("HellgateSolidCamera")) as GameObject;
 			solidCamera.name = "SolidCamera";
 			solidCamera.transform.parent = gCamera.transform;
 			solidCamera.transform.position = Vector3.zero;
@@ -447,7 +447,7 @@ namespace Hellgate
 
 			GameObject gShield = null;
 			if (createShield) {
-				gShield = Instantiate (Resources.Load ("nGUIShield")) as GameObject;
+				gShield = Instantiate (Resources.Load ("HellgateShield")) as GameObject;
 				gShield.name = "Shield" + shields.Count;
 				gShield.transform.parent = shield.transform;
 				gShield.GetComponentInChildren<Camera> ().gameObject.AddComponent<UICamera> ();
@@ -502,7 +502,7 @@ namespace Hellgate
 				GameObject root = scenes [sceneName];
 				if (!root.activeSelf) {
 					OnActiveScreen (root);
-
+					ClearScene (sceneName);
 					return;
 				}
 			}

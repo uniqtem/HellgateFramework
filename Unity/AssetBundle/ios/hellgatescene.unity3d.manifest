@@ -1,0 +1,27 @@
+ManifestFileVersion: 0
+CRC: 2382203009
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 132cd9884ad0adac7c4ce2025b7296f2
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 75957c18d05791510cbdd301a328d69f
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_LevelUp.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_Accuracy.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_Luck.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Inventory_Steak.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_Sleep.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_BoostSpeed.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Rewards_Coins.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Inventory_PotionSmall.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_Time.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Scene/Modifiers_Silence.png
+Dependencies: []

@@ -42,7 +42,8 @@ FIX : Sqlite DB transaction bug
 NEW : Japanese document
 NEW : Sqlite DB Create Table
 FIX : Sqlite DB AUTOINCREMENT INSERT bug
-1.5.0
+2.0.0
 NEW : Logger
 NEW : GCM, APNS
 NEW : Schedule Local Notification
+NEW : Scene System(delete SS-System)

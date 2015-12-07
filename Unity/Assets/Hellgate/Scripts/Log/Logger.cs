@@ -30,7 +30,7 @@ namespace Hellgate
 			margin = 10;
 		[SerializeField]
 		private int
-			fontSize = 12;
+			fontSize = 14;
 		[SerializeField]
 		private float
 			backgroundAlpha = 0.5f;

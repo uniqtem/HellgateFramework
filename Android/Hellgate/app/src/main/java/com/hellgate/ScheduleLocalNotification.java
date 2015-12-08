@@ -67,37 +67,26 @@ public class ScheduleLocalNotification {
 	}
 
 	public void unregister(String id) {
-		Log.d(Config.HELLGATE, "unregister " + id);
 		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
 		if (stringSet.size() <= 0) {
 			return;
 		}
 
-		Log.d(Config.HELLGATE, "stringSet : " + stringSet.size());
 		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
 		for (String s : stringSet) {
 			String[] parts = s.split("[" + DIVISION + "]");
-
-			Log.d(Config.HELLGATE, "String : " + s);
-			Log.d(Config.HELLGATE, "id : " + parts [0]);
-			Log.d(Config.HELLGATE, "value : " + parts [2]);
 			if (id != "") {
 				if (!parts [0].equals(id)) {
-					Log.d(Config.HELLGATE, "continute ");
 					continue;
 				}
 			}
 
 			int requestCode = Integer.valueOf(parts[2]);
-			Log.d(Config.HELLGATE, "requestCode : " + requestCode);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
-			Log.d(Config.HELLGATE, "pendingIntent : " + pendingIntent.toString());
 			alarmManager.cancel(pendingIntent);
 
 			stringSet.remove(s);
 		}
-
-		Log.d(Config.HELLGATE, "after remove " + stringSet.size());
 
 		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
 		editor.commit();

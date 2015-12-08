@@ -55,8 +55,9 @@ public class Util {
 			.setAutoCancel(true);
 
 		Intent resultIntent = new Intent(context, UnityPlayerProxyActivity.class);
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
-			Config.REQUEST_CODE_UNITY_ACTIVITY,
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(
+			context,
+			notificationId,
 			resultIntent,
 			PendingIntent.FLAG_UPDATE_CURRENT);
 

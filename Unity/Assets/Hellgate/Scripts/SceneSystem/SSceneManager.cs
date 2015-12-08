@@ -278,8 +278,10 @@ namespace Hellgate
 					loadLevelData.callback ();
 				}
 
-				if (screenStartChange != null) {
-					screenStartChange (loadLevelData.sceneName);
+				if (loadLevelData.type == SceneType.SCENE) {
+					if (screenStartChange != null) {
+						screenStartChange (loadLevelData.sceneName);
+					}
 				}
 
 				MonoBehaviour uicam = uiCamera.GetComponent<MonoBehaviour> ();
@@ -583,7 +585,7 @@ namespace Hellgate
 		/// <summary>
 		/// Close this pop up only.
 		/// </summary>
-		public virtual void Close ()
+		public virtual void Close (CallbackDelegate callback = null)
 		{
 			if (popups.Count <= 0) {
 				return;
@@ -592,6 +594,8 @@ namespace Hellgate
 			string sceneName = popups.Peek ();
 			GameObject root = scenes [sceneName];
 			SSceneController ctrl = root.GetComponent<SSceneController> ();
+			ctrl.callback = callback;
+
 			if (ctrl.IsCache) {
 				OnDeativeScreen (root);
 			} else {

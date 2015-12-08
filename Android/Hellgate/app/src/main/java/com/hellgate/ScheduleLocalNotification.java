@@ -3,7 +3,6 @@ package com.hellgate;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -82,7 +81,7 @@ public class ScheduleLocalNotification {
 			}
 
 			int requestCode = Integer.valueOf(parts[2]);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			alarmManager.cancel(pendingIntent);
 
 			stringSet.remove(s);
@@ -96,8 +95,7 @@ public class ScheduleLocalNotification {
 		unregister("");
 	}
 
-	public static void unregister(int registerCode, SharedPreferences sharedPreferences)
-	{
+	public static void unregister(int registerCode, SharedPreferences sharedPreferences) {
 		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
 		for (String s: stringSet) {
 			String[] parts = s.split("[" + DIVISION + "]");

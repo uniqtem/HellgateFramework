@@ -104,6 +104,7 @@ namespace Hellgate
 
 		/// <summary>
 		/// Schedules the local notification.
+		/// "Hellgate ScheduleLocalNotification" id Do not use
 		/// </summary>
 		/// <param name="dateTime">Date time.</param>
 		/// <param name="text">Text.</param>
@@ -119,7 +120,7 @@ namespace Hellgate
 		/// </summary>
 		/// <returns><c>true</c> if this instance cancel local notification the specified id; otherwise, <c>false</c>.</returns>
 		/// <param name="id">Identifier.</param>
-		public override void CancelLocalNotification (string id)
+		public override void CancelLocalNotification (string id = "")
 		{
 			base.CancelLocalNotification (id);
 		}

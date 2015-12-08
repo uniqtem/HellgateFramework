@@ -14,7 +14,6 @@ namespace Hellgate
 	public abstract partial class Notification : MonoBehaviour
 	{
 #if UNITY_IOS && !UNITY_EDITOR
-
 		protected bool tokenSent;
 		protected string hexToken;
 		
@@ -63,10 +62,16 @@ namespace Hellgate
 		
 		public virtual void ScheduleLocalNotification (DateTime date, string text, string id = "", string title = "")
 		{
+			CancelLocalNotification (id);
+
 			LocalNotification notif = new LocalNotification ();
 			notif.fireDate = date;
 			notif.alertBody = text;
-			
+
+			if (id == "") {
+				id = SCHEDULE_LOCAL_NOTIFICATION;
+			}
+
 			Dictionary<string, string> userInfo = new Dictionary<string, string> (1);
 			userInfo ["id"] = id;
 			notif.userInfo = userInfo;
@@ -74,12 +79,18 @@ namespace Hellgate
 			
 		}
 		
-		public virtual void CancelLocalNotification (string id)
+		public virtual void CancelLocalNotification (string id = "")
 		{
 			LocalNotification[] notifis = NotificationServices.scheduledLocalNotifications;
-			for (int i = 0; i < notifis.Length; i++) {
-				if (notifis [i].userInfo ["id"].ToString() == id) {
-					NotificationServices.CancelLocalNotification (notifis[i]);
+			if (notifis.Length > 0) {
+				if (id == "") {
+					id = SCHEDULE_LOCAL_NOTIFICATION;
+				}
+
+				for (int i = 0; i < notifis.Length; i++) {
+					if (notifis [i].userInfo ["id"].ToString() == id) {
+						NotificationServices.CancelLocalNotification (notifis[i]);
+					}
 				}
 			}
 		}
@@ -92,6 +103,6 @@ namespace Hellgate
 		protected abstract void DevicePushIdReceived (string tokenID);
 		protected abstract void LocalNotificationReceived (string message);
 		protected abstract void RemoteNotificationReceived (string message);
-		#endif
+#endif
 	}
 }

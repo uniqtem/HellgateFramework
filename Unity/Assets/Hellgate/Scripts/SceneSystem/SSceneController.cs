@@ -15,6 +15,10 @@ namespace Hellgate
 		/// </summary>
 		public SceneCallbackDelegate deactive;
 		/// <summary>
+		/// Close pop up callback .
+		/// </summary>
+		public CallbackDelegate callback;
+		/// <summary>
 		/// The is cache.
 		/// </summary>
 		protected bool isCache;
@@ -58,6 +62,10 @@ namespace Hellgate
 		{
 			if (deactive != null) {
 				deactive (ctrl);
+			}
+
+			if (callback != null) {
+				callback ();
 			}
 		}
 

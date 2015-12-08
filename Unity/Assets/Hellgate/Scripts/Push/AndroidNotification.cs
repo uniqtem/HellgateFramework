@@ -6,9 +6,10 @@ namespace Hellgate
 {
 	public abstract partial class Notification : MonoBehaviour
 	{
+		private const string SCHEDULE_LOCAL_NOTIFICATION = "HellgateScheduleLocalNotification";
 #if UNITY_ANDROID || UNITY_EDITOR || UNITY_PC
 		private const string CLASS_NAME = "com.hellgate.UnityRegister";
-		private const string DATE_TIME = "yyyyMMddHHmmss";
+		protected const string DATE_TIME = "yyyyMMddHHmmss";
 		protected AndroidJavaClass android;
 
 		protected virtual void Awake ()
@@ -73,13 +74,21 @@ namespace Hellgate
 					title = Application.productName;
 				}
 
+				if (id == "") {
+					id = SCHEDULE_LOCAL_NOTIFICATION;
+				}
+
 				android.CallStatic ("scheduleLocalNotification", time, title, text, id);
 			}
 		}
 		
-		public virtual void CancelLocalNotification (string id)
+		public virtual void CancelLocalNotification (string id = "")
 		{
 			if (Application.platform == RuntimePlatform.Android) {
+				if (id == "") {
+					id = SCHEDULE_LOCAL_NOTIFICATION;
+				}
+
 				android.CallStatic ("cancelLocalNotification", id);
 			}
 		}

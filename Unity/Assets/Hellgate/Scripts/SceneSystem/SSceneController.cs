@@ -30,7 +30,6 @@ namespace Hellgate
 			}
 		}
 
-
 		public virtual void Awake ()
 		{
 			isCache = false;
@@ -53,12 +52,14 @@ namespace Hellgate
 
 		public virtual void OnDisable ()
 		{
-			if (deactive != null) {
-				deactive (ctrl);
-			}
-
-			if (callback != null) {
-				callback ();
+			if (isCache) {
+				if (deactive != null) {
+					deactive (ctrl);
+				}
+				
+				if (callback != null) {
+					callback ();
+				}
 			}
 		}
 

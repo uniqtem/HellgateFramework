@@ -17,6 +17,7 @@ public class HellgateQuestEx : SceneController
 	private GameObject rUser;
 	private float time;
 	private int count;
+	private bool isStart;
 
 	public static void GoQuest ()
 	{
@@ -70,11 +71,17 @@ public class HellgateQuestEx : SceneController
 
 		time = 0;
 		count = 0;
+		isStart = true;
 	}
 
 	void Update ()
 	{
 		time += Time.deltaTime;
+		if (isStart) {
+			if (time > 2f) {
+				isStart = false;
+			}
+		}
 
 		if (time >= 0.5f) {
 			time = 0;

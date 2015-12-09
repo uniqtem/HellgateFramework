@@ -41,10 +41,6 @@ namespace Hellgate
 		public override void OnDestroy ()
 		{
 			base.OnDestroy ();
-
-			if (jobData != null && jobData.popUp) {
-				OnNextScene ();
-			}
 		}
 
 		public override void OnKeyBack ()
@@ -209,7 +205,9 @@ namespace Hellgate
 			}
 
 			if (jobData.popUp) {
-				SceneManager.Instance.Close ();
+				SceneManager.Instance.Close (delegate () {
+					OnNextScene ();
+				});
 			} else {
 				OnNextScene ();
 			}

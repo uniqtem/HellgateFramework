@@ -51,9 +51,11 @@ public class HellgateUserEx : MonoBehaviour
 
 	void OnTriggerEnter (Collider other)
 	{
-		if (!dieFlag) {
-			manager.Die ();
+		if (other.gameObject.GetComponent<HellgateMissileEx> () != null) {
+			if (!dieFlag) {
+				manager.Die ();
+			}
+			dieFlag = true;
 		}
-		dieFlag = true;
 	}
 }

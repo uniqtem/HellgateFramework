@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,7 +73,7 @@ public class ScheduleLocalNotification {
 		}
 
 		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
-		for (String s : stringSet) {
+		for (String s : new ArrayList<String>(stringSet)) {
 			String[] parts = s.split("[" + DIVISION + "]");
 			if (id != "") {
 				if (!parts [0].equals(id)) {
@@ -83,7 +84,6 @@ public class ScheduleLocalNotification {
 			int requestCode = Integer.valueOf(parts[2]);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 			alarmManager.cancel(pendingIntent);
-
 			stringSet.remove(s);
 		}
 

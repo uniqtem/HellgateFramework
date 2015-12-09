@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.SyncStateContract;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
@@ -57,7 +58,7 @@ public class ScheduleLocalNotification {
 		intent.putExtra("text", text);
 		intent.putExtra("requestCode", requestCode);
 
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, 0);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
 		alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
@@ -83,6 +84,9 @@ public class ScheduleLocalNotification {
 
 			int requestCode = Integer.valueOf(parts[2]);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			if (alarmManager == null) {
+				alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
+			}
 			alarmManager.cancel(pendingIntent);
 			stringSet.remove(s);
 		}

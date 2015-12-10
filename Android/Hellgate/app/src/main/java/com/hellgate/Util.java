@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.unity3d.player.UnityPlayer;
+import com.unity3d.player.UnityPlayerActivity;
 import com.unity3d.player.UnityPlayerProxyActivity;
 
 public class Util {
@@ -54,10 +55,10 @@ public class Util {
 			.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
 			.setAutoCancel(true);
 
-		Intent resultIntent = new Intent(context, UnityPlayerProxyActivity.class);
+		Intent resultIntent = new Intent(context, UnityPlayerActivity.class);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(
 			context,
-			notificationId,
+			Config.REQUEST_CODE_UNITY_ACTIVITY + notificationId,
 			resultIntent,
 			PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -4,7 +4,9 @@ import android.util.Log;
 
 public class UnityRegister {
 	private static GcmActivity gcmActivity;
+	private static WebViewActivity webViewActivity;
 	private static ScheduleLocalNotification scheduleLocalNotification;
+
 
 	public static boolean checkPlayServices() {
 		if (gcmActivity == null) {
@@ -65,5 +67,30 @@ public class UnityRegister {
 		}
 
 		scheduleLocalNotification.allUnregister();
+	}
+
+	public static void webViewLoadURL(String url, int left, int right, int top, int bottom) {
+		if (webViewActivity == null) {
+			webViewActivity = new WebViewActivity();
+		}
+
+		webViewActivity.setMargin(left, right, top, bottom);
+		webViewActivity.loadURL(url);
+	}
+
+	public static void webViewDestroy() {
+		if (webViewActivity == null) {
+			return;
+		}
+
+		webViewActivity.destroy();
+	}
+
+	public static void webViewsetVisibility(boolean bool) {
+		if (webViewActivity == null) {
+			return;
+		}
+
+		webViewActivity.setVisibility(bool);
 	}
 }

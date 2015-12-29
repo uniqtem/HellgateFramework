@@ -58,7 +58,7 @@ public class GcmActivity {
 			protected String doInBackground(Void... params) {
 				try {
 					regId = gcm.register(senderIds);
-					Util.sendMessage(Config.DEVICE_PUSH_ID_RECEIVED, regId);
+					Util.sendMessage(Config.NOTIFICATION_MANAGER, Config.DEVICE_PUSH_ID_RECEIVED, regId);
 				} catch (IOException ex) {
 					Log.e(Config.HELLGATE, ex.getMessage());
 				}

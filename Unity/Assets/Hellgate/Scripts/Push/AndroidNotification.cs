@@ -26,9 +26,7 @@ namespace Hellgate
 		public virtual void Register (string gcmSenderId)
 		{
 			if (Application.platform == RuntimePlatform.Android) {
-				using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
-					android.CallStatic ("register", gcmSenderId);
-				}
+				android.CallStatic ("register", gcmSenderId);
 			}
 		}
 

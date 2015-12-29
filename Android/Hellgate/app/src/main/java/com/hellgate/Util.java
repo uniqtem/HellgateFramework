@@ -18,12 +18,12 @@ import com.unity3d.player.UnityPlayerActivity;
 import com.unity3d.player.UnityPlayerProxyActivity;
 
 public class Util {
-	public static void sendMessage(final String method, final String message) {
+	public static void sendMessage(final String cls, final String method, final String message) {
 		try {
 			if (TextUtils.isEmpty(message)) {
-				UnityPlayer.UnitySendMessage(Config.RECEIVER_NAME, method, "");
+				UnityPlayer.UnitySendMessage(cls, method, "");
 			} else {
-				UnityPlayer.UnitySendMessage(Config.RECEIVER_NAME, method, message);
+				UnityPlayer.UnitySendMessage(cls, method, message);
 			}
 		} catch (UnsatisfiedLinkError e) {
 			e.printStackTrace();

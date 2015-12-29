@@ -30,7 +30,9 @@ namespace Hellgate
 		protected virtual void Awake ()
 		{
 			if (!Application.isPlaying) {
-				cameras = GameObject.FindObjectsOfType<Camera> ();
+				if (cameras == null) {
+					cameras = GameObject.FindObjectsOfType<Camera> ();
+				}
 			} else {
 				if (SSceneManager.Instance != null) {
 					SSceneApplication.Loaded (gameObject);
@@ -42,7 +44,7 @@ namespace Hellgate
 		{
 #if UNITY_EDITOR
 			if (!Application.isPlaying) {
-				gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
+					gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
 			}
 #endif
 		}

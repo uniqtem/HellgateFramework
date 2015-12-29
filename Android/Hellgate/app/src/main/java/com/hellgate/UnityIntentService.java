@@ -23,7 +23,7 @@ public class UnityIntentService extends IntentService {
 			String text = intent.getStringExtra("text");
 
 			if (Util.isForeground(this)) {
-				Util.sendMessage(Config.LOCAL_NOTIFICATION_RECEIVED, text);
+				Util.sendMessage(Config.NOTIFICATION_MANAGER, Config.LOCAL_NOTIFICATION_RECEIVED, text);
 			} else {
 				Util.showNotification(this, title, text, title, intent.getIntExtra("requestCode", 1));
 			}
@@ -49,7 +49,7 @@ public class UnityIntentService extends IntentService {
 					int requestCode = Integer.parseInt(extras.getString("requestCode", "1"));
 					if (Util.isForeground(this)) {
 						if (internal == 0 || internal == 1) {
-							Util.sendMessage(Config.REMOTE_NOTIFICATION_RECEIVED, extras.getString("text"));
+							Util.sendMessage(Config.NOTIFICATION_MANAGER, Config.REMOTE_NOTIFICATION_RECEIVED, extras.getString("text"));
 						} else {
 							Util.showNotification(this, extras.getString("title"), extras.getString("text"), ticker, requestCode);
 						}

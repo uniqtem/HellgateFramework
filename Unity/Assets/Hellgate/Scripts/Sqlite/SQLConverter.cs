@@ -132,6 +132,9 @@ namespace Hellgate
 						cons += " PRIMARY KEY";
 					}
 					break;
+				case SqliteDataConstraints.FK:
+
+					break;
 				case SqliteDataConstraints.UNIQUE:
 					cons += " UNIQUE";
 					break;

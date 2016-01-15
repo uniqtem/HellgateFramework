@@ -16,6 +16,7 @@ static UIWebView *webView = nil;
 
 @interface WebViewPlugin : UIViewController<UIWebViewDelegate>
 {
+
     int progress;
     bool isFinish;
 }

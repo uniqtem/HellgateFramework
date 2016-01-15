@@ -46,6 +46,41 @@ public class Board
 	}
 }
 
+[Table ("comment")]
+public class Comment
+{
+	[Column (SqliteDataConstraints.AI)]
+	private int idx = 0;
+	[Column (SqliteDataConstraints.FK, "board", "idx")]
+	private int boardIdx = 0;
+	private string name = "";
+	private string description = "";
+
+	public int Idx {
+		get {
+			return idx;
+		}
+	}
+
+	public int BoardIdx {
+		get {
+			return boardIdx;
+		}
+	}
+
+	public string Name {
+		get {
+			return name;
+		}
+	}
+
+	public string Description {
+		get {
+			return description;
+		}
+	}
+}
+
 public class HellgateDatabaseEx : SceneController
 {
 	[SerializeField]

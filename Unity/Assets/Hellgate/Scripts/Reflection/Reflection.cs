@@ -134,9 +134,13 @@ namespace Hellgate
 		/// <param name="fieldInfos">Field infos.</param>
 		/// <param name="flag">Flag.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
-		public static Dictionary<string, object> Convert<T> (T t, FieldInfo[] fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic)
+		public static Dictionary<string, object> Convert<T> (T t = default (T), FieldInfo[] fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic)
 		{
 			if (fieldInfos == null) {
+				if (t == null) {
+					t = (T)Activator.CreateInstance (typeof(T), null);
+				}
+
 				fieldInfos = t.GetType ().GetFields (BindingFlags.Instance | flag);
 			}
 

@@ -3,27 +3,27 @@
 /// </summary>
 using UnityEngine;
 using System.Collections;
+using System.Text;
 
 namespace Hellgate
 {
 	public class SQLMaker : SQLConverter
 	{
-		protected string GenerateInsertSQL (string query, string[] sA, bool apostrophe = false)
+		protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA, bool apostrophe = false)
 		{
 			string apos = apostrophe ? "'" : "";
 			
 			int index = 0;
 			foreach (string s in sA) {
 				index++;
-				
-				query += apos + s + apos;
+				stringBuilder.AppendFormat ("{0}{1}{2}", apos, s, apos);
 				
 				if (sA.Length > index) {
-					query += ", ";
+					stringBuilder.Append (", ");
 				}
 			}
 			
-			return query;
+			return stringBuilder;
 		}
 
 		/// <summary>
@@ -39,13 +39,14 @@ namespace Hellgate
 				return "";
 			}
 
-			string query = "INSERT INTO " + tableName + " (";
-			query = GenerateInsertSQL (query, columnName);
-			query += ") VALUES (";
-			query = GenerateInsertSQL (query, data, true);
-			query += ");";
+			StringBuilder stringBuilder = new StringBuilder ();
+			stringBuilder.AppendFormat ("INSERT INTO {0} (", tableName);
+			stringBuilder = GenerateInsertSQL (stringBuilder, columnName);
+			stringBuilder.Append (") VALUES (");
+			stringBuilder = GenerateInsertSQL (stringBuilder, data, true);
+			stringBuilder.Append (");");
 
-			return query;
+			return stringBuilder.ToString ();
 		}
 
 		/// <summary>
@@ -57,20 +58,17 @@ namespace Hellgate
 		/// <param name="data">Data.</param>
 		public string GenerateInsertBatchSQL (string tableName, string[] columnName, string[][] data)
 		{
-			string query = "";
+			StringBuilder stringBuilder = new StringBuilder ();
 			for (int i = 0; i < data.Length; i++) {
 				if (columnName.Length != data [i].Length) {
 					continue;
 				}
-				
-				query += "INSERT INTO " + tableName + " (";
-				query = GenerateInsertSQL (query, columnName);
-				query += ") VALUES (";
-				query = GenerateInsertSQL (query, data [i], true);
-				query += "); ";
+
+				stringBuilder.Append (GenerateInsertSQL (tableName, columnName, data [i]));
+				stringBuilder.AppendLine ();
 			}
 
-			return query;
+			return stringBuilder.ToString ();
 		}
 
 		/// <summary>
@@ -86,18 +84,20 @@ namespace Hellgate
 			if (columnName.Length != data.Length) {
 				return "";
 			}
-			
-			string query = "UPDATE " + tableName + " SET ";
+
+			StringBuilder stringBuilder = new StringBuilder ();
+			stringBuilder.AppendFormat ("UPDATE {0} SET ", tableName);
+
 			for (int i = 0; i < columnName.Length; i++) {
-				string temp = columnName [i] + " = '" + data [i] + "'";
-				query += temp;
+				stringBuilder.AppendFormat ("{0} = '{1}'", columnName [i], data [i]);
+
 				if (i < (columnName.Length - 1)) {
-					query += " , ";
+					stringBuilder.Append (" , ");
 				}
 			}
-			query += " " + addQuery + ";";
+			stringBuilder.AppendFormat (" {0};", addQuery);
 
-			return query;
+			return stringBuilder.ToString ();
 		}
 
 		/// <summary>
@@ -114,24 +114,25 @@ namespace Hellgate
 			if (where.Length != data.Length) {
 				return "";
 			}
-			
-			string query = "UPDATE " + tableName + " SET " + dataName + " = CASE " + whereName + " ";
-			
+
+			StringBuilder stringBuilder = new StringBuilder ();
+			stringBuilder.AppendFormat ("UPDATE {0} SET {1} = CASE {2} ", tableName, dataName, whereName);
+
 			for (int i = 0; i < where.Length; i++) {
-				query += "WHEN " + where [i] + " THEN '" + data [i] + "' ";
+				stringBuilder.AppendFormat ("WHEN {0} THEN '{1}' ", where [i], data [i]);
 			}
-			
-			query += "END WHERE " + whereName + " IN (";
+			stringBuilder.AppendFormat ("END WHERE {0} IN (", whereName);
+
 			for (int j = 0; j < where.Length; j++) {
-				query += "'" + where [j] + "'";
+				stringBuilder.AppendFormat ("'{0}'", where [j]);
 				
 				if (j < (where.Length - 1)) {
-					query += ", ";
+					stringBuilder.Append (", ");
 				}
 			}
-			query += ");";
+			stringBuilder.Append (");");
 
-			return query;
+			return stringBuilder.ToString ();
 		}
 
 		/// <summary>
@@ -142,7 +143,7 @@ namespace Hellgate
 		/// <param name="addQuery">Add query.</param>
 		public string GenerateSelectSQL (string tableName, string addQuery = "")
 		{
-			return "SELECT * FROM " + tableName + " " + addQuery + ";";
+			return string.Format ("SELECT * FROM {0} {1};", tableName, addQuery);
 		}
 
 		/// <summary>
@@ -154,20 +155,19 @@ namespace Hellgate
 		/// <param name="where">Where.</param>
 		public string GenerateSelectSyncSQL (string tableName, string whereKey, string[] where)
 		{
-			string query = "SELECT * FROM " + tableName;
-			
-			query += " WHERE ";
-			
+			StringBuilder stringBuilder = new StringBuilder ();
+			stringBuilder.AppendFormat ("SELECT * FROM {0} WHERE ", tableName);
+
 			for (int i = 0; i < where.Length; i++) {
-				query += whereKey + " = " + "'" + where [i] + "'";
+				stringBuilder.AppendFormat ("{0} = '{1}'", whereKey, where [i]);
 				
 				if (i < where.Length - 1) {
-					query += " OR ";
+					stringBuilder.Append (" OR ");
 				}
 			}
-			query += ";";
+			stringBuilder.Append (";");
 
-			return query;
+			return stringBuilder.ToString ();
 		}
 
 		/// <summary>
@@ -178,10 +178,7 @@ namespace Hellgate
 		/// <param name="addQuery">Add query.</param>
 		public string GenerateDeleteSQL (string tableName, string addQuery = "")
 		{
-			string query = "DELETE FROM " + tableName;
-			query += " " + addQuery + ";";
-
-			return query;
+			return string.Format ("DELETE FROM {0} {1};", tableName, addQuery);
 		}
 
 		/// <summary>
@@ -192,7 +189,7 @@ namespace Hellgate
 		/// <param name="value">Value.</param>
 		public string GenerateWhereKeyValueSQL (string key, object value)
 		{
-			return "WHERE " + key + " = '" + value + "'";
+			return string.Format ("WHERE {0} = '{1}'", key, value);
 		}
 
 		/// <summary>
@@ -203,28 +200,32 @@ namespace Hellgate
 		/// <param name="configs">Configs.</param>
 		public string GenerateCreateTableSQL (string tableName, AttributeMappingConfig<ColumnAttribute>[] configs)
 		{
-			string query = "CREATE TABLE '" + tableName + "' (";
+			StringBuilder stringBuilder = new StringBuilder ();
+			stringBuilder.AppendFormat ("CREATE TABLE '{0}' (", tableName);
 
 			for (int i = 0; i < configs.Length; i++) {
-				query += "'" + configs [i].name + "' ";
+				StringBuilder temp = new StringBuilder ();
+				temp.AppendFormat ("'{0}'", configs [i].name);
+
 				if (configs [i].t == null || configs [i].t.Type == "") {
-					query += ConvertToSQLType (configs [i].type);
+					temp.Append (ConvertToSQLType (configs [i].type));
 				} else {
-					query += configs [i].t.Type;
+					temp.Append (configs [i].t.Type);
 				}
 
 				if (configs [i].t != null) {
-					query += ConvertToSQLConstraints (configs [i].t.Constraints);
+					temp.Append (ConvertToSQLConstraints (configs [i].t.Constraints));
 				}
 
 				if (i < configs.Length - 1) {
-					query += ", ";
+					temp.Append (", ");
 				}
 
+				stringBuilder.Append (temp);
 			}
-			query += ");";
 
-			return query;
+			stringBuilder.Append (");");
+			return stringBuilder.ToString ();
 		}
 	}
 }

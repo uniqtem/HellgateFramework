@@ -30,4 +30,4 @@ public class Table_sample2
 	private float column2;
 	private bool column3;
 }
-*/
+//*/

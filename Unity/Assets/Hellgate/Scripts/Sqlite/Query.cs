@@ -31,7 +31,11 @@ namespace Hellgate
 				
 				string[] values = new string[count];
 				for (int i = 0; i < count; i++) {
-					values [i] = temp [i].ToString ();
+					if (temp [i] == null) {
+						values [i] = "";
+					} else {
+						values [i] = temp [i].ToString ();
+					}
 				}
 				
 				this.keys = keys;
@@ -187,7 +191,7 @@ namespace Hellgate
 		/// <param name="tableName">Table name.</param>
 		/// <param name="whereKey">Where key.</param>
 		/// <param name="where">Where.</param>
-		public DataTable SELECT_SYNC (string tableName, string whereKey, string[] where)
+		public DataTable SELECT_SYNC (string tableName, string whereKey, List<string> where)
 		{
 			string query = GenerateSelectSyncSQL (tableName, whereKey, where);
 			DataTable data = sqlite.ExecuteQuery (query);
@@ -215,6 +219,25 @@ namespace Hellgate
 		public void DELETE (string tableName, string key, object value)
 		{
 			DELETE (tableName, GenerateWhereKeyValueSQL (key, value));
+		}
+
+		/// <summary>
+		/// Executes the query.
+		/// </summary>
+		/// <returns>The query.</returns>
+		/// <param name="query">Query.</param>
+		public DataTable ExecuteQuery (string query)
+		{
+			return sqlite.ExecuteQuery (query);
+		}
+
+		/// <summary>
+		/// Executes the non query.
+		/// </summary>
+		/// <param name="query">Query.</param>
+		public void ExecuteNonQuery (string query)
+		{
+			sqlite.ExecuteNonQuery (query);
 		}
 	}
 }

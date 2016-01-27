@@ -1,4 +1,4 @@
-﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 //					Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -61,11 +61,11 @@ namespace Hellgate
 		{
 			GameObject gObj = gameObject;
 			if (showDebug) {
-				if (!gObj.GetComponent<Logger> ()) {
-					gObj.AddComponent<Logger> ();
+				if (!gObj.GetComponent<HDebug> ()) {
+					gObj.AddComponent<HDebug> ();
 				}
 			} else {
-				Destroy (gObj.GetComponent<Logger> ());
+				Destroy (gObj.GetComponent<HDebug> ());
 			}
 		}
 #endregion
@@ -195,7 +195,7 @@ namespace Hellgate
 		public virtual void PopUp (string text, PopUpType type, PopUpController.FinishedDelegate finished = null)
 		{
 			if (popUpSceneName == "") {
-				Debug.LogWarning ("The default popup scene is not set");
+				HDebug.LogWarning ("The default popup scene is not set");
 				if (finished != null) {
 					finished (PopUpYNType.Yes);
 				}
@@ -218,7 +218,7 @@ namespace Hellgate
 		public virtual void LoadingJob (LoadingJobData data, bool popUp, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (LoadingJobSceneName == "") {
-				Debug.LogWarning ("The default loading job scene is not set");
+				HDebug.LogWarning ("The default loading job scene is not set");
 				return;
 			}
 
@@ -249,7 +249,7 @@ namespace Hellgate
 		public virtual void LoadMainMenu (SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
 		{
 			if (menuSceneName == "") {
-				Debug.LogWarning ("The default menu scene is not set");
+				HDebug.LogWarning ("The default menu scene is not set");
 				return;
 			}
 

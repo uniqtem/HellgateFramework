@@ -77,7 +77,7 @@ namespace Hellgate
 		/// <param name="www">Www.</param>
 		protected virtual void OnFail (HttpData data, WWW www)
 		{
-			Debug.Log ("Request OnFail " + www.error);
+			HDebug.Log ("Request OnFail " + www.error);
 			CallbackRequest (data, www);
 		}
 
@@ -88,7 +88,7 @@ namespace Hellgate
 		/// <param name="www">Www.</param>
 		protected virtual void OnDisposed (HttpData data, WWW www)
 		{
-			Debug.Log ("Reuqest timeover");
+			HDebug.Log ("Reuqest timeover");
 			CallbackRequest (data, www);
 		}
 
@@ -99,7 +99,7 @@ namespace Hellgate
 		/// <param name="www">Www.</param>
 		protected virtual void OnDone (HttpData data, WWW www)
 		{
-			Debug.Log ("Requst good!!");
+			HDebug.Log ("Requst good!!");
 			CallbackRequest (data, www);
 		}
 
@@ -148,7 +148,7 @@ namespace Hellgate
 						innerRequest ();
 					});
 				} else {
-					Debug.LogWarning ("The default loading scene is not set");
+					HDebug.LogWarning ("The default loading scene is not set");
 					innerRequest ();
 				}
 			} else {

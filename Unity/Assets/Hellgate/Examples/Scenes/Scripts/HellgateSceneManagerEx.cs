@@ -13,7 +13,8 @@ using UnityEditor;
 public class HellgateSceneManagerEx : SceneManager
 {
 	[SerializeField]
-	private string buildVersion = "1.0.0";
+	private string
+		buildVersion = "1.0.0";
 
 	protected override void Awake ()
 	{
@@ -27,6 +28,7 @@ public class HellgateSceneManagerEx : SceneManager
 		Sqlite sql = new Sqlite ();
 		if (sql.CreateFile ("Hellgate.db")) {
 			sql.CreateTable ("Hellgate.db", new Board ().GetType ());
+			sql.CreateTable ("Hellgate.db", new Comment ().GetType ());
 		}
 
 //		if (sql.CreateFile ("Hellgate.db")) {

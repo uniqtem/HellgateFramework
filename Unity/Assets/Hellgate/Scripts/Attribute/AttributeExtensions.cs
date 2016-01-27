@@ -23,7 +23,7 @@ namespace Hellgate
 		/// <typeparam name="TAttribute">The 1st type parameter.</typeparam>
 		/// <typeparam name="TValue">The 2nd type parameter.</typeparam>
 		public static TValue GetAttributeValue<TAttribute, TValue>(
-			this Type type, 
+			this Type type,
 			Func<TAttribute, TValue> valueSelector) 
 			where TAttribute : Attribute
 		{

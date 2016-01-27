@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Hellgate
 {
-	public class Logger : MonoBehaviour
+	public class HDebug : MonoBehaviour
 	{
 		private class LogData
 		{
@@ -126,6 +126,39 @@ namespace Hellgate
 			log.type = type;
 
 			data.Enqueue (log);
+		}
+
+		/// <summary>
+		/// Log the specified message.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		public static void Log (object message)
+		{
+			if (Debug.isDebugBuild) {
+				Debug.Log (message);
+			}
+		}
+
+		/// <summary>
+		/// Logs the warning.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		public static void LogWarning (object message)
+		{
+			if (Debug.isDebugBuild) {
+				Debug.LogWarning (message);
+			}
+		}
+
+		/// <summary>
+		/// Logs the error.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		public static void LogError (object message)
+		{
+			if (Debug.isDebugBuild) {
+				Debug.LogError (message);
+			}
 		}
 	}
 }

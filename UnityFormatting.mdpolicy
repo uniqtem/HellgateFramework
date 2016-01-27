@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PolicySet name="UnityFormatting.mdpolicy">
+  <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp">
+    <FileWidth>200</FileWidth>
+    <TabsToSpaces>False</TabsToSpaces>
+  </TextStylePolicy>
+  <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp">
+    <IndentBreakStatements>False</IndentBreakStatements>
+    <IndentPreprocessorDirectives>False</IndentPreprocessorDirectives>
+    <MethodCallArgumentWrapping>WrapIfTooLong</MethodCallArgumentWrapping>
+    <AlignToFirstMethodCallArgument>True</AlignToFirstMethodCallArgument>
+    <MethodDeclarationParameterWrapping>WrapIfTooLong</MethodDeclarationParameterWrapping>
+    <IndexerDeclarationParameterWrapping>WrapIfTooLong</IndexerDeclarationParameterWrapping>
+    <IndexerArgumentWrapping>WrapIfTooLong</IndexerArgumentWrapping>
+    <AlignToFirstIndexerArgument>True</AlignToFirstIndexerArgument>
+  </CSharpFormattingPolicy>
+  <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain">
+    <FileWidth>120</FileWidth>
+    <TabsToSpaces>False</TabsToSpaces>
+    <EolMarker>Unix</EolMarker>
+  </TextStylePolicy>
+  <StandardHeader>
+    <Text />
+    <IncludeInNewFiles>True</IncludeInNewFiles>
+  </StandardHeader>
+  <TextStylePolicy inheritsSet="null" scope="application/xml" />
+  <XmlFormattingPolicy inheritsSet="Mono" inheritsScope="application/xml" scope="application/xml" />
+  <TextStylePolicy inheritsSet="null" scope="text/x-shader" />
+  <TextStylePolicy inheritsSet="null" scope="text/x-unitytxt" />
+</PolicySet>

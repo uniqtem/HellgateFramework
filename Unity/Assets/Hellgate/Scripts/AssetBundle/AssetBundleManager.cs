@@ -70,7 +70,7 @@ namespace Hellgate
 		/// <param name="www">Www.</param>
 		protected virtual void DownloadError (WWW www)
 		{
-			Debug.LogError ("WWW download error : " + www.error);
+			HDebug.LogError ("WWW download error : " + www.error);
 		}
 
 		/// <summary>
@@ -164,7 +164,7 @@ namespace Hellgate
 			};
 
 #if UNITY_EDITOR
-//			Debug.Log (data.assetBundleName + " / " + data.objName);
+//			HDebug.Log (data.assetBundleName + " / " + data.objName);
 			string[] paths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName (data.assetBundleName, data.objName);
 			string path = "";
 			if (paths.Length <= 0) {

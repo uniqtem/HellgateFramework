@@ -119,7 +119,7 @@ namespace Hellgate
 			if (assetBundleData._Resource.Major != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR)) {
 
 #if UNITY_EDITOR
-				Debug.Log ("Major : " + assetBundleData._Resource.Major);
+				HDebug.Log ("Major : " + assetBundleData._Resource.Major);
 #endif
 
 				downloads = assetBundleData._AssetBundle;
@@ -129,7 +129,7 @@ namespace Hellgate
 			} else if (assetBundleData._Resource.Minor != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MINOR)) {
 
 #if UNITY_EDITOR
-				Debug.Log ("Minor : " + assetBundleData._Resource.Minor);
+				HDebug.Log ("Minor : " + assetBundleData._Resource.Minor);
 #endif
 
 				downloads = new List<AssetBundleInitialData.AssetBundle> ();
@@ -153,7 +153,7 @@ namespace Hellgate
 				index = 0;
 				DownloadAssetBundle ();
 			} else {
-				Debug.LogWarning ("None of this has changed assetbundle version.");
+				HDebug.LogWarning ("None of this has changed assetbundle version.");
 				Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR, assetBundleData._Resource.Major);
 				Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MINOR, assetBundleData._Resource.Minor);
 

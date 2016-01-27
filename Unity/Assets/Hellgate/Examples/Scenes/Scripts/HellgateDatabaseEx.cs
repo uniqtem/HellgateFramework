@@ -16,6 +16,8 @@ public class Board
 	private int idx = 0;
 	private string name = "";
 	private string description = "";
+//	[Ignore]
+//	private Comment comment = null;
 
 	public int Idx {
 		get {
@@ -35,6 +37,12 @@ public class Board
 		}
 	}
 
+//	public Comment Comment {
+//		get {
+//			return comment;
+//		}
+//	}
+
 	public Board ()
 	{
 	}
@@ -51,7 +59,7 @@ public class Comment
 {
 	[Column (SqliteDataConstraints.AI)]
 	private int idx = 0;
-	[Column (SqliteDataConstraints.FK, "board", "idx")]
+	[Column (SqliteDataConstraints.FK, typeof(Board), "idx")]
 	private int boardIdx = 0;
 	private string name = "";
 	private string description = "";

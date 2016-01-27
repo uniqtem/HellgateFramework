@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//					Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -171,10 +175,13 @@ namespace Hellgate
 			shield.transform.localPosition = Vector3.zero;
 
 			DontDestroyOnLoad (instance.gameObject);
+
+#if !UNITY_5_3 
 			DontDestroyOnLoad (gCamera);
 			DontDestroyOnLoad (scene);
 			DontDestroyOnLoad (shield);
-
+#endif
+			
 			solidCamera = Instantiate (Resources.Load ("HellgateSolidCamera")) as GameObject;
 			solidCamera.name = "SolidCamera";
 			solidCamera.transform.parent = gCamera.transform;

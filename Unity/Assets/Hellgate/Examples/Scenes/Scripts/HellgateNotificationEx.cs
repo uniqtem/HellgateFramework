@@ -1,4 +1,4 @@
-﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 //					Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -66,17 +66,17 @@ public class HellgateNotificationEx : SceneController
 	
 	private void DevicePushIdReceived (string token)
 	{
-		Debug.Log ("DevicePushIdReceived : " + token);
+		HDebug.Log ("DevicePushIdReceived : " + token);
 	}
 
 	private void LocalNotificationReceived (string text)
 	{
-		Debug.Log ("LocalNotificationReceived : " + text);
+		HDebug.Log ("LocalNotificationReceived : " + text);
 	}
 
 	private void RemoteNotificationReceived (string text)
 	{
-		Debug.Log ("RemoteNotificationReceived : " + text);
+		HDebug.Log ("RemoteNotificationReceived : " + text);
 	}
 
 	public override void OnKeyBack ()
@@ -93,10 +93,11 @@ public class HellgateNotificationEx : SceneController
 	{
 		string id = NotificationManager.Instance.GetRegistrationId ();
 		if (id == "") {
-			Debug.Log ("Please on click register");
+			HDebug.Log ("Please on click register");
 			return;
 		}
-		Debug.Log (id);
+
+		HDebug.Log (id);
 	}
 
 	public void OnClickGcmOnOff ()
@@ -116,39 +117,39 @@ public class HellgateNotificationEx : SceneController
 	public void OnClickLocalNoti30Second ()
 	{
 		DateTime date = DateTime.Now.AddSeconds (30);
-		Debug.Log ("register time : " + date);
+		HDebug.Log ("register time : " + date);
 		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 30 second", "HellgateNoti30Sec");
 	}
 
 	public void OnClickLocalNoti1Min ()
 	{
 		DateTime date = DateTime.Now.AddMinutes (1);
-		Debug.Log ("register time : " + date);
+		HDebug.Log ("register time : " + date);
 		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 1 minute", "HellgateNoti1Min");
 	}
 
 	public void OnClickLocalNoti5Min ()
 	{
 		DateTime date = DateTime.Now.AddMinutes (5);
-		Debug.Log ("register time : " + date);
+		HDebug.Log ("register time : " + date);
 		NotificationManager.Instance.ScheduleLocalNotification (date, "Hellgate schedule local notification 5 minute");
 	}
 
 	public void OnClickLocalNoti30SecondCancel ()
 	{
-		Debug.Log ("Cacenl HellgateNoti30Sec");
+		HDebug.Log ("Cacenl HellgateNoti30Sec");
 		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti30Sec");
 	}
 
 	public void OnClickLocalNoti1MinCancel ()
 	{
-		Debug.Log ("Cacenl HellgateNoti1Min");
+		HDebug.Log ("Cacenl HellgateNoti1Min");
 		NotificationManager.Instance.CancelLocalNotification ("HellgateNoti1Min");
 	}
 
 	public void OnClickLocalNotiAllCancel ()
 	{
-		Debug.Log ("All Cacenl");
+		HDebug.Log ("All Cacenl");
 		NotificationManager.Instance.CancelAllLocalNotifications ();
 	}
 }

@@ -47,3 +47,7 @@ NEW : Logger
 NEW : GCM, APNS
 NEW : Schedule Local Notification
 NEW : Scene System(delete SS-System)
+2.1.0
+FIX : Logger -> HDebug
+NEW : Sqlite ORM join
+NEW : WebView

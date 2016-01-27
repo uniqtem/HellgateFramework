@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//					Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -33,6 +37,14 @@ namespace Hellgate
 				if (cameras == null) {
 					cameras = GameObject.FindObjectsOfType<Camera> ();
 				}
+#if UNITY_EDITOR
+	#if UNITY_5_3
+				UnityEditor.SceneManagement.SceneSetup sceneSetup = new UnityEditor.SceneManagement.SceneSetup ();
+				gameObject.name = Path.GetFileNameWithoutExtension (sceneSetup.path);
+	#elif
+				gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
+	#endif
+#endif
 			} else {
 				if (SSceneManager.Instance != null) {
 					SSceneApplication.Loaded (gameObject);
@@ -40,13 +52,13 @@ namespace Hellgate
 			}
 		}
 
-		protected virtual void Update ()
-		{
-#if UNITY_EDITOR
-			if (!Application.isPlaying) {
-					gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
-			}
-#endif
-		}
+//		protected virtual void Update ()
+//		{
+//#if UNITY_EDITOR
+//			if (!Application.isPlaying) {
+//					gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
+//			}
+//#endif
+//		}
 	}
 }

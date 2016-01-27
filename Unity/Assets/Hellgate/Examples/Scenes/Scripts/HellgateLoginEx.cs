@@ -37,7 +37,7 @@ public class HellgateLoginEx : SceneController
 		base.OnSet (data);
 
 		string encrypt = Encrypt.SHA1Key (BuildVersionBindings.GetBuildVersion () + "Hellgate");
-//		Debug.Log (encrypt);
+//		HDebug.Log (encrypt);
 		List<string> param = new List<string> ();
 		param.Add (BASE_URL);
 		param.Add (encrypt);
@@ -108,9 +108,9 @@ public class HellgateLoginEx : SceneController
 		this.aStatus = status;
 
 		if (status == AssetBundleInitalStatus.HttpError) {
-			Debug.Log ("Download resource error");
+			HDebug.Log ("Download resource error");
 		} else if (status == AssetBundleInitalStatus.HttpTimeover) {
-			Debug.Log ("Download timeover");
+			HDebug.Log ("Download timeover");
 		} else if (status == AssetBundleInitalStatus.Start) {
 			progress.SetActive (true);
 			percent.SetActive (true);

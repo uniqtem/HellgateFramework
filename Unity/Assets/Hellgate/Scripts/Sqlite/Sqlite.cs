@@ -1,4 +1,4 @@
-﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 //					Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -22,6 +22,15 @@ namespace Hellgate
 		FK, // FOREIGN KEY
 		AI, // AUTOINCREMENT
 		UNIQUE // UNIQUE
+	}
+
+	public enum SqliteJoinType
+	{
+		CROSS,
+		INNER,
+		OUTER,
+		LEFT,
+		RIGHT
 	}
 	
 	public class Sqlite
@@ -78,14 +87,14 @@ namespace Hellgate
 						File.WriteAllBytes (pathDB, www.bytes);
 					} else {
 						canQuery = false;
-						Debug.LogWarning (www.error);
+						HDebug.LogWarning (www.error);
 					}
 				} else {
 					if (File.Exists (resourcePath)) {
 						File.Copy (resourcePath, pathDB, true);
 					} else {
 						canQuery = false;
-						Debug.LogError ("The file DB named " + db + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+						HDebug.LogError ("The file DB named " + db + " doesn't exist in the StreamingAssets Folder, please copy it there.");
 					}
 				}
 			}
@@ -169,7 +178,7 @@ namespace Hellgate
 				try {
 					dbtrans.Rollback ();
 				} catch (Exception e2) {
-					Debug.LogError (e2.Message);
+					HDebug.LogError (e2.Message);
 				}
 			}
 
@@ -184,7 +193,7 @@ namespace Hellgate
 		public DataTable ExecuteQuery (string query)
 		{
 			if (!canQuery) {
-				Debug.LogWarning ("Can't execute the query, verify DB origin file");
+				HDebug.LogWarning ("Can't execute the query, verify DB origin file");
 				return null;
 			}
 
@@ -193,7 +202,7 @@ namespace Hellgate
 			}
 
 			if ((ConnectionState)dbconn.State != ConnectionState.Open) {
-				Debug.LogWarning ("Sqlite DB is not open");
+				HDebug.LogWarning ("Sqlite DB is not open");
 				return null;
 			}
 
@@ -201,10 +210,8 @@ namespace Hellgate
 			try {
 				reader = dbcmd.ExecuteReader ();
 			} catch (Exception e) {
-#if UNITY_EDITOR
-				Debug.Log ("Query : " + query);
-#endif
-				Debug.LogError (e.Message);
+				HDebug.Log ("Query : " + query);
+				HDebug.LogError (e.Message);
 				return null;
 			}
 
@@ -236,7 +243,7 @@ namespace Hellgate
 		public void ExecuteNonQuery (string query)
 		{
 			if (!canQuery) {
-				Debug.LogWarning ("Can't execute the query, verify DB origin file");
+				HDebug.LogWarning ("Can't execute the query, verify DB origin file");
 				return;
 			}
 
@@ -245,7 +252,7 @@ namespace Hellgate
 			}
 
 			if ((ConnectionState)dbconn.State != ConnectionState.Open) {
-				Debug.LogWarning ("Sqlite DB is not open");
+				HDebug.LogWarning ("Sqlite DB is not open");
 				return;
 			}
 
@@ -253,10 +260,8 @@ namespace Hellgate
 			try {
 				dbcmd.ExecuteNonQuery ();
 			} catch (Exception e) {
-#if UNITY_EDITOR
-				Debug.Log ("Query : " + query);
-#endif
-				Debug.LogError (e.Message);
+				HDebug.Log ("Query : " + query);
+				HDebug.LogError (e.Message);
 				return;
 			}
 
@@ -289,7 +294,7 @@ namespace Hellgate
 			try {
 				SqliteConnection.CreateFile (resourcePath);
 			} catch (Exception e) {
-				Debug.LogError (e.Message);
+				HDebug.LogError (e.Message);
 
 				return false;
 			}

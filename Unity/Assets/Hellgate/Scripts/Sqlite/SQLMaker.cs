@@ -3,12 +3,34 @@
 /// </summary>
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Hellgate
 {
 	public class SQLMaker : SQLConverter
 	{
+		public const string UNDERLINE = "_";
+
+		protected string ConvertListToString (List<string> list, bool comma = true)
+		{
+			if (list == null || list.Count <= 0) {
+				return "";
+			}
+			
+			StringBuilder stringBuilder = new StringBuilder ();
+			for (int i = 0; i < list.Count; i++) {
+				stringBuilder.Append (list [i]);
+				if (i < list.Count - 1) {
+					if (comma) {
+						stringBuilder.Append (", ");
+					}
+				}
+			}
+			
+			return stringBuilder.ToString ();
+		}
+
 		protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA, bool apostrophe = false)
 		{
 			string apos = apostrophe ? "'" : "";
@@ -143,7 +165,42 @@ namespace Hellgate
 		/// <param name="addQuery">Add query.</param>
 		public string GenerateSelectSQL (string tableName, string addQuery = "")
 		{
-			return string.Format ("SELECT * FROM {0} {1};", tableName, addQuery);
+			return GenerateSelectSQL (
+				new List<string> (new string[] {"*"}),
+				new List<string> (new string[] {tableName}),
+				null,
+				addQuery);
+		}
+
+		/// <summary>
+		/// Generates the select SQL.
+		/// </summary>
+		/// <returns>The select SQL.</returns>
+		/// <param name="selects">Selects.</param>
+		/// <param name="tables">Tables.</param>
+		/// <param name="addQuery">Add query.</param>
+		public string GenerateSelectSQL (List<string> selects, List<string> tables, List<string> wheres = null, string addQuery = "")
+		{
+			if (wheres != null) {
+				for (int i = 0; i < wheres.Count; i++) {
+					string temp = "";
+					if (i == 0) {
+						temp = "WHERE";
+					} else {
+						temp = "AND";
+					}
+
+					wheres [i] = string.Format ("{0} {1}", temp, wheres [i]);
+				}
+			}
+
+			return string.Format (
+				"SELECT {0} FROM {1} {2} {3}",
+				ConvertListToString (selects),
+				ConvertListToString (tables),
+				ConvertListToString (wheres, false),
+				addQuery
+			);
 		}
 
 		/// <summary>
@@ -153,15 +210,15 @@ namespace Hellgate
 		/// <param name="tableName">Table name.</param>
 		/// <param name="whereKey">Where key.</param>
 		/// <param name="where">Where.</param>
-		public string GenerateSelectSyncSQL (string tableName, string whereKey, string[] where)
+		public string GenerateSelectSyncSQL (string tableName, string whereKey, List<string> where)
 		{
 			StringBuilder stringBuilder = new StringBuilder ();
 			stringBuilder.AppendFormat ("SELECT * FROM {0} WHERE ", tableName);
 
-			for (int i = 0; i < where.Length; i++) {
+			for (int i = 0; i < where.Count; i++) {
 				stringBuilder.AppendFormat ("{0} = '{1}'", whereKey, where [i]);
 				
-				if (i < where.Length - 1) {
+				if (i < where.Count - 1) {
 					stringBuilder.Append (" OR ");
 				}
 			}
@@ -226,6 +283,38 @@ namespace Hellgate
 
 			stringBuilder.Append (");");
 			return stringBuilder.ToString ();
+		}
+
+		/// <summary>
+		/// Generates the select alias SQL.
+		/// </summary>
+		/// <returns>The select alias SQ.</returns>
+		/// <param name="tableName">Table name.</param>
+		/// <param name="columnName">Column name.</param>
+		public string GenerateSelectAliasSQL (string tableName, string columnName)
+		{
+			return string.Format ("{0} as {1}{2}{3}", Period (tableName, columnName), tableName, UNDERLINE, columnName);
+		}
+
+		/// <summary>
+		/// Period the specified key and value.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		public string Period (string key, string value)
+		{
+			return string.Format ("{0}.{1}", key, value);
+		}
+
+		/// <summary>
+		/// Equalses the sign.
+		/// </summary>
+		/// <returns>The sign.</returns>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		public string EqualsSign (string key, string value)
+		{
+			return string.Format ("{0} = {1}", key, value);
 		}
 	}
 }

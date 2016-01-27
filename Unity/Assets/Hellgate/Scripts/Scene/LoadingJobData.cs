@@ -103,7 +103,7 @@ namespace Hellgate
 		public void PutExtra (string key, object value)
 		{
 			if (intent.ContainsKey (key)) {
-				Debug.LogWarning ("The key that already exists.");
+				HDebug.LogWarning ("The key that already exists.");
 			} else {
 				intent.Add (key, value);
 			}

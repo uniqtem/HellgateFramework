@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -241,7 +242,7 @@ namespace Hellgate
 		/// <returns>The distinct values.</returns>
 		/// <param name="list">List.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
-		public static List<T> GetDistinctValues <T> (List<T> list)
+		public static List<T> GetDistinctValues<T> (List<T> list)
 		{
 			List<T> temp = new List<T> ();
 			for (int i = 0; i < list.Count; i++) {
@@ -253,6 +254,77 @@ namespace Hellgate
 			}
 
 			return temp;
+		}
+
+		/// <summary>
+		/// Gets the distinct values.
+		/// </summary>
+		/// <returns>The distinct values.</returns>
+		/// <param name="array">Array.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static List<T> GetDistinctValues<T> (T[] array)
+		{
+			List<T> temp = new List<T> ();
+			for (int i = 0; i < array.Length; i++) {
+				if (temp.Contains (array [i])) {
+					continue;
+				}
+				
+				temp.Add (array [i]);
+			}
+			
+			return temp;
+		}
+		
+		public static bool IsInteger (Type type)
+		{
+			return (
+				type == typeof(SByte) ||
+				type == typeof(Int16) ||
+				type == typeof(Int32) ||
+				type == typeof(Int64) ||
+				type == typeof(Byte) ||
+				type == typeof(UInt16) ||
+				type == typeof(UInt32) ||
+				type == typeof(UInt64)
+				); 
+		}
+		
+		public static bool IsFloat (Type type)
+		{
+			return (type == typeof(float) | type == typeof(double) | type == typeof(Decimal));
+		}
+		
+		public static bool IsNumeric (Type type)
+		{
+			if (!(
+				type == typeof(Byte) ||
+				type == typeof(Int16) ||
+				type == typeof(Int32) ||
+				type == typeof(Int64) ||
+				type == typeof(SByte) ||
+				type == typeof(UInt16) ||
+				type == typeof(UInt32) ||
+				type == typeof(UInt64) ||
+				type == typeof(Decimal) ||
+				type == typeof(Double) ||
+				type == typeof(Single)
+				)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+
+		public static bool IsText (Type type)
+		{
+			return (type == typeof(String) || type == typeof(Char));
+		}
+
+		public static bool IsValueType (Type type)
+		{
+			return (IsText (type) || IsNumeric (type));
 		}
 	}
 }

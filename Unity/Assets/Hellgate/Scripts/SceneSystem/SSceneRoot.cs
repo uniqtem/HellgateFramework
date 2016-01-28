@@ -13,51 +13,43 @@ using System.IO;
 
 namespace Hellgate
 {
-	[ExecuteInEditMode]
-	public class SSceneRoot : MonoBehaviour
-	{
-		/// <summary>
-		/// The cameras.
-		/// </summary>
-		[SerializeField]
-		protected Camera[] cameras;
-		/// <summary>
-		/// Gets the cameras.
-		/// </summary>
-		/// <value>The cameras.</value>
-		public Camera[] Cameras {
-			get {
-				return cameras;
-			}
-		}
+    [ExecuteInEditMode]
+    public class SSceneRoot : MonoBehaviour
+    {
+        /// <summary>
+        /// The cameras.
+        /// </summary>
+        [SerializeField]
+        protected Camera[] cameras;
 
-		protected virtual void Awake ()
-		{
-			if (!Application.isPlaying) {
-				if (cameras == null) {
-					cameras = GameObject.FindObjectsOfType<Camera> ();
-				}
+        /// <summary>
+        /// Gets the cameras.
+        /// </summary>
+        /// <value>The cameras.</value>
+        public Camera[] Cameras {
+            get {
+                return cameras;
+            }
+        }
+
+        protected virtual void Awake ()
+        {
+            if (!Application.isPlaying) {
+                if (cameras == null) {
+                    cameras = GameObject.FindObjectsOfType<Camera> ();
+                }
 #if UNITY_EDITOR
-	#if UNITY_5_3
-				gameObject.name = Path.GetFileNameWithoutExtension (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene ().name);
-	#elif
-				gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
-	#endif
+    #if UNITY_5_3
+                gameObject.name = Path.GetFileNameWithoutExtension (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene ().name);
+    #elif
+                gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
+    #endif
 #endif
-			} else {
-				if (SSceneManager.Instance != null) {
-					SSceneApplication.Loaded (gameObject);
-				}
-			}
-		}
-
-//		protected virtual void Update ()
-//		{
-//#if UNITY_EDITOR
-//			if (!Application.isPlaying) {
-//					gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
-//			}
-//#endif
-//		}
-	}
+            } else {
+                if (SSceneManager.Instance != null) {
+                    SSceneApplication.Loaded (gameObject);
+                }
+            }
+        }
+    }
 }

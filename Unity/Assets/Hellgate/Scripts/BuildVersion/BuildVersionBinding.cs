@@ -7,66 +7,68 @@ using System.Runtime.InteropServices;
 
 namespace Hellgate
 {
-	public class BuildVersionBindings
-	{
+    public class BuildVersionBindings
+    {
 #if UNITY_ANDROID
-		public static string AndroidBundleVersion {
-			get {
-				if (AbundleVersion == null) {
-					GetVersionInfo ();
-				}
-				
-				return AbundleVersion;
-			}
-		}
-		
-		private static string AbundleVersion;
-		
-		private static void GetVersionInfo ()
-		{
-			AndroidJavaClass unityPlayer = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
-			AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject> ("currentActivity").Call<AndroidJavaObject> ("getApplicationContext");
-			AndroidJavaObject pManager = context.Call<AndroidJavaObject> ("getPackageManager");
-			AndroidJavaObject pInfo = pManager.Call<AndroidJavaObject> ("getPackageInfo", context.Call<string> ("getPackageName"), pManager.GetStatic<int> ("GET_ACTIVITIES"));
-			
-			AbundleVersion = pInfo.Get<string> ("versionName");
-		}
+        public static string AndroidBundleVersion {
+            get {
+                if (AbundleVersion == null) {
+                    GetVersionInfo ();
+                }
+
+                return AbundleVersion;
+            }
+        }
+
+        private static string AbundleVersion;
+
+        private static void GetVersionInfo ()
+        {
+            AndroidJavaClass unityPlayer = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject> ("currentActivity").Call<AndroidJavaObject> ("getApplicationContext");
+            AndroidJavaObject pManager = context.Call<AndroidJavaObject> ("getPackageManager");
+            AndroidJavaObject pInfo = pManager.Call<AndroidJavaObject> ("getPackageInfo",
+                                                               context.Call<string> ("getPackageName"),
+                                                               pManager.GetStatic<int> ("GET_ACTIVITIES"));
+
+            AbundleVersion = pInfo.Get<string> ("versionName");
+        }
 #endif
 
 #if UNITY_IPHONE
-		[DllImport("__Internal")]
-		private static extern string _GetCFBundleVersion ();
-		
-		public static string IOSBundleVersion {
-			get {
-				if (IbundleVersion == null) {
-					GetVersionInfo ();
-				}
-				return IbundleVersion;
-			}
-		}
-		
-		private static string IbundleVersion;
-		
-		private static void GetVersionInfo ()
-		{
-			IbundleVersion = _GetCFBundleVersion ();
-		}
+        [DllImport ("__Internal")]
+        private static extern string _GetCFBundleVersion ();
+
+        public static string IOSBundleVersion {
+            get {
+                if (IbundleVersion == null) {
+                    GetVersionInfo ();
+                }
+                return IbundleVersion;
+            }
+        }
+
+        private static string IbundleVersion;
+
+        private static void GetVersionInfo ()
+        {
+            IbundleVersion = _GetCFBundleVersion ();
+        }
 #endif
 
-		/// <summary>
-		/// Gets the build version.
-		/// </summary>
-		/// <returns>The build version.</returns>
-		public static string GetBuildVersion ()
-		{
+        /// <summary>
+        /// Gets the build version.
+        /// </summary>
+        /// <returns>The build version.</returns>
+        public static string GetBuildVersion ()
+        {
 #if UNITY_EDITOR
-			return UnityEditor.PlayerSettings.bundleVersion;
+            return UnityEditor.PlayerSettings.bundleVersion;
 #elif UNITY_ANDROID
-			return AndroidBundleVersion;
+            return AndroidBundleVersion;
 #elif UNITY_IOS
-			return IOSBundleVersion;
+            return IOSBundleVersion;
 #endif
-		}
-	}
+        }
+    }
 }

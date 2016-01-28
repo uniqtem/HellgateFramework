@@ -8,54 +8,54 @@ using System.Collections.Generic;
 
 public class HellgateQuestDataEx
 {
-	public class User
-	{
-		private string prefab = "";
-		private int speed = 0;
+    public class User
+    {
+        private string prefab = "";
+        private int speed = 0;
 
-		public string Prefab {
-			get {
-				return prefab;
-			}
-		}
-		
-		public float Speed {
-			get {
-				return (float)speed / 100;
-			}
-		}
-	}
+        public string Prefab {
+            get {
+                return prefab;
+            }
+        }
 
-	public class Missile
-	{
-		private string prefab = "";
-		private int speed = 0;
+        public float Speed {
+            get {
+                return (float)speed / 100;
+            }
+        }
+    }
 
-		public string Prefab {
-			get {
-				return prefab;
-			}
-		}
+    public class Missile
+    {
+        private string prefab = "";
+        private int speed = 0;
 
-		public float Speed {
-			get {
-				return (float)speed / 100;
-			}
-		}
-	}
+        public string Prefab {
+            get {
+                return prefab;
+            }
+        }
 
-	private User user = null;
-	private Missile[] missile = null;
+        public float Speed {
+            get {
+                return (float)speed / 100;
+            }
+        }
+    }
 
-	public User _User {
-		get {
-			return user;
-		}
-	}
+    private User user = null;
+    private Missile[] missile = null;
 
-	public List<Missile> _Missile {
-		get {
-			return new List<Missile> (missile);
-		}
-	}
+    public User _User {
+        get {
+            return user;
+        }
+    }
+
+    public List<Missile> _Missile {
+        get {
+            return new List<Missile> (missile);
+        }
+    }
 }

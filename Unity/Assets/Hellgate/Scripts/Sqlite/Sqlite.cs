@@ -12,369 +12,379 @@ using Mono.Data.Sqlite;
 
 namespace Hellgate
 {
-	/// <summary>
-	/// Sqlite data constraints.
-	/// </summary>
-	public enum SqliteDataConstraints
-	{
-		NOTNULL, // NOT NULL
-		PK, // PRIMARY KEY
-		FK, // FOREIGN KEY
-		AI, // AUTOINCREMENT
-		UNIQUE // UNIQUE
-	}
+    /// <summary>
+    /// Sqlite data constraints.
+    /// </summary>
+    public enum SqliteDataConstraints
+    {
+        // NOT NULL
+        NOTNULL,
+        // PRIMARY KEY
+        PK,
+        // FOREIGN KEY
+        FK,
+        // AUTOINCREMENT
+        AI,
+        // UNIQUE
+        UNIQUE
+    }
 
-	public enum SqliteJoinType
-	{
-		CROSS,
-		INNER,
-		OUTER,
-		LEFT,
-		RIGHT
-	}
-	
-	public class Sqlite
-	{
-		public const string BASE_PATH = "URI=file:";
-		protected SqliteConnection dbconn;
-		protected SqliteCommand dbcmd;
-		protected SqliteDataReader reader;
-		protected SqliteTransaction dbtrans;
-		protected string pathDB;
-		protected bool canQuery;
-		protected bool isConnectionOpen;
+    /// <summary>
+    /// Sqlite join type.
+    /// </summary>
+    public enum SqliteJoinType
+    {
+        None,
+        CROSS,
+        INNER,
+        // SQLite only supports the LEFT OUTER JOIN.
+        OUTER
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Hellgate.Sqlite"/> class.
-		/// </summary>
-		public Sqlite ()
-		{
-			canQuery = true;
-		}
+    public class Sqlite
+    {
+        public const string BASE_PATH = "URI=file:";
+        protected SqliteConnection dbconn;
+        protected SqliteCommand dbcmd;
+        protected SqliteDataReader reader;
+        protected SqliteTransaction dbtrans;
+        protected string pathDB;
+        protected bool canQuery;
+        protected bool isConnectionOpen;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Hellgate.Sqlite"/> class.
-		/// The DB name '/' Do not put
-		/// Data Base name. (the file needs exist in the streamingAssets folder)
-		/// </summary>
-		/// <param name="db">DB name && path.</param>
-		/// <param name="resetDB">reset DB.</param>
-		public Sqlite (string db, bool resetDB = false)
-		{
-			canQuery = true;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.Sqlite"/> class.
+        /// </summary>
+        public Sqlite ()
+        {
+            canQuery = true;
+        }
 
-			if (db.Contains ("/")) {
-				pathDB = db;
-				return;
-			}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.Sqlite"/> class.
+        /// The DB name '/' Do not put
+        /// Data Base name. (the file needs exist in the streamingAssets folder)
+        /// </summary>
+        /// <param name="db">DB name && path.</param>
+        /// <param name="resetDB">reset DB.</param>
+        public Sqlite (string db, bool resetDB = false)
+        {
+            canQuery = true;
 
-			pathDB = Path.Combine (Application.persistentDataPath, db);
-			// StreamingAssets folder
-			string resourcePath = Path.Combine (Application.streamingAssetsPath, db);
+            if (db.Contains ("/")) {
+                pathDB = db;
+                return;
+            }
+
+            pathDB = Path.Combine (Application.persistentDataPath, db);
+            // StreamingAssets folder
+            string resourcePath = Path.Combine (Application.streamingAssetsPath, db);
 
 #if UNITY_EDITOR
-			AutoDDL (db, false);
+            AutoDDL (db, false);
 #endif
 
-			if (!File.Exists (pathDB) || (File.GetLastWriteTimeUtc (resourcePath) > File.GetLastWriteTimeUtc (pathDB)) || resetDB) {
-				if (resourcePath.Contains ("://")) { // android
-					WWW www = new WWW (resourcePath);
-					while (!www.isDone) {
-						;
-					}
-					
-					if (www.error == null) {
-						File.WriteAllBytes (pathDB, www.bytes);
-					} else {
-						canQuery = false;
-						HDebug.LogWarning (www.error);
-					}
-				} else {
-					if (File.Exists (resourcePath)) {
-						File.Copy (resourcePath, pathDB, true);
-					} else {
-						canQuery = false;
-						HDebug.LogError ("The file DB named " + db + " doesn't exist in the StreamingAssets Folder, please copy it there.");
-					}
-				}
-			}
-		}
+            if (!File.Exists (pathDB) || (File.GetLastWriteTimeUtc (resourcePath) > File.GetLastWriteTimeUtc (pathDB)) || resetDB) {
+                if (resourcePath.Contains ("://")) { // android
+                    WWW www = new WWW (resourcePath);
+                    while (!www.isDone) {
+                        ;
+                    }
 
-		protected void Open (string conn)
-		{
-			conn = BASE_PATH + conn;
-			dbconn = new SqliteConnection (conn);
-			dbconn.Open (); //Open connection to the database.
-			dbcmd = dbconn.CreateCommand ();
-		}
+                    if (www.error == null) {
+                        File.WriteAllBytes (pathDB, www.bytes);
+                    } else {
+                        canQuery = false;
+                        HDebug.LogWarning (www.error);
+                    }
+                } else {
+                    if (File.Exists (resourcePath)) {
+                        File.Copy (resourcePath, pathDB, true);
+                    } else {
+                        canQuery = false;
+                        HDebug.LogError ("The file DB named " + db + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Open this DB.
-		/// </summary>
-		public bool Open ()
-		{
-			Open (pathDB);
+        protected void Open (string conn)
+        {
+            conn = BASE_PATH + conn;
+            dbconn = new SqliteConnection (conn);
+            dbconn.Open (); //Open connection to the database.
+            dbcmd = dbconn.CreateCommand ();
+        }
 
-			if ((ConnectionState)dbconn.State == ConnectionState.Open) {
-				isConnectionOpen = true;
-			}
+        /// <summary>
+        /// Open this DB.
+        /// </summary>
+        public bool Open ()
+        {
+            Open (pathDB);
 
-			return isConnectionOpen;
-		}
+            if ((ConnectionState)dbconn.State == ConnectionState.Open) {
+                isConnectionOpen = true;
+            }
 
-		/// <summary>
-		/// Close this DB.
-		/// </summary>
-		public void Close ()
-		{
-			if (reader != null) {
-				reader.Close ();
-				reader = null;
-			}
+            return isConnectionOpen;
+        }
 
-			if (dbcmd != null) {
-				dbcmd.Dispose ();
-				dbcmd = null;
-			}
+        /// <summary>
+        /// Close this DB.
+        /// </summary>
+        public void Close ()
+        {
+            if (reader != null) {
+                reader.Close ();
+                reader = null;
+            }
 
-			if (dbconn != null) {
-				dbconn.Close ();
-				dbconn = null;
-			}
+            if (dbcmd != null) {
+                dbcmd.Dispose ();
+                dbcmd = null;
+            }
 
-			if (dbtrans != null) {
-				dbtrans.Dispose ();
-				dbtrans = null;
-			}
+            if (dbconn != null) {
+                dbconn.Close ();
+                dbconn = null;
+            }
 
-			isConnectionOpen = false;
-		}
+            if (dbtrans != null) {
+                dbtrans.Dispose ();
+                dbtrans = null;
+            }
 
-		/// <summary>
-		/// Begins the transaction.
-		/// </summary>
-		public void BeginTransaction ()
-		{
-			if (!isConnectionOpen) {
-				Open (pathDB);
+            isConnectionOpen = false;
+        }
 
-				if ((ConnectionState)dbconn.State == ConnectionState.Open) {
-					isConnectionOpen = true;
-				}
-			}
+        /// <summary>
+        /// Begins the transaction.
+        /// </summary>
+        public void BeginTransaction ()
+        {
+            if (!isConnectionOpen) {
+                Open (pathDB);
 
-			dbtrans = dbconn.BeginTransaction ();
-			dbcmd.Transaction = dbtrans;
-		}
+                if ((ConnectionState)dbconn.State == ConnectionState.Open) {
+                    isConnectionOpen = true;
+                }
+            }
 
-		/// <summary>
-		/// Commit this DB.
-		/// </summary>
-		public void Commit ()
-		{
-			try {
-				dbtrans.Commit ();
-			} catch {
-				try {
-					dbtrans.Rollback ();
-				} catch (Exception e2) {
-					HDebug.LogError (e2.Message);
-				}
-			}
+            dbtrans = dbconn.BeginTransaction ();
+            dbcmd.Transaction = dbtrans;
+        }
 
-			Close ();
-		}
+        /// <summary>
+        /// Commit this DB.
+        /// </summary>
+        public void Commit ()
+        {
+            try {
+                dbtrans.Commit ();
+            } catch {
+                try {
+                    dbtrans.Rollback ();
+                } catch (Exception e2) {
+                    HDebug.LogError (e2.Message);
+                }
+            }
 
-		/// <summary>
-		/// Executes the query.
-		/// </summary>
-		/// <returns>The query.</returns>
-		/// <param name="query">Query.</param>
-		public DataTable ExecuteQuery (string query)
-		{
-			if (!canQuery) {
-				HDebug.LogWarning ("Can't execute the query, verify DB origin file");
-				return null;
-			}
+            Close ();
+        }
 
-			if (!isConnectionOpen) {
-				Open (pathDB);
-			}
+        /// <summary>
+        /// Executes the query.
+        /// </summary>
+        /// <returns>The query.</returns>
+        /// <param name="query">Query.</param>
+        public DataTable ExecuteQuery (string query)
+        {
+            if (!canQuery) {
+                HDebug.LogWarning ("Can't execute the query, verify DB origin file");
+                return null;
+            }
 
-			if ((ConnectionState)dbconn.State != ConnectionState.Open) {
-				HDebug.LogWarning ("Sqlite DB is not open");
-				return null;
-			}
+            if (!isConnectionOpen) {
+                Open (pathDB);
+            }
 
-			dbcmd.CommandText = query;
-			try {
-				reader = dbcmd.ExecuteReader ();
-			} catch (Exception e) {
-				HDebug.Log ("Query : " + query);
-				HDebug.LogError (e.Message);
-				return null;
-			}
+            if ((ConnectionState)dbconn.State != ConnectionState.Open) {
+                HDebug.LogWarning ("Sqlite DB is not open");
+                return null;
+            }
 
-			DataTable dataTable = new DataTable ();
-			for (int i = 0; i < reader.FieldCount; i++) {
-				dataTable.Columns.Add (reader.GetName (i));
-			}
+            dbcmd.CommandText = query;
+            try {
+                reader = dbcmd.ExecuteReader ();
+            } catch (Exception e) {
+                HDebug.Log ("Query : " + query);
+                HDebug.LogError (e.Message);
+                return null;
+            }
 
-			while (reader.Read ()) {
-				DataRow row = new DataRow ();
-				for (int i = 0; i < reader.FieldCount; i++) {
-					row.Add (reader.GetName (i), reader.GetValue (i));
-				}
+            DataTable dataTable = new DataTable ();
+            for (int i = 0; i < reader.FieldCount; i++) {
+                dataTable.Columns.Add (reader.GetName (i));
+            }
 
-				dataTable.Rows.Add (row);
-			}
+            while (reader.Read ()) {
+                DataRow row = new DataRow ();
+                for (int i = 0; i < reader.FieldCount; i++) {
+                    row.Add (reader.GetName (i), reader.GetValue (i));
+                }
 
-			if (!isConnectionOpen) {
-				Close ();
-			}
+                dataTable.Rows.Add (row);
+            }
 
-			return dataTable;
-		}
+            if (!isConnectionOpen) {
+                Close ();
+            }
 
-		/// <summary>
-		/// Executes the non query.
-		/// </summary>
-		/// <param name="query">Query.</param>
-		public void ExecuteNonQuery (string query)
-		{
-			if (!canQuery) {
-				HDebug.LogWarning ("Can't execute the query, verify DB origin file");
-				return;
-			}
+            return dataTable;
+        }
 
-			if (!isConnectionOpen) {
-				Open (pathDB);
-			}
+        /// <summary>
+        /// Executes the non query.
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public void ExecuteNonQuery (string query)
+        {
+            if (!canQuery) {
+                HDebug.LogWarning ("Can't execute the query, verify DB origin file");
+                return;
+            }
 
-			if ((ConnectionState)dbconn.State != ConnectionState.Open) {
-				HDebug.LogWarning ("Sqlite DB is not open");
-				return;
-			}
+            if (!isConnectionOpen) {
+                Open (pathDB);
+            }
 
-			dbcmd.CommandText = query;
-			try {
-				dbcmd.ExecuteNonQuery ();
-			} catch (Exception e) {
-				HDebug.Log ("Query : " + query);
-				HDebug.LogError (e.Message);
-				return;
-			}
+            if ((ConnectionState)dbconn.State != ConnectionState.Open) {
+                HDebug.LogWarning ("Sqlite DB is not open");
+                return;
+            }
 
-			if (!isConnectionOpen) {
-				Close ();
-			}
-		}
+            dbcmd.CommandText = query;
+            try {
+                dbcmd.ExecuteNonQuery ();
+            } catch (Exception e) {
+                HDebug.Log ("Query : " + query);
+                HDebug.LogError (e.Message);
+                return;
+            }
+
+            if (!isConnectionOpen) {
+                Close ();
+            }
+        }
 
 #region Editor
+
 #if UNITY_EDITOR
-		/// <summary>
-		/// Creates the Sqlite db file.
-		/// </summary>
-		/// <param name="db">DB Name.</param>
-		/// <param name="resetDB">If set to <c>true</c> Reset Db.</param>
-		public bool CreateFile (string db, bool resetDB = false)
-		{
-			string streamingAssetsPath = Application.streamingAssetsPath;
-			if (!Directory.Exists (streamingAssetsPath)) {
-				Directory.CreateDirectory (streamingAssetsPath);
-			}
+        /// <summary>
+        /// Creates the Sqlite db file.
+        /// </summary>
+        /// <param name="db">DB Name.</param>
+        /// <param name="resetDB">If set to <c>true</c> Reset Db.</param>
+        public bool CreateFile (string db, bool resetDB = false)
+        {
+            string streamingAssetsPath = Application.streamingAssetsPath;
+            if (!Directory.Exists (streamingAssetsPath)) {
+                Directory.CreateDirectory (streamingAssetsPath);
+            }
 			
-			string resourcePath = Path.Combine (streamingAssetsPath, db);
-			if (!resetDB) {
-				if (File.Exists (resourcePath)) {
-					return false;
-				}
-			}
+            string resourcePath = Path.Combine (streamingAssetsPath, db);
+            if (!resetDB) {
+                if (File.Exists (resourcePath)) {
+                    return false;
+                }
+            }
 
-			try {
-				SqliteConnection.CreateFile (resourcePath);
-			} catch (Exception e) {
-				HDebug.LogError (e.Message);
+            try {
+                SqliteConnection.CreateFile (resourcePath);
+            } catch (Exception e) {
+                HDebug.LogError (e.Message);
 
-				return false;
-			}
+                return false;
+            }
 
-			pathDB = resourcePath;
-			UnityEditor.AssetDatabase.Refresh ();
-			return true;
-		}
+            pathDB = resourcePath;
+            UnityEditor.AssetDatabase.Refresh ();
+            return true;
+        }
 
-		/// <summary>
-		/// Creates the table.
-		/// </summary>
-		/// <returns>The table.</returns>
-		/// <param name="db">Db.</param>
-		/// <param name="type">Type.</param>
-		/// <param name="returnQuery">If set to <c>true</c> return query.</param>
-		/// <param name="tableAutoGenerated">If set to <c>true</c> table auto generated.</param>
-		public string CreateTable (string db, Type type, bool returnQuery = false, bool tableAutoGenerated = false)
-		{
-			if (!returnQuery) {
-				CreateFile (db);
-			}
+        /// <summary>
+        /// Creates the table.
+        /// </summary>
+        /// <returns>The table.</returns>
+        /// <param name="db">Db.</param>
+        /// <param name="type">Type.</param>
+        /// <param name="returnQuery">If set to <c>true</c> return query.</param>
+        /// <param name="tableAutoGenerated">If set to <c>true</c> table auto generated.</param>
+        public string CreateTable (string db, Type type, bool returnQuery = false, bool tableAutoGenerated = false)
+        {
+            if (!returnQuery) {
+                CreateFile (db);
+            }
 
-			/// table
-			TableAttribute table = type.GetAttributeValue<TableAttribute> ();
-			if (table != null) {
-				if (tableAutoGenerated) {
-					if (!table.TableAutoGenerated) {
-						return "";
-					}
-				}
+            /// table
+            TableAttribute table = type.GetAttributeValue<TableAttribute> ();
+            if (table != null) {
+                if (tableAutoGenerated) {
+                    if (!table.TableAutoGenerated) {
+                        return "";
+                    }
+                }
 
-				string tableName;
-				if (table.TableName == "") {
-					tableName = type.Name;
-				} else {
-					tableName = table.TableName;
-				}
+                string tableName;
+                if (table.TableName == "") {
+                    tableName = type.Name;
+                } else {
+                    tableName = table.TableName;
+                }
 
-				// columns
-				AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
-				if (configs.Length > 0) {
-					SQLMaker sql = new SQLMaker ();
-					string query = sql.GenerateCreateTableSQL (tableName, configs);
+                // columns
+                AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
+                if (configs.Length > 0) {
+                    SQLMaker sql = new SQLMaker ();
+                    string query = sql.GenerateCreateTableSQL (tableName, configs);
 
-					if (returnQuery) {
-						return query;
-					} else {
-						ExecuteNonQuery (query);
-					}
-				}
-			}
+                    if (returnQuery) {
+                        return query;
+                    } else {
+                        ExecuteNonQuery (query);
+                    }
+                }
+            }
 
-			return "";
-		}
+            return "";
+        }
 
-		/// <summary>
-		/// Autos the DDL(Data Definition Language).
-		/// </summary>
-		/// <param name="db">DB.</param>
-		/// <param name="resetDB">If set to <c>true</c> reset DB.</param>
-		public void AutoDDL (string db, bool resetDB = false)
-		{
-			if (!CreateFile (db, resetDB)) {
-				return;
-			}
+        /// <summary>
+        /// Autos the DDL(Data Definition Language).
+        /// </summary>
+        /// <param name="db">DB.</param>
+        /// <param name="resetDB">If set to <c>true</c> reset DB.</param>
+        public void AutoDDL (string db, bool resetDB = false)
+        {
+            if (!CreateFile (db, resetDB)) {
+                return;
+            }
 
-			string query = "";
+            string query = "";
 
-			// tables
-			Type[] types = Reflection.GetExecutingAssembly ();
-			for (int i = 0; i < types.Length; i++) {
-				query += CreateTable (db, types[i], true, true) + " ";
-			}
+            // tables
+            Type[] types = Reflection.GetExecutingAssembly ();
+            for (int i = 0; i < types.Length; i++) {
+                query += CreateTable (db, types [i], true, true) + " ";
+            }
 
-			if (query != "") {
-				ExecuteNonQuery (query);
-			}
-		}
+            if (query != "") {
+                ExecuteNonQuery (query);
+            }
+        }
 #endif
+
 #endregion
-	}
+    }
 }

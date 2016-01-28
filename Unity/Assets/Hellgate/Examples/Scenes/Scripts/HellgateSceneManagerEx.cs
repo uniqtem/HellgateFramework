@@ -12,32 +12,31 @@ using UnityEditor;
 
 public class HellgateSceneManagerEx : SceneManager
 {
-	[SerializeField]
-	private string
-		buildVersion = "1.0.0";
+    [SerializeField]
+    private string buildVersion = "1.0.0";
 
-	protected override void Awake ()
-	{
-		base.Awake ();
+    protected override void Awake ()
+    {
+        base.Awake ();
 
 #if UNITY_EDITOR
-		PlayerSettings.bundleVersion = buildVersion;
+        PlayerSettings.bundleVersion = buildVersion;
 
-		// set db
-		// The example does not use the auto-generation db and table(DDL).
-		Sqlite sql = new Sqlite ();
-		if (sql.CreateFile ("Hellgate.db")) {
-			sql.CreateTable ("Hellgate.db", new Board ().GetType ());
-			sql.CreateTable ("Hellgate.db", new Comment ().GetType ());
-		}
+        // set db
+        // The example does not use the auto-generation db and table(DDL).
+        Sqlite sql = new Sqlite ();
+        if (sql.CreateFile ("Hellgate.db")) {
+            sql.CreateTable ("Hellgate.db", new Board ().GetType ());
+            sql.CreateTable ("Hellgate.db", new Comment ().GetType ());
+        }
 
-//		if (sql.CreateFile ("Hellgate.db")) {
-//			sql.ExecuteNonQuery ("CREATE TABLE `board` ( " +
-//			"`idx`	INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//			"`name`	TEXT, " +
-//			"`description`	TEXT " +
-//			");");
-//		}
+//        if (sql.CreateFile ("Hellgate.db")) {
+//            sql.ExecuteNonQuery ("CREATE TABLE `board` ( " +
+//            "`idx` INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//            "`name` TEXT, " +
+//            "`description` TEXT " +
+//            ");");
+//        }
 #endif
-	}
+    }
 }

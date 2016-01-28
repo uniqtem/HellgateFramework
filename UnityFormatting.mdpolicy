@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PolicySet name="UnityFormatting.mdpolicy">
   <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp">
-    <FileWidth>200</FileWidth>
-    <TabsToSpaces>False</TabsToSpaces>
+    <FileWidth>160</FileWidth>
   </TextStylePolicy>
   <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp">
     <IndentBreakStatements>False</IndentBreakStatements>

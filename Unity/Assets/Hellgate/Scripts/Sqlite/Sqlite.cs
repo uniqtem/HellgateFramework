@@ -34,7 +34,7 @@ namespace Hellgate
     /// </summary>
     public enum SqliteJoinType
     {
-        None,
+        NONE = 1,
         CROSS,
         INNER,
         // SQLite only supports the LEFT OUTER JOIN.

@@ -24,6 +24,8 @@ namespace Hellgate
                 if (i < list.Count - 1) {
                     if (comma) {
                         stringBuilder.Append (", ");
+                    } else {
+                        stringBuilder.Append (" ");
                     }
                 }
             }
@@ -169,6 +171,7 @@ namespace Hellgate
                 new List<string> (new string[] { "*" }),
                 new List<string> (new string[] { tableName }),
                 null,
+                null,
                 addQuery);
         }
 
@@ -179,9 +182,13 @@ namespace Hellgate
         /// <param name="selects">Selects.</param>
         /// <param name="tables">Tables.</param>
         /// <param name="addQuery">Add query.</param>
-        public string GenerateSelectSQL (List<string> selects, List<string> tables, List<string> wheres = null, string addQuery = "")
+        public string GenerateSelectSQL (List<string> selects,
+                                         List<string> tables,
+                                         List<string> joins = null,
+                                         List<string> wheres = null,
+                                         string addQuery = "")
         {
-            if (wheres != null) {
+            if (wheres != null && wheres.Count > 0) {
                 for (int i = 0; i < wheres.Count; i++) {
                     string temp = "";
                     if (i == 0) {
@@ -195,9 +202,10 @@ namespace Hellgate
             }
 
             return string.Format (
-                "SELECT {0} FROM {1} {2} {3}",
+                "SELECT {0} FROM {1} {2} {3};",
                 ConvertListToString (selects),
                 ConvertListToString (tables),
+                ConvertListToString (joins, false),
                 ConvertListToString (wheres, false),
                 addQuery
             );
@@ -309,10 +317,15 @@ namespace Hellgate
                                        string joinTableName,
                                        string columnName,
                                        string joinColumnName,
-                                       SqliteJoinType type = default (SqliteJoinType))
+                                       SqliteJoinType type)
         {
             StringBuilder stringBuilder = new StringBuilder ();
-            stringBuilder.AppendFormat (ConvertToSQLJoinType (type), joinTableName);
+            string joinQuery = ConvertToSQLJoinType (type);
+            if (joinQuery == "") {
+                return joinQuery;
+            }
+
+            stringBuilder.AppendFormat (joinQuery, joinTableName);
             stringBuilder.Append (EqualsSign (Period (tableName, columnName), Period (joinTableName, joinColumnName))); 
             return stringBuilder.ToString ();
         }

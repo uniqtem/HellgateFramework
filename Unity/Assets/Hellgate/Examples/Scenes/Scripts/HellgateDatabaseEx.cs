@@ -16,8 +16,8 @@ public class Board
     private int idx = 0;
     private string name = "";
     private string description = "";
-//    [Join (SqliteJoinType.OUTER)]
-//    private Comment comment = null;
+    [Join (SqliteJoinType.OUTER)]
+    private Comment comment = null;
 
     public int Idx {
         get {
@@ -37,11 +37,11 @@ public class Board
         }
     }
 
-//    public Comment Comment {
-//        get {
-//            return comment;
-//        }
-//    }
+    public Comment Comment {
+        get {
+            return comment;
+        }
+    }
 
     public Board ()
     {
@@ -92,20 +92,15 @@ public class Comment
 public class HellgateDatabaseEx : SceneController
 {
     [SerializeField]
-    private UILabel
-        title;
+    private UILabel title;
     [SerializeField]
-    private UIInput
-        uName;
+    private UIInput uName;
     [SerializeField]
-    private UIInput
-        description;
+    private UIInput description;
     [SerializeField]
-    private UIGrid
-        grid;
+    private UIGrid grid;
     [SerializeField]
-    private GameObject
-        temp;
+    private GameObject temp;
     private string[] column;
     private Query query;
     private int idx;
@@ -157,14 +152,15 @@ public class HellgateDatabaseEx : SceneController
         }
 
         for (int i = 0; i < data.Length; i++) {
+            Debug.Log (data [i].Comment);
             GameObject gObj = Instantiate (temp) as GameObject;
 
             gObj.transform.parent = grid.transform;
             gObj.transform.localScale = new Vector3 (1f, 1f, 1f);
-            gObj.transform.localPosition = new Vector3 (0, -i * 100, 0);
+            gObj.transform.localPosition = new Vector3 (0, i * 100, 0);
 
-            Util.FindChildObject<UILabel> (gObj, "Name").text = data [i].Name.ToString ();
-            Util.FindChildObject<UILabel> (gObj, "Description").text = data [i].Description.ToString ();
+            Util.FindChildObject<UILabel> (gObj, "Name").text = data [i].Name;
+            Util.FindChildObject<UILabel> (gObj, "Description").text = data [i].Description;
 
             Util.FindChildObject (gObj, "Select").name = data [i].Idx.ToString ();
             Util.FindChildObject (gObj, "Delete").name = data [i].Idx.ToString ();

@@ -29,7 +29,10 @@ namespace Hellgate
         private List<string> selects;
         private List<string> tables;
         private List<string> wheres;
+        private List<string> joins;
+        private List<string> joinsQuerys;
         private Type type;
+        private SqliteJoinType joinType;
         private string tableName;
 
         /// <summary>
@@ -58,6 +61,8 @@ namespace Hellgate
             selects = new List<string> ();
             tables = new List<string> ();
             wheres = new List<string> ();
+            joins = new List<string> ();
+            joinsQuerys = new List<string> ();
 
             tableInfos = new List<TableInfo> ();
             tableInfos.Add (new TableInfo (this.type, this.tableName));
@@ -105,11 +110,28 @@ namespace Hellgate
         /// <param name="fieldName">Field name.</param>
         /// <param name="joinTable">Join table.</param>
         /// <param name="joinFieldName">Join field name.</param>
-        public void SetJoin (string fieldName, Type joinTable, string joinFieldName)
+        public void SetJoin (Type tableType, string fieldName, string joinFieldName)
         {
-            string key = Period (Query.GetTableName (joinTable), joinFieldName);
-            string value = Period (tableName, fieldName);
-            wheres.Add (EqualsSign (key, value));
+            string tableName = Query.GetTableName (tableType);
+            string joinQuery = GenerateJoinSQL (tableName, this.tableName, fieldName, joinFieldName, joinType);
+
+            if (joinQuery == "") {
+                string key = Period (tableName, joinFieldName);
+                string value = Period (this.tableName, fieldName);
+                wheres.Add (EqualsSign (key, value));
+            } else {
+                joins.Add (this.tableName);
+                joinsQuerys.Add (joinQuery);
+            }
+        }
+
+        /// <summary>
+        /// Sets the type of the join.
+        /// </summary>
+        /// <param name="joinType">Join type.</param>
+        public void SetJoinType (SqliteJoinType joinType = SqliteJoinType.NONE)
+        {
+            this.joinType = joinType;
         }
 
         /// <summary>
@@ -117,22 +139,15 @@ namespace Hellgate
         /// </summary>
         public string GetQuery (string addQuery = "")
         {
-            return GenerateSelectSQL (selects, tables, wheres);
-        }
-
-        public Dictionary<string, object> Convert (DataTable data)
-        {
-            List<Dictionary<string, object>> list = new List<Dictionary<string, object>> (data.Rows.Count);
-            for (int i = 0; i < data.Rows.Count; i++) {
-                foreach (KeyValuePair<string, object> pair in list [i]) {
-                    Debug.Log (pair.Key + " / " + pair.Value);
-                    foreach (TableInfo info in tableInfos) {
-                        Debug.Log (info.type + " / " + info.parentType);
+            if (joins.Count > 0) {
+                foreach (string j in joins) {
+                    if (tables.Contains (j)) {
+                        tables.Remove (j);
                     }
                 }
             }
 
-            return null;
+            return GenerateSelectSQL (selects, tables, joinsQuerys, wheres, addQuery);
         }
     }
 
@@ -208,7 +223,7 @@ namespace Hellgate
         {
             List<Dictionary<string, object>> data = Reflection.Convert<T> (list, blindingFlags);
 
-            string[] columns = new string[data [0].Count];
+            string[] columns = null;
             string[][] qData = new string[data.Count][];
             for (int i = 0; i < data.Count; i++) {
                 data [i] = CleanUseless (data [i]);
@@ -217,10 +232,13 @@ namespace Hellgate
                 int index = 0;
                 foreach (KeyValuePair<string, object> pair in data [i]) {
                     if (i == 0) {
+                        if (columns == null) {
+                            columns = new string[data [i].Count];
+                        }
                         columns [index] = pair.Key;
                     }
 
-                    temp [index] = pair.Value == null ? "" : pair.Value.ToString ();
+                    temp [index] = pair.Value.ToString ();
                     index++;
                 }
 
@@ -323,26 +341,10 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public T[] SELECT<T> (string tableName = "", string addQuery = "")
         {
-//			SelectORMMaker mapper = new SelectORMMaker (typeof(T), tableName);
-//			mapper = Reflection.SetSelectORMMaker (mapper, blindingFlags);
-//			DataTable data = ExecuteQuery (mapper.GetQuery (addQuery));
-//
-//			if (data == null || data.Rows.Count <= 0) {
-//				Debug.Log ("null");
-//				return null;
-//			}
-//
-//			// convert
-////			Dictionary<string, object>
-//
-//			return null;
-//			return mapper.Execute (addQuery);
+            SelectORMMaker mapper = new SelectORMMaker (typeof(T), tableName);
+            mapper = Reflection.SetSelectORMMaker (mapper, blindingFlags);
 
-            if (tableName == "") {
-                tableName = GetTableName<T> ();
-            }
-
-            DataTable data = SELECT (tableName, addQuery);
+            DataTable data = ExecuteQuery (mapper.GetQuery (addQuery));
             if (data == null || data.Rows.Count <= 0) {
                 return null;
             }

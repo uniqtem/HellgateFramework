@@ -216,7 +216,7 @@ namespace Hellgate
     [AttributeUsage (AttributeTargets.Field)]
     public class JoinAttribute : Attribute
     {
-        private SqliteJoinType type;
+        private SqliteJoinType type = SqliteJoinType.NONE;
 
         public SqliteJoinType Type {
             get {

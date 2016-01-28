@@ -12,6 +12,19 @@ namespace Hellgate
 {
     public partial class Reflection
     {
+        private static object ConvertIgnoreData (FieldInfo field, object data)
+        {
+            if (data is Int64) {
+                data = int.Parse (data.ToString ());
+            } else if (field.FieldType == typeof(bool)) {
+                data = Util.ToBoolean (data.ToString ());
+            } else if (field.FieldType.IsEnum) {
+                data = Enum.Parse (field.FieldType, data.ToString ());
+            }
+
+            return data;
+        }
+
         /// <summary>
         /// Convert the specified dic, fieldInfo, flag and type.
         /// </summary>
@@ -33,13 +46,7 @@ namespace Hellgate
 
             foreach (FieldInfo field in fieldInfos) {
                 object data = dic [field.Name];
-                if (data is Int64) {
-                    data = int.Parse (dic [field.Name].ToString ());
-                } else if (field.FieldType == typeof(bool)) {
-                    data = Util.ToBoolean (data.ToString ());
-                } else if (field.FieldType.IsEnum) {
-                    data = Enum.Parse (field.FieldType, data.ToString ());
-                }
+                data = ConvertIgnoreData (field, data);
 
                 if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
                     if (field.FieldType.IsArray || typeof(IList).IsAssignableFrom (field.FieldType)) {
@@ -95,10 +102,8 @@ namespace Hellgate
 
             FieldInfo[] fieldInfo = obj.GetType ().GetFields (BindingFlags.Instance | flag);
             T[] ts = new T[list.Count];
-            int index = 0;
-            foreach (IDictionary iDic in list) {
-                ts [index] = Convert<T> (iDic, fieldInfo, flag, obj.GetType ());
-                index++;
+            for (int i = 0; i < list.Count; i++) {
+                ts [i] = Convert<T> ((IDictionary)list [i], fieldInfo, flag, obj.GetType ());
             }
 
             return ts;
@@ -158,22 +163,6 @@ namespace Hellgate
             }
 
             return data;
-        }
-
-        /// <summary>
-        /// Convert the specified data and flag.
-        /// </summary>
-        /// <param name="data">Data.</param>
-        /// <param name="flag">Flag.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T[] Convert<T> (DataTable data, BindingFlags flag = BindingFlags.NonPublic)
-        {
-            List<Dictionary<string, object>> list = new List<Dictionary<string, object>> (data.Rows.Count);
-            for (int i = 0; i < data.Rows.Count; i++) {
-                list.Add (data.Rows [i]);
-            }
-
-            return Convert<T> (list, flag);
         }
 
         /// <summary>

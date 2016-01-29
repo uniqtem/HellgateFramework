@@ -72,7 +72,7 @@ namespace Hellgate
                     } else {
                         IDictionary iDic = (IDictionary)data;
                         FieldInfo[] fields = field.FieldType.GetFields (BindingFlags.Instance | flag);
-                        data = Convert<object> (iDic, fields, BindingFlags.NonPublic, field.FieldType);
+                        data = Convert<object> (iDic, fields, flag, field.FieldType);
                     }
                 }
 

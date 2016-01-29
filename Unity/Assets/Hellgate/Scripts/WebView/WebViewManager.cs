@@ -16,8 +16,8 @@ namespace Hellgate
     {
 #region Const
 
-        private const string WEBVIEW_MANAGER = "WebViewManager";
-        private const string CLASS_NAME = "com.hellgate.UnityRegister";
+        protected const string WEBVIEW_MANAGER = "WebViewManager";
+        protected const string CLASS_NAME = "com.hellgate.UnityRegister";
 
 #endregion
 

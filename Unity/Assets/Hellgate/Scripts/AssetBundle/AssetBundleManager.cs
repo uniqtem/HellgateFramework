@@ -17,7 +17,7 @@ namespace Hellgate
     {
 #region Const
 
-        private const string ASSET_BUNDLE_MANAGER = "AssetBundleManager";
+        protected const string ASSET_BUNDLE_MANAGER = "AssetBundleManager";
 
 #endregion
 

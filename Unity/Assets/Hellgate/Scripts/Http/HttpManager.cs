@@ -12,7 +12,7 @@ namespace Hellgate
     {
 #region Const
 
-        private const string HTTP_MANAGER = "HttpManager";
+        protected const string HTTP_MANAGER = "HttpManager";
 
 #endregion
 

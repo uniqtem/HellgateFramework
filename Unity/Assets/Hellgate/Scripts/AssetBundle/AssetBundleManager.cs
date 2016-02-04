@@ -168,7 +168,7 @@ namespace Hellgate
             };
 
 #if UNITY_EDITOR
-//			HDebug.Log (data.assetBundleName + " / " + data.objName);
+//          HDebug.Log (data.assetBundleName + " / " + data.objName);
             string[] paths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName (data.assetBundleName, data.objName);
             string path = "";
             if (paths.Length <= 0) {

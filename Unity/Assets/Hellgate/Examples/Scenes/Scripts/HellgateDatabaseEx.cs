@@ -152,7 +152,6 @@ public class HellgateDatabaseEx : SceneController
         }
 
         for (int i = 0; i < data.Length; i++) {
-            Debug.Log (data [i].Comment);
             GameObject gObj = Instantiate (temp) as GameObject;
 
             gObj.transform.parent = grid.transform;

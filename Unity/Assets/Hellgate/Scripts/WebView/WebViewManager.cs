@@ -43,7 +43,7 @@ namespace Hellgate
                     GameObject gObj = new GameObject ();
                     instance = gObj.AddComponent<WebViewManager> ();
                     instance.Awake ();
-					
+
                     gObj.name = WEBVIEW_MANAGER;
                     DontDestroyOnLoad (gObj);
                 }

@@ -70,7 +70,7 @@ namespace Hellgate
         /// <summary>
         /// The shield alpha.
         /// </summary>
-        public float shieldAlpha = -1f;
+        public float shieldAlpha = 1f;
         /// <summary>
         /// The loading job of pop up and screen.
         /// </summary>

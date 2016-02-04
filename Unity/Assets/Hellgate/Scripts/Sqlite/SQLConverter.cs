@@ -163,7 +163,7 @@ namespace Hellgate
                 stringBuilder.Append ("LEFT OUTER ");
             break;
             default:
-            return "";
+                return "";
             }
 
             stringBuilder.Append ("JOIN {0} ON ");

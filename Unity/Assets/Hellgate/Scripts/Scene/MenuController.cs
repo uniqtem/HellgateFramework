@@ -48,7 +48,7 @@ namespace Hellgate
         public override void OnEnable ()
         {
             base.OnEnable ();
-			
+
             if (SSceneManager.Instance != null) {
                 SceneManager.Instance.screenStartChange += OnScreenStartChange;
             }
@@ -57,7 +57,7 @@ namespace Hellgate
         public override void OnDisable ()
         {
             base.OnDisable ();
-			
+
             if (SSceneManager.Instance != null) {
                 SceneManager.Instance.screenStartChange -= OnScreenStartChange;
             }

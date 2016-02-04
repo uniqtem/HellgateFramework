@@ -46,14 +46,14 @@ namespace Hellgate
         public static string GetPathTemplateFile (string fileName)
         {
             FileInfo f = SearchTemplateFile (fileName);
-			
+
             if (f == null)
                 return null;
-			
+
             string path = f.FullName;
             int index = path.IndexOf ("Assets");
             path = path.Substring (index);
-			
+
             return path;
         }
 #endif
@@ -254,7 +254,6 @@ namespace Hellgate
 #endif
 
             return typeCode;
-			
         }
 
         /// <summary>
@@ -290,10 +289,10 @@ namespace Hellgate
                 if (temp.Contains (array [i])) {
                     continue;
                 }
-				
+
                 temp.Add (array [i]);
             }
-			
+
             return temp;
         }
 

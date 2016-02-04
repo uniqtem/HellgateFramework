@@ -192,11 +192,11 @@ namespace Hellgate
             DontDestroyOnLoad (instance.gameObject);
 
 #if !UNITY_5_3 
-			DontDestroyOnLoad (gCamera);
-			DontDestroyOnLoad (scene);
-			DontDestroyOnLoad (shield);
+            DontDestroyOnLoad (gCamera);
+            DontDestroyOnLoad (scene);
+            DontDestroyOnLoad (shield);
 #endif
-			
+
             solidCamera = Instantiate (Resources.Load ("HellgateSolidCamera")) as GameObject;
             solidCamera.name = "SolidCamera";
             solidCamera.transform.parent = gCamera.transform;
@@ -408,7 +408,7 @@ namespace Hellgate
                     keys.Add (pair.Key);
                 }
             }
-			
+
             foreach (string key in keys) {
                 DestroyScene (key);
             }
@@ -432,7 +432,7 @@ namespace Hellgate
                     }
                 }
             }
-			
+
             return shield;
         }
 
@@ -564,7 +564,7 @@ namespace Hellgate
                     return;
                 }
             }
-			
+
             LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
             loadLevel.type = SceneType.ADDSCREEN;
             LoadLevel (loadLevel);

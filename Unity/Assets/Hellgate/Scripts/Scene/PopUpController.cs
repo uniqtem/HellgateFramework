@@ -26,10 +26,10 @@ namespace Hellgate
         public override void OnSet (object data)
         {
             PopUpData popupData = (PopUpData)data;
-			
+
             SetText (text, popupData.Title);
             type = popupData.Type;
-			
+
             buttonYes.SetActive (type == PopUpType.YesAndNo);
             buttonNo.SetActive (type == PopUpType.YesAndNo);
             buttonOk.SetActive (type == PopUpType.Ok);

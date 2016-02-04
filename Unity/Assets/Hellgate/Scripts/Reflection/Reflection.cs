@@ -76,6 +76,10 @@ namespace Hellgate
                     }
                 }
 
+                if (data == null) {
+                    continue;
+                }
+
                 if (field.FieldType != data.GetType ()) {
                     data = System.Convert.ChangeType (data, field.FieldType);
                 }

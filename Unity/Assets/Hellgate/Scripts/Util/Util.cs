@@ -59,6 +59,27 @@ namespace Hellgate
 #endif
 
         /// <summary>
+        /// Gets the child object.
+        /// </summary>
+        /// <returns>The child object.</returns>
+        /// <param name="GameObject">gameObject.</param>
+        /// <param name="strName">String name.</param>
+        public static GameObject GetChildObject(GameObject gO, string strName)
+        {
+            Transform[] AllData = gO.GetComponentsInChildren<Transform>(true);
+            GameObject target = null;
+
+            for (int i = 0; i < AllData.Length; i++) {
+                if (AllData[i].name == strName) {
+                    target = AllData[i].gameObject;
+                    break;
+                }
+            }
+
+            return target;
+        }
+
+        /// <summary>
         /// Finds the child object.
         /// </summary>
         /// <returns>The child object.</returns>

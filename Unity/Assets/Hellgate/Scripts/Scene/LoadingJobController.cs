@@ -193,7 +193,7 @@ namespace Hellgate
             if (nextSceneName == "") {
                 if (jobData.finishedDelegate != null) {
                     jobData.finishedDelegate (datas, this);
-                    jobData.finishedDelegate = null;
+//                    jobData.finishedDelegate = null;
                 }
 
                 return;

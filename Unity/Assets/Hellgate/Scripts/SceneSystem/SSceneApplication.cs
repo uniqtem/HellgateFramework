@@ -44,11 +44,11 @@ namespace Hellgate
                     SceneManagement.SceneManager.LoadScene (sceneName);
                 }
 #elif
-				if (isAdditive) {
-					Application.LoadLevelAdditive (sceneName);
-				} else {
-					Application.LoadLevel (sceneName);
-				}
+                if (isAdditive) {
+                    Application.LoadLevelAdditive (sceneName);
+                } else {
+                    Application.LoadLevel (sceneName);
+                }
 #endif
             }
         }
@@ -69,11 +69,11 @@ namespace Hellgate
                     SceneManagement.SceneManager.LoadSceneAsync (sceneName);
                 }
 #elif
-				if (isAdditive) {
-					Application.LoadLevelAdditiveAsync (sceneName);
-				} else {
-					Application.LoadLevelAsync (sceneName);
-				}
+                if (isAdditive) {
+                    Application.LoadLevelAdditiveAsync (sceneName);
+                } else {
+                    Application.LoadLevelAsync (sceneName);
+                }
 #endif
             }
         }

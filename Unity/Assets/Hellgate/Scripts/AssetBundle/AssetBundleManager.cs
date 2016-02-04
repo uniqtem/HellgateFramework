@@ -136,8 +136,8 @@ namespace Hellgate
         /// <param name="finished">Finished.</param>
         public void LoadAssetBundle (AssetBundleData data, AssetBundleClient.FinishedDelegate finished)
         {
-            System.Action innerLoadAssetBundle = () => {
-                System.Action InnerLoadAssetBundle = () => {
+            System.Action InnerLoadAssetBundle = () => {
+                System.Action InnerLoadAsset = () => {
                     if (data.async) {
                         StartCoroutine (LoadAssetAsync (data, finished));
                     } else {
@@ -157,13 +157,13 @@ namespace Hellgate
                                 data.assetBundle = assetBundleClient.GetAssetBundle (data.url, data.version);
                             }
 
-                            InnerLoadAssetBundle ();
+                            InnerLoadAsset ();
                         });
                     } else {
-                        InnerLoadAssetBundle ();
+                        InnerLoadAsset ();
                     }
                 } else {
-                    InnerLoadAssetBundle ();
+                    InnerLoadAsset ();
                 }
             };
 
@@ -174,13 +174,13 @@ namespace Hellgate
             if (paths.Length <= 0) {
                 paths = AssetDatabase.GetAssetPathsFromAssetBundle (data.assetBundleName);
                 if (paths.Length <= 0) {
-                    innerLoadAssetBundle ();
+                    InnerLoadAssetBundle ();
                     return;
                 }
 
                 string[] files = Directory.GetFiles (paths [0], data.objName + ".*");
                 if (files.Length <= 0) {
-                    innerLoadAssetBundle ();
+                    InnerLoadAssetBundle ();
                     return;
                 }
                 path = files [0];
@@ -195,7 +195,7 @@ namespace Hellgate
 
             finished (temp);
 #else
-            innerLoadAssetBundle ();
+            InnerLoadAssetBundle ();
 #endif
         }
 

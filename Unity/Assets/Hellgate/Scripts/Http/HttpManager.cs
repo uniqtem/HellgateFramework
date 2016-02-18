@@ -41,12 +41,21 @@ namespace Hellgate
 
 #endregion
 
+#region Delegate
+
+        /// <summary>
+        /// Response delegate.
+        /// </summary>
+        public delegate TResult ResponseDelegate<out TResult> (WWW www);
+
+#endregion
+
 #region Static
 
         /// <summary>
         /// The response.
         /// </summary>
-        protected static Action<WWW> response = null;
+        protected static ResponseDelegate<bool> response = null;
 
 #endregion
 
@@ -54,9 +63,10 @@ namespace Hellgate
 
         /// <summary>
         /// Sets the response.
+        /// Return false if the do not HttpData.finishedDelegate.
         /// </summary>
         /// <value>The response.</value>
-        public Action<WWW> Response {
+        public ResponseDelegate<bool> Response {
             set {
                 response = value;
             }
@@ -81,12 +91,14 @@ namespace Hellgate
         {
             Action innerCallback = () => {
                 popUp = null;
-                if (data.finishedDelegate != null) {
-                    data.finishedDelegate (www);
+                if (response != null) {
+                    if (!response (www)) {
+                        return;
+                    }
                 }
 
-                if (response != null) {
-                    response (www);
+                if (data.finishedDelegate != null) {
+                    data.finishedDelegate (www);
                 }
             };
 
@@ -214,4 +226,3 @@ namespace Hellgate
         }
     }
 }
-

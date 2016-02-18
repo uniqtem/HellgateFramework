@@ -67,4 +67,9 @@ public class HellgateMainEx : SceneController
     {
         HellgateNotificationEx.GoNotification ();
     }
+
+    public void OnClickWebView ()
+    {
+        SceneManager.Instance.PopUp ("HellgateWebView", "https://www.google.com");
+    }
 }

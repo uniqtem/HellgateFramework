@@ -24,11 +24,11 @@ namespace Hellgate
 #region Static
 
 #if UNITY_IOS
-//        [DllImport ("__Internal")]
-//        private static extern IntPtr _WebViewLoadURL (string url, int left, int right, int top, int bottom);
-//
-//        [DllImport ("__Internal")]
-//        private static extern IntPtr _WebViewDestroy ();
+        [DllImport ("__Internal")]
+        private static extern IntPtr _WebViewLoadURL (string url, int left, int right, int top, int bottom);
+
+        [DllImport ("__Internal")]
+        private static extern IntPtr _WebViewDestroy ();
 #endif
 
 #endregion
@@ -78,12 +78,15 @@ namespace Hellgate
 
         public void LoadURL (string url, int leftMargin = 0, int rightMargin = 0, int topMargin = 0, int bottomMargin = 0)
         {
-#if UNITY_ANDROID
+#if UNITY_EDITOR
+#elif UNITY_ANDROID
             if (Application.platform == RuntimePlatform.Android) {
                 using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
                     android.CallStatic ("webViewLoadURL", url, leftMargin, rightMargin, topMargin, bottomMargin);
                 }
             }
+#elif UNITY_IOS
+            _WebViewLoadURL (url, leftMargin, rightMargin, topMargin, bottomMargin);
 #endif
         }
 
@@ -93,12 +96,15 @@ namespace Hellgate
                 return;
             }
 
-#if UNITY_ANDROID
+#if UNITY_EDITOR
+#elif UNITY_ANDROID
             if (Application.platform == RuntimePlatform.Android) {
                 using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
                     android.CallStatic ("webViewDestroy");
                 }
             }
+#elif UNITY_IOS
+            _WebViewDestroy ();
 #endif
 
             GameObject.Destroy (gameObject);

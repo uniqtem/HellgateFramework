@@ -5,8 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.SyncStateContract;
-import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 
@@ -16,101 +14,101 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ScheduleLocalNotification {
-	private final static String DIVISION = "||";
-	private AlarmManager alarmManager;
-	private Activity activity;
-	private SharedPreferences sharedPreferences;
-	private SharedPreferences.Editor editor;
+    private final static String DIVISION = "||";
+    private AlarmManager alarmManager;
+    private Activity activity;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
-	public ScheduleLocalNotification() {
-		activity = UnityPlayer.currentActivity;
-		sharedPreferences = activity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
-		editor = sharedPreferences.edit();
-		alarmManager = null;
-	}
+    public ScheduleLocalNotification() {
+        activity = UnityPlayer.currentActivity;
+        sharedPreferences = activity.getSharedPreferences(Config.HELLGATE, Activity.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        alarmManager = null;
+    }
 
-	public void register(String time, String title, String text, String id) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(System.currentTimeMillis());
-		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.substring(6, 8)));
-		calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(8, 10)));
-		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(10, 12)));
-		calendar.set(Calendar.SECOND, Integer.parseInt(time.substring(12, 14)));
+    public void register(String time, String title, String text, String id) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(time.substring(6, 8)));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(8, 10)));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(10, 12)));
+        calendar.set(Calendar.SECOND, Integer.parseInt(time.substring(12, 14)));
 
-		unregister(id);
-		
-		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
-		int requestCode = -1;
-		if (stringSet.size() > 0) {
-			for (String s : stringSet) {
-				String[] parts = s.split("[" + DIVISION + "]");
-				int code = Integer.valueOf(parts[2]);
-				if (code > requestCode) {
-					requestCode = code;
-				}
-			}
-		}
-		requestCode++;
+        unregister(id);
 
-		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
-		intent.putExtra(Config.SCHEDULE_LOCAL_NOTIFICATION, true);
-		intent.putExtra("title", title);
-		intent.putExtra("text", text);
-		intent.putExtra("requestCode", requestCode);
+        Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
+        int requestCode = -1;
+        if (stringSet.size() > 0) {
+            for (String s : stringSet) {
+                String[] parts = s.split("[" + DIVISION + "]");
+                int code = Integer.valueOf(parts[2]);
+                if (code > requestCode) {
+                    requestCode = code;
+                }
+            }
+        }
+        requestCode++;
 
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
-		alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
+        intent.putExtra(Config.SCHEDULE_LOCAL_NOTIFICATION, true);
+        intent.putExtra("title", title);
+        intent.putExtra("text", text);
+        intent.putExtra("requestCode", requestCode);
 
-		stringSet.add(id + DIVISION + requestCode);
-		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
-		editor.commit();
-	}
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager = (AlarmManager) activity.getSystemService(Activity.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-	public void unregister(String id) {
-		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
-		if (stringSet.size() <= 0) {
-			return;
-		}
+        stringSet.add(id + DIVISION + requestCode);
+        editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+        editor.commit();
+    }
 
-		Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
-		for (String s : new ArrayList<String>(stringSet)) {
-			String[] parts = s.split("[" + DIVISION + "]");
-			if (id != "") {
-				if (!parts [0].equals(id)) {
-					continue;
-				}
-			}
+    public void unregister(String id) {
+        Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
+        if (stringSet.size() <= 0) {
+            return;
+        }
 
-			int requestCode = Integer.valueOf(parts[2]);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-			if (alarmManager == null) {
-				alarmManager = (AlarmManager)activity.getSystemService(Activity.ALARM_SERVICE);
-			}
-			alarmManager.cancel(pendingIntent);
-			stringSet.remove(s);
-		}
+        Intent intent = new Intent(activity, com.hellgate.UnityBroadcastReceiver.class);
+        for (String s : new ArrayList<String>(stringSet)) {
+            String[] parts = s.split("[" + DIVISION + "]");
+            if (id != "") {
+                if (!parts[0].equals(id)) {
+                    continue;
+                }
+            }
 
-		editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
-		editor.commit();
-	}
+            int requestCode = Integer.valueOf(parts[2]);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            if (alarmManager == null) {
+                alarmManager = (AlarmManager) activity.getSystemService(Activity.ALARM_SERVICE);
+            }
+            alarmManager.cancel(pendingIntent);
+            stringSet.remove(s);
+        }
 
-	public void allUnregister() {
-		unregister("");
-	}
+        editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+        editor.commit();
+    }
 
-	public static void unregister(int registerCode, SharedPreferences sharedPreferences) {
-		Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
-		for (String s: stringSet) {
-			String[] parts = s.split("[" + DIVISION + "]");
-			int code = Integer.valueOf(parts[2]);
-			if (code == registerCode) {
-				stringSet.remove(s);
+    public void allUnregister() {
+        unregister("");
+    }
 
-				SharedPreferences.Editor editor = sharedPreferences.edit();
-				editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
-				editor.commit();
-			}
-		}
-	}
+    public static void unregister(int registerCode, SharedPreferences sharedPreferences) {
+        Set<String> stringSet = sharedPreferences.getStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, new HashSet<String>());
+        for (String s : stringSet) {
+            String[] parts = s.split("[" + DIVISION + "]");
+            int code = Integer.valueOf(parts[2]);
+            if (code == registerCode) {
+                stringSet.remove(s);
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putStringSet(Config.LOCAL_NOTIFICATION_RECEIVED, stringSet);
+                editor.commit();
+            }
+        }
+    }
 }

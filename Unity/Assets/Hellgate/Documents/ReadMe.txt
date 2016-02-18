@@ -51,3 +51,4 @@ NEW : Scene System(delete SS-System)
 FIX : Logger -> HDebug
 NEW : Sqlite ORM join
 NEW : WebView
+NEW : Add headers to HttpData

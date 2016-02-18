@@ -3,94 +3,94 @@ package com.hellgate;
 import android.util.Log;
 
 public class UnityRegister {
-	private static GcmActivity gcmActivity;
-	private static WebViewActivity webViewActivity;
-	private static ScheduleLocalNotification scheduleLocalNotification;
+    private static GcmActivity gcmActivity;
+    private static WebViewActivity webViewActivity;
+    private static ScheduleLocalNotification scheduleLocalNotification;
 
 
-	public static boolean checkPlayServices() {
-		if (gcmActivity == null) {
-			gcmActivity = new GcmActivity();
-		}
-		return gcmActivity.checkPlayServices();
-	}
+    public static boolean checkPlayServices() {
+        if (gcmActivity == null) {
+            gcmActivity = new GcmActivity();
+        }
+        return gcmActivity.checkPlayServices();
+    }
 
-	public static void register(final String senderIds) {
-		if (gcmActivity == null) {
-			gcmActivity = new GcmActivity();
-		}
-		gcmActivity.register(senderIds);
-	}
+    public static void register(final String senderIds) {
+        if (gcmActivity == null) {
+            gcmActivity = new GcmActivity();
+        }
+        gcmActivity.register(senderIds);
+    }
 
-	public static void unregister() {
-		if (gcmActivity == null) {
-			gcmActivity = new GcmActivity();
-		}
-		gcmActivity.unregister();
-	}
+    public static void unregister() {
+        if (gcmActivity == null) {
+            gcmActivity = new GcmActivity();
+        }
+        gcmActivity.unregister();
+    }
 
-	public static String getRegistrationId() {
-		if (gcmActivity == null) {
-			gcmActivity = new GcmActivity();
-		}
+    public static String getRegistrationId() {
+        if (gcmActivity == null) {
+            gcmActivity = new GcmActivity();
+        }
 
-		return gcmActivity.getRegistrationId();
-	}
+        return gcmActivity.getRegistrationId();
+    }
 
-	public static void setNotificationsEnabled(boolean enabled) {
-		Util.notificationsEnabled(enabled);
-	}
+    public static void setNotificationsEnabled(boolean enabled) {
+        Util.notificationsEnabled(enabled);
+    }
 
-	public static boolean getNotificationsEnabled() {
-		return Util.notificationsEnabled();
-	}
+    public static boolean getNotificationsEnabled() {
+        return Util.notificationsEnabled();
+    }
 
-	public static void scheduleLocalNotification(String time, String title, String text, String id) {
-		if (scheduleLocalNotification == null) {
-			scheduleLocalNotification = new ScheduleLocalNotification();
-		}
+    public static void scheduleLocalNotification(String time, String title, String text, String id) {
+        if (scheduleLocalNotification == null) {
+            scheduleLocalNotification = new ScheduleLocalNotification();
+        }
 
-		scheduleLocalNotification.register(time, title, text, id);
-	}
+        scheduleLocalNotification.register(time, title, text, id);
+    }
 
-	public static void cancelLocalNotification(String id) {
-		if (scheduleLocalNotification == null) {
-			scheduleLocalNotification = new ScheduleLocalNotification();
-		}
+    public static void cancelLocalNotification(String id) {
+        if (scheduleLocalNotification == null) {
+            scheduleLocalNotification = new ScheduleLocalNotification();
+        }
 
-		scheduleLocalNotification.unregister(id);
-	}
+        scheduleLocalNotification.unregister(id);
+    }
 
-	public static void cancelAllLocalNotifications() {
-		if (scheduleLocalNotification == null) {
-			scheduleLocalNotification = new ScheduleLocalNotification();
-		}
+    public static void cancelAllLocalNotifications() {
+        if (scheduleLocalNotification == null) {
+            scheduleLocalNotification = new ScheduleLocalNotification();
+        }
 
-		scheduleLocalNotification.allUnregister();
-	}
+        scheduleLocalNotification.allUnregister();
+    }
 
-	public static void webViewLoadURL(String url, int left, int right, int top, int bottom) {
-		if (webViewActivity == null) {
-			webViewActivity = new WebViewActivity();
-		}
+    public static void webViewLoadURL(String url, int left, int right, int top, int bottom) {
+        if (webViewActivity == null) {
+            webViewActivity = new WebViewActivity();
+        }
 
-		webViewActivity.setMargin(left, right, top, bottom);
-		webViewActivity.loadURL(url);
-	}
+//        webViewActivity.setMargin(left, right, top, bottom);
+        webViewActivity.loadURL(url);
+    }
 
-	public static void webViewDestroy() {
-		if (webViewActivity == null) {
-			return;
-		}
+    public static void webViewDestroy() {
+        if (webViewActivity == null) {
+            return;
+        }
 
-		webViewActivity.destroy();
-	}
+        webViewActivity.destroy();
+    }
 
-	public static void webViewsetVisibility(boolean bool) {
-		if (webViewActivity == null) {
-			return;
-		}
+    public static void webViewsetVisibility(boolean bool) {
+        if (webViewActivity == null) {
+            return;
+        }
 
-		webViewActivity.setVisibility(bool);
-	}
+        webViewActivity.setVisibility(bool);
+    }
 }

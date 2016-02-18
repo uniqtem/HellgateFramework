@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -40,7 +41,26 @@ namespace Hellgate
 
 #endregion
 
+#region Static
+
+        /// <summary>
+        /// The response.
+        /// </summary>
+        protected static Action<WWW> response = null;
+
+#endregion
+
         protected SSceneController popUp;
+
+        /// <summary>
+        /// Sets the response.
+        /// </summary>
+        /// <value>The response.</value>
+        public Action<WWW> Response {
+            set {
+                response = value;
+            }
+        }
 
         protected virtual void Awake ()
         {
@@ -59,19 +79,24 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void CallbackRequest (HttpData data, WWW www)
         {
+            Action innerCallback = () => {
+                popUp = null;
+                if (data.finishedDelegate != null) {
+                    data.finishedDelegate (www);
+                }
+
+                if (response != null) {
+                    response (www);
+                }
+            };
+
             if (popUp != null) {
-                SceneManager.Instance.Close ();
-
-                if (data.finishedDelegate != null) {
-                    data.finishedDelegate (www);
-                }
+                SceneManager.Instance.Close (delegate {
+                    innerCallback ();
+                });
             } else {
-                if (data.finishedDelegate != null) {
-                    data.finishedDelegate (www);
-                }
+                innerCallback ();
             }
-
-            popUp = null;
         }
 
         /// <summary>
@@ -114,15 +139,16 @@ namespace Hellgate
         /// <param name="post">If set to <c>true</c> post.</param>
         public void Request (HttpData data, bool post)
         {
-            System.Action innerRequest = () => {
+            Action innerRequest = () => {
                 Http http;
                 if (post) { // post reuqest
                     http = new Http (this, data.url);
-                    foreach (KeyValuePair<string, string> kVP in data.data) {
+                    http.Headers = data.headers;
+                    foreach (KeyValuePair<string, string> kVP in data.datas) {
                         http.AddData (kVP.Key, kVP.Value);
                     }
                 } else { // get request
-                    http = new Http (this, data.url, data.data);
+                    http = new Http (this, data.url, data.datas);
                 }
 
                 // Set timeout time.

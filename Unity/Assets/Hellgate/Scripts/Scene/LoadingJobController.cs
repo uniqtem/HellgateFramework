@@ -102,7 +102,7 @@ namespace Hellgate
 			
             string key = jobData.https [index].url;
             if (jobData.https [index].post) {
-                foreach (KeyValuePair<string, string> kVP in jobData.https [index].data) {
+                foreach (KeyValuePair<string, string> kVP in jobData.https [index].datas) {
                     key += kVP.Key + kVP.Value;
                 }
             }

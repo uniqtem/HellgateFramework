@@ -19,14 +19,19 @@ namespace Hellgate
         /// </summary>
         public static string BASE_URL = "";
         /// <summary>
+        /// Set default headers.
+        /// </summary>
+        public static Dictionary<string, string> defaultHeaders = null;
+        /// <summary>
         /// Set default data.
         /// </summary>
-        public static Dictionary<string, string> defaultData = null;
+        public static Dictionary<string, string> defaultDatas = null;
 
 #endregion
 
         public string url;
-        public Dictionary<string, string> data;
+        public Dictionary<string, string> headers;
+        public Dictionary<string, string> datas;
         public Http.FinishedDelegate finishedDelegate = null;
         public int retry = DEFAULT_RETRY;
         public float timeout = 0;
@@ -40,7 +45,8 @@ namespace Hellgate
             }
 
             this.url += url;
-            data = defaultData;
+            headers = defaultHeaders;
+            datas = defaultDatas;
         }
 
         /// <summary>

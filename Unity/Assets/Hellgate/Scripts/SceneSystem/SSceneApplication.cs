@@ -43,7 +43,7 @@ namespace Hellgate
                 } else {
                     SceneManagement.SceneManager.LoadScene (sceneName);
                 }
-#elif
+#else
                 if (isAdditive) {
                     Application.LoadLevelAdditive (sceneName);
                 } else {
@@ -68,7 +68,7 @@ namespace Hellgate
                 } else {
                     SceneManagement.SceneManager.LoadSceneAsync (sceneName);
                 }
-#elif
+#else
                 if (isAdditive) {
                     Application.LoadLevelAdditiveAsync (sceneName);
                 } else {

@@ -45,8 +45,8 @@ namespace Hellgate
             }
 
             this.url += url;
-            headers = defaultHeaders;
-            datas = defaultDatas;
+            headers = AddStaticData (defaultHeaders);
+            datas = AddStaticData (defaultDatas);
         }
 
         /// <summary>
@@ -66,6 +66,19 @@ namespace Hellgate
         public HttpData (string url, string extension)
         {
             Init (url + "." + extension);
+        }
+
+        private Dictionary<string, string> AddStaticData (Dictionary<string, string> def)
+        {
+            Dictionary<string, string> dic = null;
+            if (def != null) {
+                dic = new Dictionary<string, string> ();
+                foreach (KeyValuePair<string, string> data in def) {
+                    dic.Add (data.Key, data.Value);
+                }
+            }
+
+            return dic;
         }
     }
 }

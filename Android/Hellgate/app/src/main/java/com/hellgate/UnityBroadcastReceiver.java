@@ -10,7 +10,7 @@ public class UnityBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         ComponentName comp = new ComponentName(context.getPackageName(), com.hellgate.UnityIntentService.class.getName());
-        startWakefulService(context, (intent.setComponent(comp)));
+        startWakefulService(context, intent.setComponent(comp));
         setResultCode(Activity.RESULT_OK);
     }
 }

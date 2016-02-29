@@ -45,6 +45,10 @@ namespace Hellgate
             }
 
             foreach (FieldInfo field in fieldInfos) {
+                if (!dic.Contains (field.Name)) {
+                    continue;
+                }
+
                 object data = dic [field.Name];
                 data = ConvertIgnoreData (field, data);
 

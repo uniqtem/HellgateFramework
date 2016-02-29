@@ -32,6 +32,16 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Wait the specified duration and callback.
+        /// </summary>
+        /// <param name="duration">Duration.</param>
+        /// <param name="callback">Callback.</param>
+        public void Wait (float duration, SceneManager.FinishedDelegate callback)
+        {
+            this.StartCoroutine (SceneManager.Instance.CWait (duration, callback));
+        }
+
+        /// <summary>
         /// Sets the UI2DSprite.
         /// </summary>
         /// <param name="gObj">G object.</param>

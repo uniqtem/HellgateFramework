@@ -12,16 +12,14 @@ using System.Runtime.InteropServices;
 
 namespace Hellgate
 {
-    public class WebViewManager : MonoBehaviour
+    public class WebViewManager : WebView
     {
 #region Const
 
         protected const string WEBVIEW_MANAGER = "WebViewManager";
-        protected const string CLASS_NAME = "com.hellgate.UnityRegister";
 
 #endregion
 
-#region Static
 
 #if UNITY_IOS
         [DllImport ("__Internal")]
@@ -30,8 +28,6 @@ namespace Hellgate
         [DllImport ("__Internal")]
         private static extern IntPtr _WebViewDestroy ();
 #endif
-
-#endregion
 
 #region Singleton
 
@@ -54,60 +50,38 @@ namespace Hellgate
 
 #endregion
 
-        public event Action<int> ProgressReceivedEvent;
-
-        protected virtual void Awake ()
+        protected override void Awake ()
         {
             if (instance == null) {
+                base.Awake ();
+
                 instance = this;
-                DontDestroyOnLoad (this.gameObject);
             }
         }
 
-        protected virtual void OnDestory ()
+        protected override void OnDestory ()
         {
+            base.OnDestory ();
+
             instance = null;
         }
 
-        protected virtual void OnProgressChanged (string percent)
+        public override void Destroy ()
         {
-            if (ProgressReceivedEvent != null) {
-                ProgressReceivedEvent (int.Parse (percent));
-            }
-        }
+            base.Destroy ();
 
-        public void LoadURL (string url, int leftMargin = 0, int rightMargin = 0, int topMargin = 0, int bottomMargin = 0)
-        {
-#if UNITY_EDITOR
-#elif UNITY_ANDROID
-            if (Application.platform == RuntimePlatform.Android) {
-                using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
-                    android.CallStatic ("webViewLoadURL", url, leftMargin, rightMargin, topMargin, bottomMargin);
-                }
-            }
-#elif UNITY_IOS
-            _WebViewLoadURL (url, leftMargin, rightMargin, topMargin, bottomMargin);
-#endif
-        }
-
-        public void Destroy ()
-        {
             if (instance == null) {
                 return;
             }
 
-#if UNITY_EDITOR
-#elif UNITY_ANDROID
-            if (Application.platform == RuntimePlatform.Android) {
-                using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
-                    android.CallStatic ("webViewDestroy");
-                }
-            }
-#elif UNITY_IOS
-            _WebViewDestroy ();
-#endif
-
             GameObject.Destroy (gameObject);
+        }
+
+        public void LoadURL (string url, int leftMargin, int topMargin, int rightMargin, int bottomMargin)
+        {
+            LoadURL (url);
+            SetMargin (leftMargin, topMargin, rightMargin, bottomMargin);
+            SetVisibility (true);
         }
     }
 }

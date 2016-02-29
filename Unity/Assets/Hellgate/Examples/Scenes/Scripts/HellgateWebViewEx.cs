@@ -17,11 +17,18 @@ public class HellgateWebViewEx : SceneController
     {
         base.Start ();
 
-        WebViewManager.Instance.LoadURL (url, 0, 0, 100, 0);
+        WebViewManager.Instance.ProgressReceivedEvent += OnProgress;
+        WebViewManager.Instance.LoadURL (url, 50, 100, 50, 50);
+    }
+
+    private void OnProgress (int progress)
+    {
+        Debug.Log ("OnProgress : " + progress);
     }
 
     public void OnClick ()
     {
+        WebViewManager.Instance.ProgressReceivedEvent -= OnProgress;
         WebViewManager.Instance.Destroy ();
         OnClickClose ();
     }

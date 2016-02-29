@@ -150,12 +150,6 @@ namespace Hellgate
             }
         }
 
-        private IEnumerator CWait (float secondes, FinishedDelegate callback)
-        {
-            yield return new WaitForSeconds (secondes);
-            callback ();
-        }
-
         /// <summary>
         /// Screen the specified sceneName, data, active and deactive.
         /// </summary>
@@ -302,6 +296,18 @@ namespace Hellgate
             if (mainMenu != null) {
                 mainMenu.gameObject.SetActive (true);
             }
+        }
+
+        /// <summary>
+        /// wait.
+        /// </summary>
+        /// <returns>The wait.</returns>
+        /// <param name="secondes">Secondes.</param>
+        /// <param name="callback">Callback.</param>
+        public IEnumerator CWait (float secondes, FinishedDelegate callback)
+        {
+            yield return new WaitForSeconds (secondes);
+            callback ();
         }
 
         /// <summary>

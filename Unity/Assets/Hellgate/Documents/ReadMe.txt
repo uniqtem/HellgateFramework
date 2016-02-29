@@ -49,7 +49,7 @@ NEW : Schedule Local Notification
 NEW : Scene System(delete SS-System)
 2.1.0
 FIX : Logger -> HDebug
+FIX : Http
 NEW : Sqlite ORM join
 NEW : WebView
 NEW : Add headers to HttpData
-NEW : Add response callback to HttpManager

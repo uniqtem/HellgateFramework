@@ -46,7 +46,7 @@ public class Util {
         }
 
         Resources resources = context.getResources();
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context.getApplicationContext())
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context.getApplicationContext())
             .setSmallIcon(resources.getIdentifier("app_icon", "drawable", context.getPackageName()))
             .setTicker(ticker)
             .setContentTitle(title)
@@ -61,10 +61,10 @@ public class Util {
             resultIntent,
             PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mBuilder.setContentIntent(resultPendingIntent);
+        builder.setContentIntent(resultPendingIntent);
 
-        NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(notificationId, mBuilder.build());
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId, builder.build());
     }
 
     public static void clearAllNotifications() {

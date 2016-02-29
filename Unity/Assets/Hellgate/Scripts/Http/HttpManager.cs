@@ -46,27 +46,43 @@ namespace Hellgate
         /// <summary>
         /// Response delegate.
         /// </summary>
-        public delegate TResult ResponseDelegate<out TResult> (WWW www);
+        public delegate TResult TResultDelegate<out TResult> (object obj);
 
 #endregion
 
 #region Static
 
         /// <summary>
+        /// The pre reuqest.
+        /// </summary>
+        protected static TResultDelegate<HttpData> preReuqest;
+
+        /// <summary>
         /// The response.
         /// </summary>
-        protected static ResponseDelegate<bool> response = null;
+        protected static TResultDelegate<bool> response = null;
 
 #endregion
 
         protected SSceneController popUp;
 
         /// <summary>
+        /// Sets the pre request.
+        /// To request a callback just before.
+        /// </summary>
+        /// <value>The pre request.</value>
+        public TResultDelegate<HttpData> PreRequest {
+            set {
+                preReuqest = value;
+            }
+        }
+
+        /// <summary>
         /// Sets the response.
         /// Return false if the do not HttpData.finishedDelegate.
         /// </summary>
         /// <value>The response.</value>
-        public ResponseDelegate<bool> Response {
+        public TResultDelegate<bool> Response {
             set {
                 response = value;
             }
@@ -118,7 +134,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnFail (HttpData data, WWW www)
         {
-            HDebug.Log ("Request OnFail " + www.error);
+//            HDebug.Log ("Request OnFail " + www.error);
             CallbackRequest (data, www);
         }
 
@@ -129,7 +145,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnDisposed (HttpData data, WWW www)
         {
-            HDebug.Log ("Reuqest timeover");
+//            HDebug.Log ("Reuqest timeover");
             CallbackRequest (data, www);
         }
 
@@ -140,7 +156,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnDone (HttpData data, WWW www)
         {
-            HDebug.Log ("Requst good!!");
+//            HDebug.Log ("Requst good!!");
             CallbackRequest (data, www);
         }
 
@@ -152,6 +168,10 @@ namespace Hellgate
         public void Request (HttpData data, bool post)
         {
             Action innerRequest = () => {
+                if (preReuqest != null) {
+                    data = preReuqest (data);
+                }
+
                 Http http;
                 if (post) { // post reuqest
                     http = new Http (this, data.url);
@@ -213,7 +233,7 @@ namespace Hellgate
         /// <param name="data">HttpData.</param>
         public void GET (HttpData data)
         {
-            Request (data, false);
+            Request (data);
         }
 
         /// <summary>
@@ -222,7 +242,8 @@ namespace Hellgate
         /// <param name="data">HttpData.</param>
         public void POST (HttpData data)
         {
-            Request (data, true);
+            data.post = true;
+            Request (data);
         }
     }
 }

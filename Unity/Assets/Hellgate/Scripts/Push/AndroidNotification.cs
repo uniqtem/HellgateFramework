@@ -6,10 +6,10 @@ namespace Hellgate
 {
     public abstract partial class Notification : MonoBehaviour
     {
+        private const string SCHEDULE_LOCAL_NOTIFICATION = "HellgateScheduleLocalNotification";
 #if UNITY_ANDROID || UNITY_EDITOR || UNITY_PC
 #region Const
 
-        private const string SCHEDULE_LOCAL_NOTIFICATION = "HellgateScheduleLocalNotification";
         private const string CLASS_NAME = "com.hellgate.UnityRegister";
 
 #endregion

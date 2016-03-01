@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ClientCertRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -42,6 +43,13 @@ public class UnityWebViewActivity {
                         Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_PROGRESS_CHANGED, String.valueOf(newProgress));
                     }
                 });
+
+//                webView.setWebViewClient(new WebViewClient() {
+//                    @Override
+//                    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+//                        Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_ERROR, description);
+//                    }
+//                });
 
                 webView.setWebViewClient(new WebViewClient());
 

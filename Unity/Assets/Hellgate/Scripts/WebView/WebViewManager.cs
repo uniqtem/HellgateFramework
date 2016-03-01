@@ -20,15 +20,6 @@ namespace Hellgate
 
 #endregion
 
-
-#if UNITY_IOS
-        [DllImport ("__Internal")]
-        private static extern IntPtr _WebViewLoadURL (string url, int left, int right, int top, int bottom);
-
-        [DllImport ("__Internal")]
-        private static extern IntPtr _WebViewDestroy ();
-#endif
-
 #region Singleton
 
         private static WebViewManager instance = null;
@@ -50,6 +41,8 @@ namespace Hellgate
 
 #endregion
 
+        public event Action<int> ProgressReceivedEvent;
+
         protected override void Awake ()
         {
             if (instance == null) {
@@ -64,6 +57,13 @@ namespace Hellgate
             base.OnDestory ();
 
             instance = null;
+        }
+
+        protected virtual void OnProgressChanged (string percent)
+        {
+            if (ProgressReceivedEvent != null) {
+                ProgressReceivedEvent (int.Parse (percent));
+            }
         }
 
         public override void Destroy ()

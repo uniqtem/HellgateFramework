@@ -13,8 +13,6 @@ namespace Hellgate
 #if UNITY_ANDROID
         protected const string CLASS_NAME = "com.hellgate.UnityWebViewActivity";
 
-        public event Action<int> ProgressReceivedEvent;
-
         protected AndroidJavaObject android;
 
         protected virtual void Awake ()
@@ -28,13 +26,6 @@ namespace Hellgate
         protected virtual void OnDestory ()
         {
             Destroy ();
-        }
-
-        protected virtual void OnProgressChanged (string percent)
-        {
-            if (ProgressReceivedEvent != null) {
-                ProgressReceivedEvent (int.Parse (percent));
-            }
         }
 
         public virtual void LoadURL (string url)
@@ -81,7 +72,6 @@ namespace Hellgate
 
             android.Call ("setBackground", flag);
         }
-    }
 #endif
+    }
 }
-

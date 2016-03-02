@@ -52,4 +52,3 @@ FIX : Logger -> HDebug
 FIX : Http
 NEW : Sqlite ORM join
 NEW : WebView
-NEW : Add headers to HttpData

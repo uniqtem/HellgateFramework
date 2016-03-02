@@ -10,7 +10,6 @@ namespace Hellgate
 {
     public partial class WebView : MonoBehaviour
     {
-#if UNITY_ANDROID
         protected const string CLASS_NAME = "com.hellgate.UnityWebViewActivity";
 
         protected AndroidJavaObject android;
@@ -72,6 +71,5 @@ namespace Hellgate
 
             android.Call ("setBackground", flag);
         }
-#endif
     }
 }

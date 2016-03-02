@@ -10,9 +10,7 @@ namespace Hellgate
 {
     public partial class WebView
     {
-#if UNITY_IOS
-        protected const string CLASS_NAME = "com.hellgate.UnityWebViewActivity";
-
+#if !UNITY_EDITOR && UNITY_IOS
         [DllImport ("__Internal")]
         private static extern void _WebViewInit ();
 

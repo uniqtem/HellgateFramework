@@ -2,23 +2,23 @@ ManifestFileVersion: 0
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: hellgateasset.unity3d
-      Dependencies: {}
-    Info_1:
-      Name: hellgatehttp.unity3d
-      Dependencies: {}
-    Info_2:
-      Name: hellgatemain.unity3d
-      Dependencies: {}
-    Info_3:
-      Name: hellgatemaster.unity3d
-      Dependencies: {}
-    Info_4:
       Name: hellgateobjectpol.unity3d
       Dependencies: {}
-    Info_5:
+    Info_1:
+      Name: hellgatescene.unity3d
+      Dependencies: {}
+    Info_2:
+      Name: hellgatemaster.unity3d
+      Dependencies: {}
+    Info_3:
+      Name: hellgatemain.unity3d
+      Dependencies: {}
+    Info_4:
       Name: hellgatequest.unity3d
       Dependencies: {}
+    Info_5:
+      Name: hellgatehttp.unity3d
+      Dependencies: {}
     Info_6:
-      Name: hellgatescene.unity3d
+      Name: hellgateasset.unity3d
       Dependencies: {}

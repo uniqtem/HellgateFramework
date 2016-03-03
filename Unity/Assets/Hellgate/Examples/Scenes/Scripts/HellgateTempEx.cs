@@ -7,5 +7,4 @@ using System.Collections;
 
 public class HellgateTempEx : MonoBehaviour
 {
-
 }

@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//					Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,42 +13,43 @@ using System.IO;
 
 namespace Hellgate
 {
-	[ExecuteInEditMode]
-	public class SSceneRoot : MonoBehaviour
-	{
-		/// <summary>
-		/// The cameras.
-		/// </summary>
-		[SerializeField]
-		protected Camera[] cameras;
-		/// <summary>
-		/// Gets the cameras.
-		/// </summary>
-		/// <value>The cameras.</value>
-		public Camera[] Cameras {
-			get {
-				return cameras;
-			}
-		}
+    [ExecuteInEditMode]
+    public class SSceneRoot : MonoBehaviour
+    {
+        /// <summary>
+        /// The cameras.
+        /// </summary>
+        [SerializeField]
+        protected Camera[] cameras;
 
-		protected virtual void Awake ()
-		{
-			if (!Application.isPlaying) {
-				cameras = GameObject.FindObjectsOfType<Camera> ();
-			} else {
-				if (SSceneManager.Instance != null) {
-					SSceneApplication.Loaded (gameObject);
-				}
-			}
-		}
+        /// <summary>
+        /// Gets the cameras.
+        /// </summary>
+        /// <value>The cameras.</value>
+        public Camera[] Cameras {
+            get {
+                return cameras;
+            }
+        }
 
-		protected virtual void Update ()
-		{
+        protected virtual void Awake ()
+        {
+            if (!Application.isPlaying) {
+                if (cameras == null) {
+                    cameras = GameObject.FindObjectsOfType<Camera> ();
+                }
 #if UNITY_EDITOR
-			if (!Application.isPlaying) {
-				gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
-			}
+    #if UNITY_5_3
+                gameObject.name = Path.GetFileNameWithoutExtension (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene ().name);
+    #else
+                gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
+    #endif
 #endif
-		}
-	}
+            } else {
+                if (SSceneManager.Instance != null) {
+                    SSceneApplication.Loaded (gameObject);
+                }
+            }
+        }
+    }
 }

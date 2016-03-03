@@ -1,0 +1,57 @@
+ManifestFileVersion: 0
+CRC: 3057480116
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 82bcf5b61a8b117fc3d448a5b2f3af3a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9dea23ffc7e96552740e12d1ee5309d8
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Box64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_TrimmedBox128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Rect32x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Rect64x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey__Combined.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Box128x128Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Rect32x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Rect64x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Rect32x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_TrimmedBox128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Angle128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange__Combined.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Angle32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_TrimmedBox64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Rect32x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Angle64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Angle64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Angle128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Box32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Box32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey__Combined.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Box64x64Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Angle32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Box64x64Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Box128x128Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_TrimmedBox64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Rect32x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_TrimmedBox128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Angle128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Box32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Box128x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Box64x64Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Angle32x32.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Angle64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Rect32x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/Orange_Box128x128Measured.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/DarkGrey_Box64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Box64x64.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_Rect64x128.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Main/LightGrey_TrimmedBox64x64.png
+Dependencies: []

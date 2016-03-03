@@ -8,15 +8,15 @@ using Hellgate;
 
 public class HellgateScreen3Ex : SceneController
 {
-	public override void OnSet (object data)
-	{
-		base.OnSet (data);
+    public override void OnSet (object data)
+    {
+        base.OnSet (data);
 
-		MenuController.Instance.SetActiveBottom (false);
-	}
+        MenuController.Instance.SetActiveBottom (false);
+    }
 
-	public void OnClickBack ()
-	{
-		HellgateSceneEx.GoScene ();
-	}
+    public void OnClickBack ()
+    {
+        HellgateSceneEx.GoScene ();
+    }
 }

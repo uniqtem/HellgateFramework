@@ -4,105 +4,110 @@ using System.Collections;
 
 namespace Hellgate
 {
-	public abstract partial class Notification : MonoBehaviour
-	{
-		private const string SCHEDULE_LOCAL_NOTIFICATION = "HellgateScheduleLocalNotification";
+    public abstract partial class Notification : MonoBehaviour
+    {
+        private const string SCHEDULE_LOCAL_NOTIFICATION = "HellgateScheduleLocalNotification";
 #if UNITY_ANDROID || UNITY_EDITOR || UNITY_PC
-		private const string CLASS_NAME = "com.hellgate.UnityRegister";
-		protected const string DATE_TIME = "yyyyMMddHHmmss";
-		protected AndroidJavaClass android;
+#region Const
 
-		protected virtual void Awake ()
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				android = new AndroidJavaClass (CLASS_NAME);
-			}
-		}
+        private const string CLASS_NAME = "com.hellgate.UnityRegister";
 
-		protected virtual void Update ()
-		{
-		}
+#endregion
 
-		public virtual void Register (string gcmSenderId)
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				using (AndroidJavaClass android = new AndroidJavaClass (CLASS_NAME)) {
-					android.CallStatic ("register", gcmSenderId);
-				}
-			}
-		}
+        protected const string DATE_TIME = "yyyyMMddHHmmss";
+        protected AndroidJavaClass android;
 
-		public virtual void Unregister ()
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				android.CallStatic ("unregister");
-			}
-		}
+        protected virtual void Awake ()
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                android = new AndroidJavaClass (CLASS_NAME);
+            }
+        }
 
-		public virtual string GetRegistrationId ()
-		{
-			string id = "";
-			if (Application.platform == RuntimePlatform.Android) {
-				id = android.CallStatic<string> ("getRegistrationId");
-			}
+        protected virtual void Update ()
+        {
+        }
 
-			return id;
-		}
+        public virtual void Register (string gcmSenderId)
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                android.CallStatic ("register", gcmSenderId);
+            }
+        }
 
-		public virtual void SetNotificationsEnabled (bool enabled)
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				android.CallStatic ("setNotificationsEnabled", enabled);
-			}
-		}
+        public virtual void Unregister ()
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                android.CallStatic ("unregister");
+            }
+        }
 
-		public virtual bool GetNotificationsEnabled ()
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				bool flag = android.CallStatic<bool> ("getNotificationsEnabled");
-				return flag;
-			}
+        public virtual string GetRegistrationId ()
+        {
+            string id = "";
+            if (Application.platform == RuntimePlatform.Android) {
+                id = android.CallStatic<string> ("getRegistrationId");
+            }
 
-			return true;
-		}
+            return id;
+        }
 
-		public virtual void ScheduleLocalNotification (DateTime dateTime, string text, string id = "", string title = "")
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				string time = dateTime.ToString (DATE_TIME);
-				if (title == "") {
-					title = Application.productName;
-				}
+        public virtual void SetNotificationsEnabled (bool enabled)
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                android.CallStatic ("setNotificationsEnabled", enabled);
+            }
+        }
 
-				if (id == "") {
-					id = SCHEDULE_LOCAL_NOTIFICATION;
-				}
+        public virtual bool GetNotificationsEnabled ()
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                bool flag = android.CallStatic<bool> ("getNotificationsEnabled");
+                return flag;
+            }
 
-				android.CallStatic ("scheduleLocalNotification", time, title, text, id);
-			}
-		}
-		
-		public virtual void CancelLocalNotification (string id = "")
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				if (id == "") {
-					id = SCHEDULE_LOCAL_NOTIFICATION;
-				}
+            return true;
+        }
 
-				android.CallStatic ("cancelLocalNotification", id);
-			}
-		}
-		
-		public virtual void CancelAllLocalNotifications ()
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				android.CallStatic ("cancelAllLocalNotifications");
-			}
-		}
-		
-		protected abstract void DevicePushIdReceived (string gcmID);
-		protected abstract void LocalNotificationReceived (string text);
-		protected abstract void RemoteNotificationReceived (string text);
+        public virtual void ScheduleLocalNotification (DateTime dateTime, string text, string id = "", string title = "")
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                string time = dateTime.ToString (DATE_TIME);
+                if (title == "") {
+                    title = Application.productName;
+                }
+
+                if (id == "") {
+                    id = SCHEDULE_LOCAL_NOTIFICATION;
+                }
+
+                android.CallStatic ("scheduleLocalNotification", time, title, text, id);
+            }
+        }
+
+        public virtual void CancelLocalNotification (string id = "")
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                if (id == "") {
+                    id = SCHEDULE_LOCAL_NOTIFICATION;
+                }
+
+                android.CallStatic ("cancelLocalNotification", id);
+            }
+        }
+
+        public virtual void CancelAllLocalNotifications ()
+        {
+            if (Application.platform == RuntimePlatform.Android) {
+                android.CallStatic ("cancelAllLocalNotifications");
+            }
+        }
+
+        protected abstract void DevicePushIdReceived (string gcmID);
+
+        protected abstract void LocalNotificationReceived (string text);
+
+        protected abstract void RemoteNotificationReceived (string text);
 #endif
-	}
+    }
 }

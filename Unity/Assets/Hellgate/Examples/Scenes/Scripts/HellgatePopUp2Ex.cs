@@ -8,19 +8,19 @@ using Hellgate;
 
 public class HellgatePopUp2Ex : SceneController
 {
-	[SerializeField]
-	private UILabel label;
+    [SerializeField]
+    private UILabel label;
 
-	public override void Awake ()
-	{
-		base.Awake ();
-		isCache = true;
-	}
+    public override void Awake ()
+    {
+        base.Awake ();
+        isCache = true;
+    }
 
-	public override void OnSet (object data)
-	{
-		base.OnSet (data);
+    public override void OnSet (object data)
+    {
+        base.OnSet (data);
 
-		label.text = data.ToString ();
-	}
+        label.text = data.ToString ();
+    }
 }

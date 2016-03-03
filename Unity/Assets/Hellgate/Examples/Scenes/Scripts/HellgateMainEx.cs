@@ -9,65 +9,67 @@ using Hellgate;
 
 public class HellgateMainEx : SceneController
 {
-	[SerializeField]
-	private UILabel
-		title;
-	[SerializeField]
-	private GameObject
-		panel_1;
-	[SerializeField]
-	private GameObject
-		panel_100;
+    [SerializeField]
+    private UILabel title;
+    [SerializeField]
+    private GameObject panel_1;
+    [SerializeField]
+    private GameObject panel_100;
 
-	public static void GoMain ()
-	{
-		string[] sprites = new string[] {
-			"DarkGrey_Box128x128Measured", "DarkGrey_TrimmedBox128x128", "DarkGrey_Angle128x128",
-			"LightGrey_Box128x128Measured", "LightGrey_TrimmedBox128x128", "LightGrey_Angle128x128",
-			"Orange_Box128x128Measured", "Orange_TrimmedBox128x128", "Orange_Angle128x128"
-		};
-		
-		LoadingJobData jobData = new LoadingJobData ("HellgateMain");
-		
-		List<AssetBundleData> assetBundles = new List<AssetBundleData> ();
-		
-		for (int i = 0; i < sprites.Length; i++) {
-			AssetBundleData aBD = new AssetBundleData ("hellgatemain");
-			aBD.type = typeof(Sprite);
-			aBD.objName = sprites [i];
-			assetBundles.Add (aBD);
-		}
-		
-		jobData.assetBundles = assetBundles;
-		jobData.PutExtra ("title", "Main");
+    public static void GoMain ()
+    {
+        string[] sprites = new string[] {
+            "DarkGrey_Box128x128Measured", "DarkGrey_TrimmedBox128x128", "DarkGrey_Angle128x128",
+            "LightGrey_Box128x128Measured", "LightGrey_TrimmedBox128x128", "LightGrey_Angle128x128",
+            "Orange_Box128x128Measured", "Orange_TrimmedBox128x128", "Orange_Angle128x128"
+        };
 
-		SceneManager.Instance.LoadingJob (jobData);
-	}
+        LoadingJobData jobData = new LoadingJobData ("HellgateMain");
 
-	public override void OnSet (object data)
-	{
-		base.OnSet (data);
+        List<AssetBundleData> assetBundles = new List<AssetBundleData> ();
 
-		List<object> objs = data as List<object>;
-		SetUI2DSprite (panel_1, objs);
-		SetUIButton (panel_100, objs);
+        for (int i = 0; i < sprites.Length; i++) {
+            AssetBundleData aBD = new AssetBundleData ("hellgatemain");
+            aBD.type = typeof(Sprite);
+            aBD.objName = sprites [i];
+            assetBundles.Add (aBD);
+        }
 
-		Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
-		title.text = intent ["title"].ToString ();
-	}
+        jobData.assetBundles = assetBundles;
+        jobData.PutExtra ("title", "Main");
 
-	public override void OnKeyBack ()
-	{
-		base.Quit ("Exit ?");
-	}
+        SceneManager.Instance.LoadingJob (jobData);
+    }
 
-	public void OnClickQuest ()
-	{
-		HellgateQuestEx.GoQuest ();
-	}
+    public override void OnSet (object data)
+    {
+        base.OnSet (data);
 
-	public void OnClickNotification ()
-	{
-		HellgateNotificationEx.GoNotification ();
-	}
+        List<object> objs = data as List<object>;
+        SetUI2DSprite (panel_1, objs);
+        SetUIButton (panel_100, objs);
+
+        Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
+        title.text = intent ["title"].ToString ();
+    }
+
+    public override void OnKeyBack ()
+    {
+        base.Quit ("Exit ?");
+    }
+
+    public void OnClickQuest ()
+    {
+        HellgateQuestEx.GoQuest ();
+    }
+
+    public void OnClickNotification ()
+    {
+        HellgateNotificationEx.GoNotification ();
+    }
+
+    public void OnClickWebView ()
+    {
+        SceneManager.Instance.PopUp ("HellgateWebView", "https://www.google.com");
+    }
 }

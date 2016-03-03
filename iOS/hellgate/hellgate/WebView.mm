@@ -8,6 +8,7 @@
 
 const char *WEBVIEW_MANAGER = "WebViewManager";
 const char *WEBVIEW_PROGRESS_CHANGED = "OnProgressChanged";
+const char *WEBVIEW_ERROR = "OnError";
 
 extern "C" UIViewController *UnityGetGLViewController();
 extern "C" void UnitySendMessage(const char *, const char *, const char *);
@@ -92,7 +93,7 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 {
     progress = 0;
     sendProgress = 0;
-    isFinish = false;
+    isFinish = FALSE;
 
     UnitySendMessage (WEBVIEW_MANAGER, WEBVIEW_PROGRESS_CHANGED, [@"0" UTF8String]);
     timer = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timer) userInfo:nil repeats:YES];
@@ -100,10 +101,18 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    isFinish = true;
+    isFinish = TRUE;
 
     [timer invalidate];
     UnitySendMessage (WEBVIEW_MANAGER, WEBVIEW_PROGRESS_CHANGED, [@"100" UTF8String]);
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    isFinish = TRUE;
+
+    [timer invalidate];
+    UnitySendMessage (WEBVIEW_MANAGER, WEBVIEW_ERROR, [[error localizedDescription] UTF8String]);
 }
 
 - (void)timer

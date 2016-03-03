@@ -6,10 +6,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-#if UNITY_IOS
-using System.Runtime.InteropServices;
-#endif
-
 namespace Hellgate
 {
     public class WebViewManager : WebView
@@ -41,7 +37,15 @@ namespace Hellgate
 
 #endregion
 
+        /// <summary>
+        /// Occurs when progress received event.
+        /// </summary>
         public event Action<int> ProgressReceivedEvent;
+
+        /// <summary>
+        /// Occurs when error received event.
+        /// </summary>
+        public event Action<string> ErrorReceivedEvent;
 
         protected override void Awake ()
         {
@@ -66,6 +70,16 @@ namespace Hellgate
             }
         }
 
+        protected virtual void OnError (string message)
+        {
+            if (ErrorReceivedEvent != null) {
+                ErrorReceivedEvent (message);
+            }
+        }
+
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public override void Destroy ()
         {
             base.Destroy ();
@@ -77,6 +91,14 @@ namespace Hellgate
             GameObject.Destroy (gameObject);
         }
 
+        /// <summary>
+        /// Loads the URL.
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="leftMargin">Left margin.</param>
+        /// <param name="topMargin">Top margin.</param>
+        /// <param name="rightMargin">Right margin.</param>
+        /// <param name="bottomMargin">Bottom margin.</param>
         public void LoadURL (string url, int leftMargin, int topMargin, int rightMargin, int bottomMargin)
         {
             LoadURL (url);

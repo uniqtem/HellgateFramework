@@ -1,5 +1,6 @@
 package com.hellgate;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
@@ -7,8 +8,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ClientCertRequest;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -44,12 +46,13 @@ public class UnityWebViewActivity {
                     }
                 });
 
-//                webView.setWebViewClient(new WebViewClient() {
-//                    @Override
-//                    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-//                        Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_ERROR, description);
-//                    }
-//                });
+                webView.setWebViewClient(new WebViewClient() {
+                    @TargetApi(android.os.Build.VERSION_CODES.M)
+                    @Override
+                    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                        Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_ERROR, error.getDescription().toString());
+                    }
+                });
 
                 webView.setWebViewClient(new WebViewClient());
 

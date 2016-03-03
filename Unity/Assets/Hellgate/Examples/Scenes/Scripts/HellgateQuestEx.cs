@@ -18,6 +18,7 @@ public class HellgateQuestEx : SceneController
     private float time;
     private int count;
     private bool isStart;
+    private bool isPopUp;
 
     public static void GoQuest ()
     {
@@ -72,6 +73,7 @@ public class HellgateQuestEx : SceneController
         time = 0;
         count = 0;
         isStart = true;
+        isPopUp = false;
     }
 
     void Update ()
@@ -110,6 +112,7 @@ public class HellgateQuestEx : SceneController
 
     public void OnClickBack ()
     {
+        isPopUp = true;
         SceneManager.Instance.PopUp ("Go main!!", PopUpType.Ok, delegate(PopUpYNType type) {
             HellgateMainEx.GoMain ();
         });
@@ -117,6 +120,10 @@ public class HellgateQuestEx : SceneController
 
     public void Die ()
     {
+        if (isPopUp) {
+            return;
+        }
+
         SceneManager.Instance.PopUp ("Die!!", PopUpType.Ok, delegate(PopUpYNType type) {
             HellgateMainEx.GoMain ();
         });

@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Hellgate Framework
-   &#160;<span id="projectnumber">2.0.0</span>
+   &#160;<span id="projectnumber">2.1.0</span>
    </div>
    <div id="projectbrief">Basic Unity project framework</div>
   </td>
@@ -67,6 +67,7 @@
       <li><a href="functions_h.html#index_h"><span>h</span></a></li>
       <li><a href="functions_i.html#index_i"><span>i</span></a></li>
       <li><a href="functions_j.html#index_j"><span>j</span></a></li>
+      <li><a href="functions_k.html#index_k"><span>k</span></a></li>
       <li><a href="functions_l.html#index_l"><span>l</span></a></li>
       <li><a href="functions_m.html#index_m"><span>m</span></a></li>
       <li><a href="functions_n.html#index_n"><span>n</span></a></li>
@@ -100,6 +101,9 @@
 </li>
 <li>OnActiveScreen()
 : <a class="el" href="class_hellgate_1_1_s_scene_manager.html#a03816e422c74a22dc73e244f2606e349">Hellgate.SSceneManager</a>
+</li>
+<li>OnClick()
+: <a class="el" href="class_hellgate_web_view_ex.html#aae58c9c310ccf8898a2496aa76e4ae7a">HellgateWebViewEx</a>
 </li>
 <li>OnClickBack()
 : <a class="el" href="class_hellgate_quest_ex.html#a1f7f45b175a04c3731907db02e512a42">HellgateQuestEx</a>
@@ -233,11 +237,16 @@
 <li>OnClickUpdateTransaction()
 : <a class="el" href="class_hellgate_database_ex.html#afbb0976e30b70f7a0962608f56b962ef">HellgateDatabaseEx</a>
 </li>
+<li>OnClickWebView()
+: <a class="el" href="class_hellgate_main_ex.html#a5088d50543b793e2c359d0ca9222873c">HellgateMainEx</a>
+</li>
 <li>OnDeativeScreen()
 : <a class="el" href="class_hellgate_1_1_s_scene_manager.html#a33ba3035d65063fc794f33ca34a5970c">Hellgate.SSceneManager</a>
 </li>
 <li>OnDestory()
 : <a class="el" href="class_hellgate_1_1_object_pool_manager.html#a2cd82d31b5e3283c94f8bcbbf365f25b">Hellgate.ObjectPoolManager</a>
+, <a class="el" href="class_hellgate_1_1_web_view.html#ac7dd8566b45b11be41e18a73ee884f2c">Hellgate.WebView</a>
+, <a class="el" href="class_hellgate_1_1_web_view_manager.html#a185ef1d0f9ebea67ecc37de20bc466a9">Hellgate.WebViewManager</a>
 </li>
 <li>OnDestroy()
 : <a class="el" href="class_hellgate_1_1_loading_job_controller.html#a9d0728e61b1b78ba66af3a0ddd6b9ec8">Hellgate.LoadingJobController</a>
@@ -246,7 +255,7 @@
 , <a class="el" href="class_hellgate_1_1_s_scene_controller.html#af624019e25d55102d3de7c92a43fd4be">Hellgate.SSceneController</a>
 </li>
 <li>OnDisable()
-: <a class="el" href="class_hellgate_1_1_logger.html#a7e76da796f39f80ceaaff85baf3b4841">Hellgate.Logger</a>
+: <a class="el" href="class_hellgate_1_1_h_debug.html#a490e1ccb02ea617c32988bd50cabafe0">Hellgate.HDebug</a>
 , <a class="el" href="class_hellgate_1_1_menu_controller.html#a8632ef90bc35b5f5a820efd99634c748">Hellgate.MenuController</a>
 , <a class="el" href="class_hellgate_1_1_s_scene_controller.html#a47c42cbdae5c8bb330c94bf49edf3c83">Hellgate.SSceneController</a>
 , <a class="el" href="class_hellgate_notification_ex.html#ad2fb4cb477f59cd26b8b6e24e126ac79">HellgateNotificationEx</a>
@@ -260,7 +269,7 @@
 , <a class="el" href="class_hellgate_1_1_http_manager.html#aebb0384e1772994a1d7a6f5c5b8515d2">Hellgate.HttpManager</a>
 </li>
 <li>OnEnable()
-: <a class="el" href="class_hellgate_1_1_logger.html#aed55db955061267f979381c8c99f35f1">Hellgate.Logger</a>
+: <a class="el" href="class_hellgate_1_1_h_debug.html#a3759e696bea44c92ad9415ab3d3332c0">Hellgate.HDebug</a>
 , <a class="el" href="class_hellgate_1_1_menu_controller.html#a08e2880caa680f55536e4ffe16ebbf90">Hellgate.MenuController</a>
 , <a class="el" href="class_hellgate_1_1_s_scene_controller.html#a88582923ae82fb4175b83639ba37db63">Hellgate.SSceneController</a>
 , <a class="el" href="class_hellgate_editor_1_1_asset_bundle_editor.html#a602e5ec3ddbaa94558149f7ebeea9645">HellgateEditor.AssetBundleEditor</a>
@@ -268,12 +277,15 @@
 , <a class="el" href="class_hellgate_editor_1_1_sqlite_editor.html#a9f4f55d68fc1773584fdfec2c8889ffe">HellgateEditor.SqliteEditor</a>
 , <a class="el" href="class_hellgate_editor_1_1_sqlite_import_editor.html#a327c02cddc289efe8ad933141a66e81f">HellgateEditor.SqliteImportEditor</a>
 </li>
+<li>OnError()
+: <a class="el" href="class_hellgate_1_1_web_view_manager.html#ae7cdc4789f86684a35d5529b683d55f3">Hellgate.WebViewManager</a>
+</li>
 <li>OnFail
 : <a class="el" href="class_hellgate_1_1_http.html#a8d31abe5f7a36ad73462e2dec16eb08d">Hellgate.Http</a>
 , <a class="el" href="class_hellgate_1_1_http_manager.html#a486bcbd2e6ee59e2eb4566ddc05fca94">Hellgate.HttpManager</a>
 </li>
 <li>OnGUI()
-: <a class="el" href="class_hellgate_1_1_logger.html#a0bfe527cf3baa1302360ad0bfe5249db">Hellgate.Logger</a>
+: <a class="el" href="class_hellgate_1_1_h_debug.html#ad422b3d97cabbd22ccdd06258c1aabc4">Hellgate.HDebug</a>
 , <a class="el" href="class_hellgate_editor_1_1_asset_bundle_editor.html#a677a5cd57c84a801d4dc4ba5e249fe04">HellgateEditor.AssetBundleEditor</a>
 , <a class="el" href="class_hellgate_editor_1_1_excel_import_editor.html#a71685a4307315b78dbdb0aa75c432f1e">HellgateEditor.ExcelImportEditor</a>
 , <a class="el" href="class_hellgate_editor_1_1_sqlite_editor.html#a60783c30e3e44751baf576e9b00a4594">HellgateEditor.SqliteEditor</a>
@@ -302,6 +314,9 @@
 <li>OnOkButtonTap()
 : <a class="el" href="class_hellgate_1_1_pop_up_controller.html#ab52611ddb95e88b75cc72469bc2997da">Hellgate.PopUpController</a>
 </li>
+<li>OnProgressChanged()
+: <a class="el" href="class_hellgate_1_1_web_view_manager.html#a049825bbf32d38528d39fdc58cc72d33">Hellgate.WebViewManager</a>
+</li>
 <li>OnScreenStartChange()
 : <a class="el" href="class_hellgate_1_1_menu_controller.html#a1d6c2a5bb408691484708908b4a65966">Hellgate.MenuController</a>
 </li>
@@ -311,6 +326,7 @@
 , <a class="el" href="class_hellgate_1_1_s_scene_controller.html#a78f809a67be9506c86419babd4cd7f21">Hellgate.SSceneController</a>
 , <a class="el" href="class_hellgate_asset_ex.html#a50a66323cbf972e331880216faa6019c">HellgateAssetEx</a>
 , <a class="el" href="class_hellgate_database_ex.html#ade98a52ed4f60d71a542af0bb66c21d9">HellgateDatabaseEx</a>
+, <a class="el" href="class_hellgate_database_pop_up_ex.html#abbc3f1b3b4f5fd7461c1bf893259c0ac">HellgateDatabasePopUpEx</a>
 , <a class="el" href="class_hellgate_http_ex.html#a89bb69f415c214e77695056e211c2f8d">HellgateHttpEx</a>
 , <a class="el" href="class_hellgate_intro_ex.html#af3a93996f843477d22a07f5c0f165958">HellgateIntroEx</a>
 , <a class="el" href="class_hellgate_login_ex.html#a5c14164a09815bae6aed07eae373de04">HellgateLoginEx</a>
@@ -324,12 +340,13 @@
 , <a class="el" href="class_hellgate_screen1_ex.html#abea79ae650d547d0c4d744441c789a0b">HellgateScreen1Ex</a>
 , <a class="el" href="class_hellgate_screen2_ex.html#a25d60ae26801323c69fe8b3f28973e59">HellgateScreen2Ex</a>
 , <a class="el" href="class_hellgate_screen3_ex.html#abaa9d37f6026d77194438ab1d8278341">HellgateScreen3Ex</a>
+, <a class="el" href="class_hellgate_web_view_ex.html#a4bb1c52a095a87d1746f89c1ba2b195d">HellgateWebViewEx</a>
 </li>
 <li>OnYesButtonTap()
 : <a class="el" href="class_hellgate_1_1_pop_up_controller.html#a3f2be5ee977fb0fb6b6f8e533ed30417">Hellgate.PopUpController</a>
 </li>
 <li>Open()
-: <a class="el" href="class_hellgate_1_1_sqlite.html#add2ae757714fd468a1a5ad96853f965a">Hellgate.Sqlite</a>
+: <a class="el" href="class_hellgate_1_1_sqlite.html#a77658aba519cc6d0ec91205d680397af">Hellgate.Sqlite</a>
 </li>
 <li>outputJsonPath
 : <a class="el" href="class_hellgate_editor_1_1_excel_import_editor.html#a0e644ecd5a2d3a8b4dfbdd18b8539b22">HellgateEditor.ExcelImportEditor</a>
@@ -339,7 +356,7 @@
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 10 2015 17:52:03 for Hellgate Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 3 2016 14:16:00 for Hellgate Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.10
 </small></address>

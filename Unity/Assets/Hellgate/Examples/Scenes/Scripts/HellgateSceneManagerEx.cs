@@ -25,9 +25,9 @@ public class HellgateSceneManagerEx : SceneManager
         // set db
         // The example does not use the auto-generation db and table(DDL).
         Sqlite sql = new Sqlite ();
-        if (sql.CreateFile ("Hellgate.db")) {
-            sql.CreateTable ("Hellgate.db", new Board ().GetType ());
-            sql.CreateTable ("Hellgate.db", new Comment ().GetType ());
+        if (sql.CreateFile ("hellgate.db")) {
+            sql.CreateTable ("hellgate.db", new Board ().GetType ());
+            sql.CreateTable ("hellgate.db", new Comment ().GetType ());
         }
 
 //        if (sql.CreateFile ("Hellgate.db")) {

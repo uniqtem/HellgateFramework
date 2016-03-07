@@ -78,5 +78,14 @@ namespace Hellgate
             Attribute[] attributes = Attribute.GetCustomAttributes (fieldInfo);
             return FindAttribute<T> (attributes);
         }
+
+        /// <summary>
+        /// Underscore the specified fieldInfo.
+        /// </summary>
+        /// <param name="fieldInfo">Field info.</param>
+        public static string UnderscoreName (this System.Reflection.FieldInfo fieldInfo)
+        {
+            return Util.ConvertCamelToUnderscore (fieldInfo.Name);
+        }
     }
 }

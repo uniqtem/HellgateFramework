@@ -49,6 +49,17 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Column Converts the camel to underscore.
+        /// </summary>
+        /// <returns>The camel to underscore.</returns>
+        /// <param name="tableName">Table name.</param>
+        /// <param name="columnName">Column name.</param>
+        protected string ConvertCamelToUnderscore (string tableName, string columnName)
+        {
+            return Underline (tableName, Util.ConvertCamelToUnderscore (columnName));
+        }
+
+        /// <summary>
         /// Generates the insert SQL.
         /// </summary>
         /// <returns>The insert SQL.</returns>
@@ -360,17 +371,6 @@ namespace Hellgate
         public string Underline (string key, string value)
         {
             return string.Format ("{0}_{1}", key, value);
-        }
-
-        /// <summary>
-        /// Column Converts the camel to underscore.
-        /// </summary>
-        /// <returns>The camel to underscore.</returns>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="columnName">Column name.</param>
-        public string ConvertCamelToUnderscore (string tableName, string columnName)
-        {
-            return Underline (tableName, Util.ConvertCamelToUnderscore (columnName));
         }
     }
 }

@@ -116,26 +116,26 @@ namespace Hellgate
         /// </summary>
         /// <returns>The to SQL constraints.</returns>
         /// <param name="constraints">Constraints.</param>
-        public string ConvertToSQLConstraints (SqliteDataConstraints[] constraints)
+        public string ConvertToSQLConstraints (DataConstraints[] constraints)
         {
             string cons = "";
             for (int i = 0; i < constraints.Length; i++) {
                 switch (constraints [i]) {
-                case SqliteDataConstraints.AI:
+                case DataConstraints.AI:
                     cons += " PRIMARY KEY AUTOINCREMENT";
                 break;
-                case SqliteDataConstraints.NOTNULL:
+                case DataConstraints.NOTNULL:
                     cons += " NOT NULL";
                 break;
-                case SqliteDataConstraints.PK:
-                    if (Array.FindIndex (constraints, c => c == SqliteDataConstraints.AI) < 0) {
+                case DataConstraints.PK:
+                    if (Array.FindIndex (constraints, c => c == DataConstraints.AI) < 0) {
                         cons += " PRIMARY KEY";
                     }
                 break;
-                case SqliteDataConstraints.FK:
+                case DataConstraints.FK:
 
                 break;
-                case SqliteDataConstraints.UNIQUE:
+                case DataConstraints.UNIQUE:
                     cons += " UNIQUE";
                 break;
                 }

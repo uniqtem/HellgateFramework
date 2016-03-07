@@ -28,8 +28,8 @@ namespace Hellgate
             foreach (FieldInfo field in fieldInfos) {
                 object data = null;
                 if (Util.IsValueType (field.FieldType)) {
-                    string key = string.Format ("{0}{1}{2}", tableName, Query.UNDERLINE, field.Name);
-                    if (row.ContainsKey (tableName + Query.UNDERLINE + field.Name)) {
+                    string key = new SQLMaker ().ConvertCamelToUnderscore (tableName, field.Name);
+                    if (row.ContainsKey (key)) {
                         data = row [key];
                         data = ConvertIgnoreData (field, data);
                         if (data == null || data.ToString () == "") {
@@ -82,30 +82,6 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Fields the AMC retrieve.
-        /// </summary>
-        /// <returns>The AMC retrieve.</returns>
-        /// <param name="type">Type.</param>
-        /// <param name="flag">Flag.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static AttributeMappingConfig<T>[] FieldAMCRetrieve<T> (Type type, BindingFlags flag = BindingFlags.NonPublic) where T : class
-        {
-            FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
-
-            AttributeMappingConfig<T>[] configs = new AttributeMappingConfig<T> [fieldInfos.Length];
-            for (int i = 0; i < fieldInfos.Length; i++) {
-                AttributeMappingConfig<T> temp = new AttributeMappingConfig<T> ();
-
-                temp.t = fieldInfos [i].GetAttributeValue<T> ();
-                temp.name = fieldInfos [i].Name;
-                temp.type = fieldInfos [i].FieldType;
-                configs [i] = temp;
-            }
-
-            return configs;
-        }
-
-        /// <summary>
         /// Sets the select ORM mapper.
         /// </summary>
         /// <returns>The select ORM mapper.</returns>
@@ -126,7 +102,7 @@ namespace Hellgate
 
                 // FK
                 ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
-                if (column != null && column.CheckConstraints (SqliteDataConstraints.FK)) {
+                if (column != null && column.CheckConstraints (DataConstraints.FK)) {
                     if (column.Key != null && column.Value != "") {
                         mapper.SetJoin (column.Key, column.Value, field.Name);
                     } else {

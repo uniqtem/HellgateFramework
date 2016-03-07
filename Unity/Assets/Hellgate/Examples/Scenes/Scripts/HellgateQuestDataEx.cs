@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Hellgate;
 
 public class HellgateQuestDataEx
 {

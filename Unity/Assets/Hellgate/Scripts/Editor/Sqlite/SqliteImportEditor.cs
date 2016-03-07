@@ -11,11 +11,12 @@ using MiniJSON;
 
 namespace HellgateEditor
 {
+    [Hellgate.Table ("sqlite_master")]
     public class SqliteMastser
     {
         private string type = "";
         private string name = "";
-        private string tbl_name = "";
+        private string tblName = "";
         private int rootpage = 0;
         private string sql = "";
 
@@ -31,9 +32,9 @@ namespace HellgateEditor
             }
         }
 
-        public string Tbl_name {
+        public string TblName {
             get {
-                return tbl_name;
+                return tblName;
             }
         }
 
@@ -118,7 +119,7 @@ namespace HellgateEditor
 
             query = new Hellgate.Query (sqlitePath);
 
-            SqliteMastser[] master = query.SELECT<SqliteMastser> ("sqlite_master", "type", (object)"table");
+            SqliteMastser[] master = query.SELECT<SqliteMastser> ("type", (object)"table");
             if (master == null) {
                 Debug.Log ("There are no tables");
             } else {

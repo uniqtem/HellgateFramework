@@ -52,3 +52,6 @@ FIX : Logger -> HDebug
 FIX : Http
 NEW : Sqlite ORM join
 NEW : WebView
+2.2.0
+FIX : Sqlite ORM
+NEW : Excel -> Json 

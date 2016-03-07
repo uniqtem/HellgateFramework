@@ -64,14 +64,14 @@ namespace Hellgate
         /// <returns>The child object.</returns>
         /// <param name="GameObject">gameObject.</param>
         /// <param name="strName">String name.</param>
-        public static GameObject GetChildObject(GameObject gO, string strName)
+        public static GameObject GetChildObject (GameObject gO, string strName)
         {
-            Transform[] AllData = gO.GetComponentsInChildren<Transform>(true);
+            Transform[] AllData = gO.GetComponentsInChildren<Transform> (true);
             GameObject target = null;
 
             for (int i = 0; i < AllData.Length; i++) {
-                if (AllData[i].name == strName) {
-                    target = AllData[i].gameObject;
+                if (AllData [i].name == strName) {
+                    target = AllData [i].gameObject;
                     break;
                 }
             }
@@ -225,35 +225,13 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Gets the device.
-        /// pc & ios & android
+        /// Converts the camel to underscore.
         /// </summary>
-        /// <returns>The device.</returns>
-        public static string GetDevice ()
+        /// <returns>The camel to underscore.</returns>
+        /// <param name="input">Input.</param>
+        public static string ConvertCamelToUnderscore (string input)
         {
-            string typeCode = "";
-#if UNITY_EDITOR
-            if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
-                typeCode = ANDROID;
-            } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
-                typeCode = IOS;
-            } else {
-                typeCode = PC;
-            }
-
-#elif UNITY_ANDROID 
-            if (Application.platform == RuntimePlatform.Android) {
-                typeCode = ANDROID;
-            }
-#elif UNITY_IOS
-            if (Application.platform == RuntimePlatform.IPhonePlayer) {
-                typeCode = IOS;
-            }
-#elif UNITY_STANDALONE
-            typeCode = PC;
-#endif
-
-            return typeCode;
+            return System.Text.RegularExpressions.Regex.Replace (input, "(?x)( [A-Z][a-z,0-9]+ | [A-Z]+(?![a-z]) )", "_$0").ToLower ();
         }
 
         /// <summary>
@@ -296,6 +274,11 @@ namespace Hellgate
             return temp;
         }
 
+        /// <summary>
+        /// Determines if is integer the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is integer the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsInteger (Type type)
         {
             return (
@@ -310,40 +293,92 @@ namespace Hellgate
             ); 
         }
 
+        /// <summary>
+        /// Determines if is float the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is float the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsFloat (Type type)
         {
             return (type == typeof(float) | type == typeof(double) | type == typeof(Decimal));
         }
 
+        /// <summary>
+        /// Determines if is numeric the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is numeric the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsNumeric (Type type)
         {
             if (!(
-                type == typeof(Byte) ||
-                type == typeof(Int16) ||
-                type == typeof(Int32) ||
-                type == typeof(Int64) ||
-                type == typeof(SByte) ||
-                type == typeof(UInt16) ||
-                type == typeof(UInt32) ||
-                type == typeof(UInt64) ||
-                type == typeof(Decimal) ||
-                type == typeof(Double) ||
-                type == typeof(Single)
-            )) {
+                    type == typeof(Byte) ||
+                    type == typeof(Int16) ||
+                    type == typeof(Int32) ||
+                    type == typeof(Int64) ||
+                    type == typeof(SByte) ||
+                    type == typeof(UInt16) ||
+                    type == typeof(UInt32) ||
+                    type == typeof(UInt64) ||
+                    type == typeof(Decimal) ||
+                    type == typeof(Double) ||
+                    type == typeof(Single)
+                )) {
                 return false;
             } else {
                 return true;
             }
         }
 
+        /// <summary>
+        /// Determines if is text the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is text the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsText (Type type)
         {
             return (type == typeof(String) || type == typeof(Char));
         }
 
+        /// <summary>
+        /// Determines if is value type the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is value type the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsValueType (Type type)
         {
             return (IsText (type) || IsNumeric (type));
+        }
+
+        /// <summary>
+        /// Gets the device.
+        /// pc & ios & android
+        /// </summary>
+        /// <returns>The device.</returns>
+        public static string GetDevice ()
+        {
+            string typeCode = "";
+#if UNITY_EDITOR
+            if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
+                typeCode = ANDROID;
+            } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
+                typeCode = IOS;
+            } else {
+                typeCode = PC;
+            }
+
+#elif UNITY_ANDROID 
+            if (Application.platform == RuntimePlatform.Android) {
+            typeCode = ANDROID;
+            }
+#elif UNITY_IOS
+            if (Application.platform == RuntimePlatform.IPhonePlayer) {
+            typeCode = IOS;
+            }
+#elif UNITY_STANDALONE
+            typeCode = PC;
+#endif
+
+            return typeCode;
         }
     }
 }

@@ -12,7 +12,7 @@ using Hellgate;
 [Table ("board")]
 public class Board
 {
-    [Column (SqliteDataConstraints.AI)]
+    [Column (DataConstraints.AI)]
     private int idx = 0;
     private string name = "";
     private string description = "";
@@ -57,9 +57,9 @@ public class Board
 [Table ("comment")]
 public class Comment
 {
-    [Column (SqliteDataConstraints.AI)]
+    [Column (DataConstraints.AI)]
     private int idx = 0;
-    [Column (SqliteDataConstraints.FK, typeof(Board), "idx")]
+    [Column (DataConstraints.FK, typeof(Board), "idx")]
     private int boardIdx = 0;
     private string name = "";
     private string description = "";

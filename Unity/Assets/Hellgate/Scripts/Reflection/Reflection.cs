@@ -141,11 +141,9 @@ namespace Hellgate
                     continue;
                 }
 
-                ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
-                if (column != null) {
-                    if (column.CheckConstraints (DataConstraints.AI)) {
-                        continue;
-                    }
+                // sqlite ignore
+                if (SqliteIgnoreAttribute (field)) {
+                    continue;
                 }
 
                 data.Add (field.Name, field.GetValue (t));
@@ -206,6 +204,15 @@ namespace Hellgate
             }
 
             return configs;
+        }
+
+        /// <summary>
+        /// Gets the executing assembly.
+        /// </summary>
+        /// <returns>The executing assembly.</returns>
+        public static Type[] GetExecutingAssembly ()
+        {
+            return Assembly.GetExecutingAssembly ().GetTypes ();
         }
     }
 }

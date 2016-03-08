@@ -55,7 +55,7 @@ namespace HellgateEditor
             }
             EditorGUILayout.EndHorizontal ();
 
-            selected = EditorGUILayout.Popup ("Option : ", selected, Enum.GetNames(typeof(ExcelImportType)));
+            selected = EditorGUILayout.Popup ("Option : ", selected, Enum.GetNames (typeof(ExcelImportType)));
 
             GUILayout.Label ("Set Ignore table name", EditorStyles.boldLabel);
             GUILayout.Label ("Ex) Info,Version,Description  or  Info|Version|Description");

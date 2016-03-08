@@ -12,6 +12,18 @@ namespace Hellgate
 {
     public partial class Reflection
     {
+        private static bool SqliteIgnoreAttribute (FieldInfo field)
+        {
+            ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
+            if (column != null) {
+                if (column.CheckConstraints (DataConstraints.AI)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Convert the specified data and flag.
         /// </summary>
@@ -41,7 +53,7 @@ namespace Hellgate
                         row.Remove (key);
                     }
                 } else {
-                    data = Convert(row, flag, field.FieldType);
+                    data = Convert (row, flag, field.FieldType);
                 }
 
                 if (data != null) {
@@ -66,19 +78,10 @@ namespace Hellgate
         {
             T[] ts = new T[table.Rows.Count];
             for (int i = 0; i < table.Rows.Count; i++) {
-                ts[i] = (T)Convert (table.Rows [i], flag, typeof (T));
+                ts [i] = (T)Convert (table.Rows [i], flag, typeof(T));
             }
 
             return ts;
-        }
-
-        /// <summary>
-        /// Gets the executing assembly.
-        /// </summary>
-        /// <returns>The executing assembly.</returns>
-        public static Type[] GetExecutingAssembly ()
-        {
-            return Assembly.GetExecutingAssembly ().GetTypes ();
         }
 
         /// <summary>

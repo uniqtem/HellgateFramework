@@ -24,7 +24,6 @@ namespace Hellgate
         UNIQUE
     }
 
-
     public class AttributeMappingConfig<T>
     {
         /// <summary>

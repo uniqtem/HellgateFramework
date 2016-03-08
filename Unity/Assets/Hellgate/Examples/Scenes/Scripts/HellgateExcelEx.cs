@@ -13,13 +13,15 @@ public class Avatar
     private string attack;
     private string defence;
     private int speed;
+    private Monster monster;
 }
 
 [Excel ("monster", "monster")]
 public class Monster
 {
+    [Column (typeof (Avatar), "idx")]
     private int idx;
+    [Column (typeof (Avatar), "name")]
     private string name;
     private string description;
 }
-

@@ -21,24 +21,6 @@ namespace HellgateEditor
 
     public class ExcelImportMaker
     {
-        protected class CreateAttributeJsonConfig
-        {
-            public IRow row;
-            public IRow titleRow;
-            public AttributeMappingConfig<ColumnAttribute>[] configs;
-            public string columnName;
-            public object columnValue;
-
-            public CreateAttributeJsonConfig ()
-            {
-                row = null;
-                titleRow = null;
-                configs = null;
-                columnName = "";
-                columnValue = null;
-            }
-        }
-
         protected IWorkbook book;
         protected string excelFilePath;
         protected string outputJsonPath;
@@ -106,8 +88,7 @@ namespace HellgateEditor
                     continue;
                 }
 
-                List<Dictionary<string, object>> list = CreateAttributeJson (type, new CreateAttributeJsonConfig ());
-
+                List<Dictionary<string, object>> list = CreateAttributeJson (type);
                 if (excel.IndexFlag) {
                     AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
                     List<string> keys = new List<string> ();
@@ -143,40 +124,51 @@ namespace HellgateEditor
             }
         }
 
-        protected Dictionary<string, object> CreateAttributeJson (CreateAttributeJsonConfig data)
+        protected Dictionary<string, object> CreateAttributeJson (IRow titleRow,
+                                                                  IRow row,
+                                                                  AttributeMappingConfig<ColumnAttribute>[] configs,
+                                                                  Dictionary<string, object> joinColumn)
         {
             Dictionary<string, object> sheetDic = new Dictionary<string, object> ();
-            for (int k = 0; k <= data.titleRow.LastCellNum; k++) {
-                ICell tCell = data.titleRow.GetCell (k);
-                ICell vCell = data.row.GetCell (k);
+            for (int k = 0; k <= titleRow.LastCellNum; k++) {
+                ICell tCell = titleRow.GetCell (k);
+                ICell vCell = row.GetCell (k);
 
                 AddData (tCell, vCell, sheetDic);
             }
 
+
             Dictionary<string, object> dic = new Dictionary<string, object> ();
-            foreach (AttributeMappingConfig<ColumnAttribute> config in data.configs) {
+            foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
                 if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (config.name))) {
-                    if (data.columnName == config.name) {
-                        if (data.columnValue.ToString () != sheetDic [Util.ConvertCamelToUnderscore (config.name)].ToString ()) {
-                            return null;
+                    if (joinColumn != null) {
+                        foreach (KeyValuePair<string, object> pair in joinColumn) {
+                            if (pair.Key == config.name) {
+                                if (pair.Value.ToString () != sheetDic [Util.ConvertCamelToUnderscore (config.name)].ToString ()) {
+                                    return null;
+                                }
+                            }
                         }
                     }
 
                     dic.Add (config.name, sheetDic [Util.ConvertCamelToUnderscore (config.name)]);
                 } else {
                     if (!Util.IsValueType (config.type)) {
+                        Dictionary<string, object> jDic = new Dictionary<string, object> ();
                         AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type);
                         foreach (AttributeMappingConfig<ColumnAttribute> c in temp) {
                             if (c.t != null) {
                                 ColumnAttribute column = c.t as ColumnAttribute;
                                 if (column != null) {
                                     if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (column.Value))) {
-                                        data.columnName = column.Value;
-                                        data.columnValue = sheetDic [Util.ConvertCamelToUnderscore (column.Value)];
-                                        dic.Add (config.name, CreateAttributeJson (config.type, data));
+                                        jDic.Add (column.Value, sheetDic [Util.ConvertCamelToUnderscore (column.Value)]);
                                     }
                                 }
                             }
+                        }
+
+                        if (jDic.Count > 0) {
+                            dic.Add (config.name, CreateAttributeJson (config.type, jDic));
                         }
                     }
                 }
@@ -185,7 +177,7 @@ namespace HellgateEditor
             return dic;
         }
 
-        protected List<Dictionary<string, object>> CreateAttributeJson (Type type, CreateAttributeJsonConfig data)
+        protected List<Dictionary<string, object>> CreateAttributeJson (Type type, Dictionary<string, object> joinColumn = null)
         {
             ExcelAttribute excel = type.GetAttributeValue<ExcelAttribute> ();
             AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
@@ -193,12 +185,12 @@ namespace HellgateEditor
             if (configs.Length > 0) {
                 ISheet s = book.GetSheet (excel.SheetName);
                 IRow titleRow = s.GetRow (0);
+
                 List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
+
                 for (int i = 1; i <= s.LastRowNum; i++) {
-                    data.row = s.GetRow (i);
-                    data.titleRow = titleRow;
-                    data.configs = configs;
-                    Dictionary<string, object> dic = CreateAttributeJson (data);
+                    Dictionary<string, object> dic = CreateAttributeJson (titleRow, s.GetRow (i), configs, joinColumn);
+
                     if (dic != null && dic.Count > 0) {
                         list.Add (dic);
                     }

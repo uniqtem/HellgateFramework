@@ -54,4 +54,5 @@ NEW : Sqlite ORM join
 NEW : WebView
 2.2.0
 FIX : Sqlite ORM
-NEW : Excel -> Json 
+NEW : Excel -> Json
+NEW : ExtensionMethods

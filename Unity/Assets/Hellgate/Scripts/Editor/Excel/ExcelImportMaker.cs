@@ -154,21 +154,25 @@ namespace HellgateEditor
                     dic.Add (config.name, sheetDic [Util.ConvertCamelToUnderscore (config.name)]);
                 } else {
                     if (!Util.IsValueType (config.type)) {
+                        if (!config.type.IsArray) {
+                            continue;
+                        }
+
                         Dictionary<string, object> jDic = new Dictionary<string, object> ();
-                        AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type);
+                        AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type.GetElementType ());
                         foreach (AttributeMappingConfig<ColumnAttribute> c in temp) {
                             if (c.t != null) {
                                 ColumnAttribute column = c.t as ColumnAttribute;
                                 if (column != null) {
                                     if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (column.Value))) {
-                                        jDic.Add (column.Value, sheetDic [Util.ConvertCamelToUnderscore (column.Value)]);
+                                        jDic.Add (c.name, sheetDic [Util.ConvertCamelToUnderscore (column.Value)]);
                                     }
                                 }
                             }
                         }
 
                         if (jDic.Count > 0) {
-                            dic.Add (config.name, CreateAttributeJson (config.type, jDic));
+                            dic.Add (config.name, CreateAttributeJson (config.type.GetElementType (), jDic));
                         }
                     }
                 }

@@ -13,7 +13,7 @@ public class Avatar
     private string attack;
     private string defence;
     private int speed;
-    private Monster monster;
+    private Monster[] monster;
 }
 
 [Excel ("monster", "monster")]

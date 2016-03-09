@@ -246,12 +246,20 @@ namespace Hellgate
     {
         private SqliteJoinType type = SqliteJoinType.NONE;
 
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
         public SqliteJoinType Type {
             get {
                 return type;
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.JoinAttribute"/> class.
+        /// </summary>
+        /// <param name="type">Type.</param>
         public JoinAttribute (SqliteJoinType type)
         {
             this.type = type;
@@ -264,24 +272,42 @@ namespace Hellgate
         private string createFileName;
         private bool indexFlag;
 
+        /// <summary>
+        /// Gets the name of the sheet.
+        /// </summary>
+        /// <value>The name of the sheet.</value>
         public string SheetName {
             get {
                 return sheetName;
             }
         }
 
+        /// <summary>
+        /// Gets the name of the create file.
+        /// </summary>
+        /// <value>The name of the create file.</value>
         public string CreateFileName {
             get {
                 return createFileName;
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Hellgate.ExcelAttribute"/> index flag.
+        /// </summary>
+        /// <value><c>true</c> if index flag; otherwise, <c>false</c>.</value>
         public bool IndexFlag {
             get {
                 return indexFlag;
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.ExcelAttribute"/> class.
+        /// </summary>
+        /// <param name="sheetName">Sheet name.</param>
+        /// <param name="createFileName">Create file name.</param>
+        /// <param name="indexFlag">If set to <c>true</c> index flag.</param>
         public ExcelAttribute (string sheetName, string createFileName = "", bool indexFlag = false)
         {
             this.sheetName = sheetName;

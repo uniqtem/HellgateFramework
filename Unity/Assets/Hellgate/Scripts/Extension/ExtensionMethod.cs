@@ -1,9 +1,10 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 #if UNITY_EDITOR
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Linq;
 
 namespace Hellgate
 {
-    public static class AttributeExtensions
+    public static class ExtensionMethod
     {
 #if UNITY_EDITOR
         /// <summary>
@@ -28,8 +29,8 @@ namespace Hellgate
             where TAttribute : Attribute
         {
             var attr = type.GetCustomAttributes (
-                           typeof(TAttribute), true
-                       ).FirstOrDefault () as TAttribute;
+                typeof(TAttribute), true
+            ).FirstOrDefault () as TAttribute;
 
             if (attr != null) {
                 return valueSelector (attr);
@@ -87,5 +88,54 @@ namespace Hellgate
         {
             return Util.ConvertCamelToUnderscore (fieldInfo.Name);
         }
+
+        /// <summary>
+        /// Merge the specified dic and mergeDic.
+        /// </summary>
+        /// <param name="dic">Dictionary.</param>
+        /// <param name="mergeDic">Merge Dictionary.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
+        {
+            if (dic == null) {
+                dic = mergeDic;
+                return;
+            }
+
+            if (dic == null) {
+                return;
+            }
+
+            foreach (KeyValuePair<K, V> pair in mergeDic) {
+                if (!dic.ContainsKey (pair.Key)) {
+                    dic.Add (pair.Key, pair.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Merge the specified list and mergeList.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="mergeList">Merge list.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
+        {
+            if (list == null) {
+                list = mergeList;
+                return;
+            }
+
+            if (list == null) {
+                return;
+            }
+
+            for (int i = 0; i < list.Count; i++) {
+                list [i].Merge<K, V> (mergeList [i]);
+            }
+        }
     }
 }
+

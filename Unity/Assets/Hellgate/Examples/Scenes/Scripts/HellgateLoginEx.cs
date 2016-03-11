@@ -92,7 +92,13 @@ public class HellgateLoginEx : SceneController
             // Set base url.
             HttpData.BASE_URL = manifest._Host.Game;
 
-            aDownloader = new AssetBundleInitialDownloader (manifest._Host.Resource, manifest._Resource.Name + ".json");
+            List<string> list = new List<string> ();
+            list.Add (manifest._Host.Resource);
+            list.Add (manifest._Resource.Name);
+
+            string url = Http.CreateURL (list, "json");
+
+            aDownloader = new AssetBundleInitialDownloader (url, manifest._Host.Resource);
             aDownloader.aEvent = CallbackDownloader;
             aDownloader.Download ();
         }

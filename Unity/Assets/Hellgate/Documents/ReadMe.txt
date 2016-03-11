@@ -54,5 +54,7 @@ NEW : Sqlite ORM join
 NEW : WebView
 2.2.0
 FIX : Sqlite ORM
+FIX : BuildVersionBinding
+FIX : AssetBundleInitialDownloader
 NEW : Excel -> Json
 NEW : ExtensionMethods

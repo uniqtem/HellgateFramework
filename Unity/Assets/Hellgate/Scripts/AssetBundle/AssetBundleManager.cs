@@ -74,7 +74,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void DownloadError (WWW www)
         {
-            HDebug.LogError ("WWW download error : " + www.error);
+            HDebug.LogError (www.url + " download error : " + www.error);
         }
 
         /// <summary>

@@ -136,6 +136,28 @@ namespace Hellgate
                 list [i].Merge<K, V> (mergeList [i]);
             }
         }
+
+        /// <summary>
+        /// Gets the list object.
+        /// </summary>
+        /// <returns>The list object.</returns>
+        /// <param name="list">List.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T GetListObject<T> (this List<object> list)
+        {
+            return Util.GetListObject<T> (list);
+        }
+
+        /// <summary>
+        /// Gets the list objects.
+        /// </summary>
+        /// <returns>The list objects.</returns>
+        /// <param name="list">List.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static List<T> GetListObjects<T> (this List<object> list)
+        {
+            return Util.GetListObjects<T> (list);
+        }
     }
 }
 

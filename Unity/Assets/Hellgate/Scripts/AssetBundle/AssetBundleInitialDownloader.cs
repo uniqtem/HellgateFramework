@@ -15,12 +15,18 @@ namespace Hellgate
 
         public delegate void EventDelegate (AssetBundleInitalStatus status);
 
+        public delegate void ResponseDelegate (WWW www);
+
 #endregion
 
         /// <summary>
         /// AssetBundleInitalDownloader status event.
         /// </summary>
         public EventDelegate aEvent = null;
+        /// <summary>
+        /// The response.
+        /// </summary>
+        public ResponseDelegate response = null;
         protected List<AssetBundleInitialData.AssetBundle> downloads;
         protected HttpData httpData;
         protected HttpManager httpManager;
@@ -79,19 +85,13 @@ namespace Hellgate
         /// <param name="baseUrl">Base URL.</param>
         /// <param name="name">Name.</param>
         /// <param name="assetExtension">Asset extension.</param>
-        public AssetBundleInitialDownloader (string baseUrl, string name, string assetExtension = "unity3d")
+        public AssetBundleInitialDownloader (string url, string baseUrl = "", string assetExtension = "unity3d")
         {
             AssetBundleData.BASE_URL = baseUrl;
             AssetBundleData.EXTENSION = assetExtension;
 
             assetBundleManager = AssetBundleManager.Instance;
             httpManager = HttpManager.Instance;
-
-            List<string> param = new List<string> ();
-            param.Add (baseUrl);
-            param.Add (name);
-
-            string url = Http.CreateURL (param);
 
             httpData = new HttpData (url);
             httpData.popUp = false;
@@ -114,6 +114,10 @@ namespace Hellgate
                     aEvent (AssetBundleInitalStatus.HttpError);
                 }
                 return;
+            }
+
+            if (response != null) {
+                response (www);
             }
 
             assetBundleData = Reflection.Convert<AssetBundleInitialData> ((IDictionary)Json.Deserialize (www.text));

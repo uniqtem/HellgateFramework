@@ -195,7 +195,7 @@ namespace Hellgate
         /// <param name="tableName">Table name.</param>
         /// <param name="t">T.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void INSERT<T> (string tableName, T t)
+        protected void INSERT<T> (string tableName, T t)
         {
             Dictionary<string, object> data = Reflection.Convert<T> (t, null, blindingFlags);
             data = CleanUseless (data);
@@ -219,7 +219,7 @@ namespace Hellgate
         /// <param name="tableName">Table name.</param>
         /// <param name="list">List.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void INSERT_BATCH<T> (string tableName, List<T> list)
+        protected void INSERT_BATCH<T> (string tableName, List<T> list)
         {
             List<Dictionary<string, object>> data = Reflection.Convert<T> (list, blindingFlags);
 
@@ -251,17 +251,6 @@ namespace Hellgate
         /// <summary>
         /// INSERT BATCH.
         /// </summary>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="list">List.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void INSERT_BATCH<T> (string tableName, T[] list)
-        {
-            INSERT_BATCH<T> (tableName, new List<T> (list));
-        }
-
-        /// <summary>
-        /// INSERT BATCH.
-        /// </summary>
         /// <param name="list">List.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public void INSERT_BATCH<T> (List<T> list)
@@ -280,21 +269,6 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// UPDATE the specified tableName, t and addQuery.
-        /// </summary>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="t">T.</param>
-        /// <param name="addQuery">Add query.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void UPDATE<T> (string tableName, T t, string addQuery)
-        {
-            Dictionary<string, object> data = Reflection.Convert<T> (t, null, blindingFlags);
-            data = CleanUseless (data);
-
-            UPDATE (tableName, data, addQuery);
-        }
-
-        /// <summary>
         /// UPDATE the specified t and addQuery.
         /// </summary>
         /// <param name="t">T.</param>
@@ -302,23 +276,10 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public void UPDATE<T> (T t, string addQuery)
         {
-            UPDATE<T> (GetTableName<T> (), t, addQuery);
-        }
-
-        /// <summary>
-        /// UPDATE the specified tableName, t, key and value.
-        /// </summary>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="t">T.</param>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void UPDATE<T> (string tableName, T t, string key, object value)
-        {
             Dictionary<string, object> data = Reflection.Convert<T> (t, null, blindingFlags);
             data = CleanUseless (data);
 
-            UPDATE (tableName, data, key, value);
+            UPDATE (GetTableName<T> (), data, addQuery);
         }
 
         /// <summary>
@@ -330,7 +291,7 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public void UPDATE<T> (T t, string key, object value)
         {
-            UPDATE<T> (GetTableName<T> (), t, key, value);
+            UPDATE<T> (t, GenerateWhereKeyValueSQL (key, value));
         }
 
         /// <summary>
@@ -339,8 +300,12 @@ namespace Hellgate
         /// <param name="tableName">Table name.</param>
         /// <param name="addQuery">Add query.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public T[] SELECT<T> (string tableName = "", string addQuery = "")
+        protected T[] SELECT<T> (string tableName, string addQuery)
         {
+            if (tableName == "") {
+                return null;
+            }
+
             SelectORMMaker mapper = new SelectORMMaker (typeof(T), tableName);
             mapper = Reflection.SetSelectORMMaker (mapper, blindingFlags);
 
@@ -357,7 +322,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="addQuery">Add query.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public T[] SELECT<T> (string addQuery)
+        public T[] SELECT<T> (string addQuery = "")
         {
             return SELECT<T> (GetTableName<T> (), addQuery);
         }
@@ -370,19 +335,7 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public T[] SELECT<T> (string key, object value)
         {
-            return SELECT<T> (GetTableName<T> (), key, value);
-        }
-
-        /// <summary>
-        /// SELECT the specified tableName, key and value.
-        /// </summary>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public T[] SELECT<T> (string tableName, string key, object value)
-        {
-            return SELECT<T> (tableName, GenerateWhereKeyValueSQL (key, value));
+            return SELECT<T> (GetTableName<T> (), GenerateWhereKeyValueSQL (key, value));
         }
 
         /// <summary>
@@ -416,6 +369,7 @@ namespace Hellgate
             TableAttribute table = type.GetAttributeValue<TableAttribute> ();
 
             if (table == null) {
+                HDebug.LogError ("Not set the table attribute.");
                 return "";
             } else if (table.TableName == "") {
                 return type.Name;

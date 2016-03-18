@@ -12,6 +12,18 @@ namespace Hellgate
 {
     public partial class Reflection
     {
+        private static bool SqliteIgnoreAttribute (FieldInfo field)
+        {
+            ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
+            if (column != null) {
+                if (column.CheckConstraints (DataConstraints.AI)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Convert the specified data and flag.
         /// </summary>
@@ -28,8 +40,8 @@ namespace Hellgate
             foreach (FieldInfo field in fieldInfos) {
                 object data = null;
                 if (Util.IsValueType (field.FieldType)) {
-                    string key = string.Format ("{0}{1}{2}", tableName, Query.UNDERLINE, field.Name);
-                    if (row.ContainsKey (tableName + Query.UNDERLINE + field.Name)) {
+                    string key = new SQLMaker ().Underline (tableName, field.UnderscoreName ());
+                    if (row.ContainsKey (key)) {
                         data = row [key];
                         data = ConvertIgnoreData (field, data);
                         if (data == null || data.ToString () == "") {
@@ -41,7 +53,7 @@ namespace Hellgate
                         row.Remove (key);
                     }
                 } else {
-                    data = Convert(row, flag, field.FieldType);
+                    data = Convert (row, flag, field.FieldType);
                 }
 
                 if (data != null) {
@@ -66,43 +78,10 @@ namespace Hellgate
         {
             T[] ts = new T[table.Rows.Count];
             for (int i = 0; i < table.Rows.Count; i++) {
-                ts[i] = (T)Convert (table.Rows [i], flag, typeof (T));
+                ts [i] = (T)Convert (table.Rows [i], flag, typeof(T));
             }
 
             return ts;
-        }
-
-        /// <summary>
-        /// Gets the executing assembly.
-        /// </summary>
-        /// <returns>The executing assembly.</returns>
-        public static Type[] GetExecutingAssembly ()
-        {
-            return Assembly.GetExecutingAssembly ().GetTypes ();
-        }
-
-        /// <summary>
-        /// Fields the AMC retrieve.
-        /// </summary>
-        /// <returns>The AMC retrieve.</returns>
-        /// <param name="type">Type.</param>
-        /// <param name="flag">Flag.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static AttributeMappingConfig<T>[] FieldAMCRetrieve<T> (Type type, BindingFlags flag = BindingFlags.NonPublic) where T : class
-        {
-            FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
-
-            AttributeMappingConfig<T>[] configs = new AttributeMappingConfig<T> [fieldInfos.Length];
-            for (int i = 0; i < fieldInfos.Length; i++) {
-                AttributeMappingConfig<T> temp = new AttributeMappingConfig<T> ();
-
-                temp.t = fieldInfos [i].GetAttributeValue<T> ();
-                temp.name = fieldInfos [i].Name;
-                temp.type = fieldInfos [i].FieldType;
-                configs [i] = temp;
-            }
-
-            return configs;
         }
 
         /// <summary>
@@ -126,9 +105,9 @@ namespace Hellgate
 
                 // FK
                 ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
-                if (column != null && column.CheckConstraints (SqliteDataConstraints.FK)) {
+                if (column != null && column.CheckConstraints (DataConstraints.FK)) {
                     if (column.Key != null && column.Value != "") {
-                        mapper.SetJoin (column.Key, column.Value, field.Name);
+                        mapper.SetJoin (column.Key, column.Value, field.UnderscoreName ());
                     } else {
                         HDebug.LogWarning (field.Name + " the column attribute is set problem");
                     }
@@ -136,7 +115,7 @@ namespace Hellgate
 
                 // select
                 if (Util.IsValueType (field.FieldType)) {
-                    mapper.SetSelect (field.Name);
+                    mapper.SetSelect (field.UnderscoreName ());
                 } else {
                     if (mapper.SetType (field.FieldType, copyType) == "") {
                         HDebug.LogWarning (field.FieldType + " the table is not set.");

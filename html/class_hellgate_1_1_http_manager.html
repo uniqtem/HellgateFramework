@@ -18,7 +18,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Hellgate Framework
-   &#160;<span id="projectnumber">2.0.0</span>
+   &#160;<span id="projectnumber">2.1.0</span>
    </div>
    <div id="projectbrief">Basic Unity project framework</div>
   </td>
@@ -54,6 +54,7 @@
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="#properties">Properties</a> &#124;
 <a href="class_hellgate_1_1_http_manager-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -65,6 +66,9 @@
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5c5633f506981d96c524d8bb9586d050"><td class="memItemLeft" align="right" valign="top">delegate TResult&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#a5c5633f506981d96c524d8bb9586d050">TResultDelegate&lt; out TResult &gt;</a> (object obj)</td></tr>
+<tr class="memdesc:a5c5633f506981d96c524d8bb9586d050"><td class="mdescLeft">&#160;</td><td class="mdescRight">Response delegate.  <a href="#a5c5633f506981d96c524d8bb9586d050">More...</a><br /></td></tr>
+<tr class="separator:a5c5633f506981d96c524d8bb9586d050"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb8430798078cbd432cb96053b92cac5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#aeb8430798078cbd432cb96053b92cac5">Request</a> (<a class="el" href="class_hellgate_1_1_http_data.html">HttpData</a> data, bool post)</td></tr>
 <tr class="memdesc:aeb8430798078cbd432cb96053b92cac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request the specified data and post.  <a href="#aeb8430798078cbd432cb96053b92cac5">More...</a><br /></td></tr>
 <tr class="separator:aeb8430798078cbd432cb96053b92cac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -97,14 +101,31 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:a45cfd0752b9e6b6fdb78c4358d88efac"><td class="memItemLeft" align="right" valign="top">const string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#a45cfd0752b9e6b6fdb78c4358d88efac">HTTP_MANAGER</a> = &quot;HttpManager&quot;</td></tr>
+<tr class="separator:a45cfd0752b9e6b6fdb78c4358d88efac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa93db6816a0f1ad68639578f6a605568"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_hellgate_1_1_s_scene_controller.html">SSceneController</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#aa93db6816a0f1ad68639578f6a605568">popUp</a></td></tr>
 <tr class="separator:aa93db6816a0f1ad68639578f6a605568"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:abcd944e593df34c0ee2ed7cae8f134f7"><td class="memItemLeft" align="right" valign="top">static TResultDelegate&lt; <a class="el" href="class_hellgate_1_1_http_data.html">HttpData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#abcd944e593df34c0ee2ed7cae8f134f7">preReuqest</a></td></tr>
+<tr class="memdesc:abcd944e593df34c0ee2ed7cae8f134f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pre reuqest.  <a href="#abcd944e593df34c0ee2ed7cae8f134f7">More...</a><br /></td></tr>
+<tr class="separator:abcd944e593df34c0ee2ed7cae8f134f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaed15b6ead181977d114bb65e68c32dc"><td class="memItemLeft" align="right" valign="top">static TResultDelegate&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#aaed15b6ead181977d114bb65e68c32dc">response</a> = null</td></tr>
+<tr class="memdesc:aaed15b6ead181977d114bb65e68c32dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The response.  <a href="#aaed15b6ead181977d114bb65e68c32dc">More...</a><br /></td></tr>
+<tr class="separator:aaed15b6ead181977d114bb65e68c32dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
 Properties</h2></td></tr>
 <tr class="memitem:a3d5307ce705f848df969ff6d43893630"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_hellgate_1_1_http_manager.html">HttpManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#a3d5307ce705f848df969ff6d43893630">Instance</a><code> [get]</code></td></tr>
 <tr class="memdesc:a3d5307ce705f848df969ff6d43893630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the instance.  <a href="#a3d5307ce705f848df969ff6d43893630">More...</a><br /></td></tr>
 <tr class="separator:a3d5307ce705f848df969ff6d43893630"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade31ad398a6a1d659e73f7153e64d615"><td class="memItemLeft" align="right" valign="top">TResultDelegate&lt; <a class="el" href="class_hellgate_1_1_http_data.html">HttpData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#ade31ad398a6a1d659e73f7153e64d615">PreRequest</a><code> [set]</code></td></tr>
+<tr class="memdesc:ade31ad398a6a1d659e73f7153e64d615"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the pre request.  <a href="#ade31ad398a6a1d659e73f7153e64d615">More...</a><br /></td></tr>
+<tr class="separator:ade31ad398a6a1d659e73f7153e64d615"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0088f88bedbde6e9f7ccdb1b97ed8330"><td class="memItemLeft" align="right" valign="top">TResultDelegate&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_hellgate_1_1_http_manager.html#a0088f88bedbde6e9f7ccdb1b97ed8330">Response</a><code> [set]</code></td></tr>
+<tr class="memdesc:a0088f88bedbde6e9f7ccdb1b97ed8330"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the response.  <a href="#a0088f88bedbde6e9f7ccdb1b97ed8330">More...</a><br /></td></tr>
+<tr class="separator:a0088f88bedbde6e9f7ccdb1b97ed8330"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a049f80d3fc5a42e66b69727850e7ce16"></a>
@@ -409,7 +430,45 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a5c5633f506981d96c524d8bb9586d050"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">delegate TResult Hellgate.HttpManager.TResultDelegate&lt; out TResult &gt; </td>
+          <td>(</td>
+          <td class="paramtype">object&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Response delegate. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a45cfd0752b9e6b6fdb78c4358d88efac"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const string Hellgate.HttpManager.HTTP_MANAGER = &quot;HttpManager&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="aa93db6816a0f1ad68639578f6a605568"></a>
 <div class="memitem">
 <div class="memproto">
@@ -427,6 +486,50 @@ Properties</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abcd944e593df34c0ee2ed7cae8f134f7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TResultDelegate&lt;<a class="el" href="class_hellgate_1_1_http_data.html">HttpData</a>&gt; Hellgate.HttpManager.preReuqest</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The pre reuqest. </p>
+
+</div>
+</div>
+<a class="anchor" id="aaed15b6ead181977d114bb65e68c32dc"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TResultDelegate&lt;bool&gt; Hellgate.HttpManager.response = null</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The response. </p>
 
 </div>
 </div>
@@ -454,13 +557,61 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ade31ad398a6a1d659e73f7153e64d615"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TResultDelegate&lt;<a class="el" href="class_hellgate_1_1_http_data.html">HttpData</a>&gt; Hellgate.HttpManager.PreRequest</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the pre request. </p>
+<p>To request a callback just before. </p>
+<p>The pre request.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0088f88bedbde6e9f7ccdb1b97ed8330"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TResultDelegate&lt;bool&gt; Hellgate.HttpManager.Response</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the response. </p>
+<p>Return false if the do not <a class="el" href="class_hellgate_1_1_http_data.html#a7efd78489fe0fb9019d1e48a0a1d2d4d">HttpData.finishedDelegate</a>. </p>
+<p>The response.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>Unity/Assets/Hellgate/Scripts/Http/<a class="el" href="_http_manager_8cs.html">HttpManager.cs</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 10 2015 17:52:02 for Hellgate Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 3 2016 14:16:00 for Hellgate Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.10
 </small></address>

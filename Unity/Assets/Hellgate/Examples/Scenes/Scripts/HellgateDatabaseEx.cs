@@ -12,7 +12,7 @@ using Hellgate;
 [Table ("board")]
 public class Board
 {
-    [Column (SqliteDataConstraints.AI)]
+    [Column (DataConstraints.AI)]
     private int idx = 0;
     private string name = "";
     private string description = "";
@@ -57,9 +57,9 @@ public class Board
 [Table ("comment")]
 public class Comment
 {
-    [Column (SqliteDataConstraints.AI)]
+    [Column (DataConstraints.AI)]
     private int idx = 0;
-    [Column (SqliteDataConstraints.FK, typeof(Board), "idx")]
+    [Column (DataConstraints.FK, typeof(Board), "idx")]
     private int boardIdx = 0;
     private string name = "";
     private string description = "";
@@ -123,7 +123,7 @@ public class HellgateDatabaseEx : SceneController
         title.text = intent ["title"].ToString ();
         idx = 0;
 
-        query = new Query ("Hellgate.db");
+        query = new Query ("hellgate.db");
         temp.SetActive (false);
     }
 
@@ -142,8 +142,10 @@ public class HellgateDatabaseEx : SceneController
     private void ListView ()
     {
         HellgateTempEx[] childs = grid.GetComponentsInChildren<HellgateTempEx> ();
-        for (int i = 0; i < childs.Length; i++) {
-            Destroy (childs [i].gameObject);
+        if (childs.Length > 0) {
+            for (int i = 0; i < childs.Length; i++) {
+                Destroy (childs [i].gameObject);
+            }
         }
 
         Board[] data = query.SELECT<Board> ();

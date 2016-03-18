@@ -35,9 +35,11 @@ namespace Hellgate
         }
 #endif
 
-#if UNITY_IPHONE
+#if UNITY_IOS
         [DllImport ("__Internal")]
         private static extern string _GetCFBundleVersion ();
+        [DllImport ("__Internal")]
+        private static extern string _GetCFBundleShortVersionString ();
 
         public static string IOSBundleVersion {
             get {
@@ -52,7 +54,7 @@ namespace Hellgate
 
         private static void GetVersionInfo ()
         {
-            IbundleVersion = _GetCFBundleVersion ();
+            IbundleVersion = _GetCFBundleShortVersionString ();
         }
 #endif
 

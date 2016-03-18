@@ -10,8 +10,6 @@ namespace Hellgate
 {
     public class SQLMaker : SQLConverter
     {
-        public const string UNDERLINE = "_";
-
         protected string ConvertListToString (List<string> list, bool comma = true)
         {
             if (list == null || list.Count <= 0) {
@@ -48,6 +46,17 @@ namespace Hellgate
             }
 
             return stringBuilder;
+        }
+
+        /// <summary>
+        /// Column Converts the camel to underscore.
+        /// </summary>
+        /// <returns>The camel to underscore.</returns>
+        /// <param name="tableName">Table name.</param>
+        /// <param name="columnName">Column name.</param>
+        protected string ConvertCamelToUnderscore (string tableName, string columnName)
+        {
+            return Underline (tableName, Util.ConvertCamelToUnderscore (columnName));
         }
 
         /// <summary>
@@ -202,7 +211,7 @@ namespace Hellgate
             }
 
             return string.Format (
-                "SELECT {0} FROM {1} {2} {3};",
+                "SELECT {0} FROM {1} {2} {3} {4};",
                 ConvertListToString (selects),
                 ConvertListToString (tables),
                 ConvertListToString (joins, false),
@@ -270,7 +279,7 @@ namespace Hellgate
 
             for (int i = 0; i < configs.Length; i++) {
                 StringBuilder temp = new StringBuilder ();
-                temp.AppendFormat ("'{0}'", configs [i].name);
+                temp.AppendFormat ("'{0}'", Util.ConvertCamelToUnderscore (configs [i].name));
 
                 if (configs [i].t == null || configs [i].t.Type == "") {
                     temp.Append (ConvertToSQLType (configs [i].type));
@@ -301,7 +310,10 @@ namespace Hellgate
         /// <param name="columnName">Column name.</param>
         public string GenerateSelectAliasSQL (string tableName, string columnName)
         {
-            return string.Format ("{0} as {1}{2}{3}", Period (tableName, columnName), tableName, UNDERLINE, columnName);
+            return string.Format ("{0} as {1}",
+                                  Period (tableName, Util.ConvertCamelToUnderscore (columnName)),
+                                  ConvertCamelToUnderscore (tableName,
+                                                            columnName));
         }
 
         /// <summary>
@@ -349,6 +361,16 @@ namespace Hellgate
         public string EqualsSign (string key, string value)
         {
             return string.Format ("{0} = {1}", key, value);
+        }
+
+        /// <summary>
+        /// Underline the specified key and value.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        public string Underline (string key, string value)
+        {
+            return string.Format ("{0}_{1}", key, value);
         }
     }
 }

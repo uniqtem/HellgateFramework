@@ -85,7 +85,12 @@ namespace Hellgate
                 }
 
                 if (field.FieldType != data.GetType ()) {
-                    data = System.Convert.ChangeType (data, field.FieldType);
+                    try {
+                        data = System.Convert.ChangeType (data, field.FieldType);
+                    } catch (Exception e) {
+                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, type.Name, field.Name));
+                        continue;
+                    }
                 }
 
                 field.SetValue (obj, data);
@@ -141,11 +146,9 @@ namespace Hellgate
                     continue;
                 }
 
-                ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
-                if (column != null) {
-                    if (column.CheckConstraints (SqliteDataConstraints.AI)) {
-                        continue;
-                    }
+                // sqlite ignore
+                if (SqliteIgnoreAttribute (field)) {
+                    continue;
                 }
 
                 data.Add (field.Name, field.GetValue (t));
@@ -182,6 +185,39 @@ namespace Hellgate
         public static List<Dictionary<string, object>> Convert<T> (T[] list, BindingFlags flag = BindingFlags.NonPublic)
         {
             return Convert<T> (new List<T> (list), flag);
+        }
+
+        /// <summary>
+        /// Fields the AMC retrieve.
+        /// </summary>
+        /// <returns>The AMC retrieve.</returns>
+        /// <param name="type">Type.</param>
+        /// <param name="flag">Flag.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static AttributeMappingConfig<T>[] FieldAMCRetrieve<T> (Type type, BindingFlags flag = BindingFlags.NonPublic) where T : class
+        {
+            FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
+
+            AttributeMappingConfig<T>[] configs = new AttributeMappingConfig<T> [fieldInfos.Length];
+            for (int i = 0; i < fieldInfos.Length; i++) {
+                AttributeMappingConfig<T> temp = new AttributeMappingConfig<T> ();
+
+                temp.t = fieldInfos [i].GetAttributeValue<T> ();
+                temp.name = fieldInfos [i].Name;
+                temp.type = fieldInfos [i].FieldType;
+                configs [i] = temp;
+            }
+
+            return configs;
+        }
+
+        /// <summary>
+        /// Gets the executing assembly.
+        /// </summary>
+        /// <returns>The executing assembly.</returns>
+        public static Type[] GetExecutingAssembly ()
+        {
+            return Assembly.GetExecutingAssembly ().GetTypes ();
         }
     }
 }

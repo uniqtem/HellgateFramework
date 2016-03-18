@@ -74,7 +74,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void DownloadError (WWW www)
         {
-            HDebug.LogError ("WWW download error : " + www.error);
+            HDebug.LogError (www.url + " download error : " + www.error);
         }
 
         /// <summary>
@@ -138,6 +138,12 @@ namespace Hellgate
         {
             System.Action InnerLoadAssetBundle = () => {
                 System.Action InnerLoadAsset = () => {
+                    if (data.objName == string.Empty) {
+                        HDebug.LogWarning ("Set the object name in the assetbundle.");
+                        finished (null);
+                        return;
+                    }
+
                     if (data.async) {
                         StartCoroutine (LoadAssetAsync (data, finished));
                     } else {

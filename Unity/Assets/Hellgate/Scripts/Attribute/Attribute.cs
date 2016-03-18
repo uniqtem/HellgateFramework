@@ -7,6 +7,23 @@ using System;
 
 namespace Hellgate
 {
+    /// <summary>
+    /// Data constraints.
+    /// </summary>
+    public enum DataConstraints
+    {
+        // NOT NULL
+        NOTNULL,
+        // PRIMARY KEY
+        PK,
+        // FOREIGN KEY
+        FK,
+        // AUTOINCREMENT
+        AI,
+        // UNIQUE
+        UNIQUE
+    }
+
     public class AttributeMappingConfig<T>
     {
         /// <summary>
@@ -82,7 +99,7 @@ namespace Hellgate
     [AttributeUsage (AttributeTargets.Field)]
     public class ColumnAttribute : Attribute
     {
-        private SqliteDataConstraints[] constraints;
+        private DataConstraints[] constraints;
         private string type = "";
         private Type key = null;
         private string value = "";
@@ -92,7 +109,7 @@ namespace Hellgate
         /// Gets the constraints.
         /// </summary>
         /// <value>The constraints.</value>
-        public SqliteDataConstraints[] Constraints {
+        public DataConstraints[] Constraints {
             get {
                 return constraints;
             }
@@ -124,7 +141,7 @@ namespace Hellgate
         /// <value>The value.</value>
         public string Value {
             get {
-                return this.value;
+                return Util.ConvertCamelToUnderscore (this.value);
             }
         }
 
@@ -133,7 +150,7 @@ namespace Hellgate
         /// </summary>
         /// <returns><c>true</c>, if constraints was checked, <c>false</c> otherwise.</returns>
         /// <param name="constraints">Constraints.</param>
-        public bool CheckConstraints (SqliteDataConstraints constraints)
+        public bool CheckConstraints (DataConstraints constraints)
         {
             if (!isConstraints) {
                 return false;
@@ -160,9 +177,9 @@ namespace Hellgate
         /// <param name="constraints">Constraints.</param>
         /// <param name="key">Key. If constraints [FK] table name</param>
         /// <param name="value">Value. If constraints [FK] column name</param>
-        public ColumnAttribute (SqliteDataConstraints constraints, Type key = null, string value = "")
+        public ColumnAttribute (DataConstraints constraints, Type key = null, string value = "")
         {
-            this.constraints = new SqliteDataConstraints[] { constraints };
+            this.constraints = new DataConstraints[] { constraints };
             this.key = key;
             this.value = value;
         }
@@ -171,7 +188,7 @@ namespace Hellgate
         /// Initializes a new instance of the <see cref="Hellgate.ColumnAttribute"/> class.
         /// </summary>
         /// <param name="constraints">Constraints.</param>
-        public ColumnAttribute (SqliteDataConstraints[] constraints)
+        public ColumnAttribute (DataConstraints[] constraints)
         {
             this.constraints = constraints;
         }
@@ -193,10 +210,10 @@ namespace Hellgate
         /// <param name="constraints">Constraints.</param>
         /// <param name="key">Key. If constraints [FK] table name</param>
         /// <param name="value">Value. If constraints [FK] column name</param>
-        public ColumnAttribute (string type, SqliteDataConstraints constraints, Type key = null, string value = "")
+        public ColumnAttribute (string type, DataConstraints constraints, Type key = null, string value = "")
         {
             this.type = type;
-            this.constraints = new SqliteDataConstraints[] { constraints };
+            this.constraints = new DataConstraints[] { constraints };
             this.key = key;
             this.value = value;
         }
@@ -206,10 +223,21 @@ namespace Hellgate
         /// </summary>
         /// <param name="type">Type.</param>
         /// <param name="constraints">Constraints.</param>
-        public ColumnAttribute (string type, SqliteDataConstraints[] constraints)
+        public ColumnAttribute (string type, DataConstraints[] constraints)
         {
             this.type = type;
             this.constraints = constraints;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.ColumnAttribute"/> class.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        public ColumnAttribute (Type key, string value)
+        {
+            this.key = key;
+            this.value = value;
         }
     }
 
@@ -218,15 +246,73 @@ namespace Hellgate
     {
         private SqliteJoinType type = SqliteJoinType.NONE;
 
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
         public SqliteJoinType Type {
             get {
                 return type;
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.JoinAttribute"/> class.
+        /// </summary>
+        /// <param name="type">Type.</param>
         public JoinAttribute (SqliteJoinType type)
         {
             this.type = type;
+        }
+    }
+
+    public class ExcelAttribute : Attribute
+    {
+        private string sheetName;
+        private string createFileName;
+        private bool indexFlag;
+
+        /// <summary>
+        /// Gets the name of the sheet.
+        /// </summary>
+        /// <value>The name of the sheet.</value>
+        public string SheetName {
+            get {
+                return sheetName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the create file.
+        /// </summary>
+        /// <value>The name of the create file.</value>
+        public string CreateFileName {
+            get {
+                return createFileName;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Hellgate.ExcelAttribute"/> index flag.
+        /// </summary>
+        /// <value><c>true</c> if index flag; otherwise, <c>false</c>.</value>
+        public bool IndexFlag {
+            get {
+                return indexFlag;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.ExcelAttribute"/> class.
+        /// </summary>
+        /// <param name="sheetName">Sheet name.</param>
+        /// <param name="createFileName">Create file name.</param>
+        /// <param name="indexFlag">If set to <c>true</c> index flag.</param>
+        public ExcelAttribute (string sheetName, string createFileName = "", bool indexFlag = false)
+        {
+            this.sheetName = sheetName;
+            this.createFileName = createFileName;
+            this.indexFlag = indexFlag;
         }
     }
 

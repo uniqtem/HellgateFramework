@@ -13,23 +13,6 @@ using Mono.Data.Sqlite;
 namespace Hellgate
 {
     /// <summary>
-    /// Sqlite data constraints.
-    /// </summary>
-    public enum SqliteDataConstraints
-    {
-        // NOT NULL
-        NOTNULL,
-        // PRIMARY KEY
-        PK,
-        // FOREIGN KEY
-        FK,
-        // AUTOINCREMENT
-        AI,
-        // UNIQUE
-        UNIQUE
-    }
-
-    /// <summary>
     /// Sqlite join type.
     /// </summary>
     public enum SqliteJoinType

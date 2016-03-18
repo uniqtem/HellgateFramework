@@ -64,14 +64,14 @@ namespace Hellgate
         /// <returns>The child object.</returns>
         /// <param name="GameObject">gameObject.</param>
         /// <param name="strName">String name.</param>
-        public static GameObject GetChildObject(GameObject gO, string strName)
+        public static GameObject GetChildObject (GameObject gObj, string strName)
         {
-            Transform[] AllData = gO.GetComponentsInChildren<Transform>(true);
+            Transform[] AllData = gObj.GetComponentsInChildren<Transform> (true);
             GameObject target = null;
 
             for (int i = 0; i < AllData.Length; i++) {
-                if (AllData[i].name == strName) {
-                    target = AllData[i].gameObject;
+                if (AllData [i].name == strName) {
+                    target = AllData [i].gameObject;
                     break;
                 }
             }
@@ -85,9 +85,9 @@ namespace Hellgate
         /// <returns>The child object.</returns>
         /// <param name="gO">GameObject.</param>
         /// <param name="strName">String name.</param>
-        public static GameObject FindChildObject (GameObject gO, string strName)
+        public static GameObject FindChildObject (GameObject gObj, string strName)
         {
-            Transform[] AllData = gO.GetComponentsInChildren<Transform> (true);
+            Transform[] AllData = gObj.GetComponentsInChildren<Transform> (true);
             GameObject target = null;
 
             for (int i = 0; i < AllData.Length; i++) {
@@ -107,9 +107,9 @@ namespace Hellgate
         /// <param name="gO">G o.</param>
         /// <param name="strName">String name.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T FindChildObject<T> (GameObject gO, string strName)
+        public static T FindChildObject<T> (GameObject gObj, string strName)
         {
-            GameObject target = FindChildObject (gO, strName);
+            GameObject target = FindChildObject (gObj, strName);
             if (target != null) {
                 return target.GetComponent<T> ();
             } else {
@@ -225,35 +225,13 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Gets the device.
-        /// pc & ios & android
+        /// Converts the camel to underscore.
         /// </summary>
-        /// <returns>The device.</returns>
-        public static string GetDevice ()
+        /// <returns>The camel to underscore.</returns>
+        /// <param name="input">Input.</param>
+        public static string ConvertCamelToUnderscore (string input)
         {
-            string typeCode = "";
-#if UNITY_EDITOR
-            if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
-                typeCode = ANDROID;
-            } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
-                typeCode = IOS;
-            } else {
-                typeCode = PC;
-            }
-
-#elif UNITY_ANDROID 
-            if (Application.platform == RuntimePlatform.Android) {
-                typeCode = ANDROID;
-            }
-#elif UNITY_IOS
-            if (Application.platform == RuntimePlatform.IPhonePlayer) {
-                typeCode = IOS;
-            }
-#elif UNITY_STANDALONE
-            typeCode = PC;
-#endif
-
-            return typeCode;
+            return System.Text.RegularExpressions.Regex.Replace (input, "(?x)( [A-Z][a-z,0-9]+ | [A-Z]+(?![a-z]) )", "_$0").ToLower ();
         }
 
         /// <summary>
@@ -282,20 +260,68 @@ namespace Hellgate
         /// <returns>The distinct values.</returns>
         /// <param name="array">Array.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static List<T> GetDistinctValues<T> (T[] array)
+        public static T [] GetDistinctValues<T> (T[] array)
         {
-            List<T> temp = new List<T> ();
-            for (int i = 0; i < array.Length; i++) {
-                if (temp.Contains (array [i])) {
-                    continue;
-                }
-
-                temp.Add (array [i]);
-            }
-
-            return temp;
+            return GetDistinctValues<T> (new List<T> (array)).ToArray ();
         }
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="iList">IList.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="list">List.</param>
+        public static List<object> GetValue (IList iList, string keyName, List<object> list = null)
+        {
+            if (list == null) {
+                list = new List<object> ();
+            }
+
+            foreach (Dictionary<string, object> iDic in iList) {
+                GetValue (iDic, keyName, list);
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="iDic">IDictionary.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="list">List.</param>
+        public static List<object> GetValue (IDictionary iDic, string keyName, List<object> list = null)
+        {
+            if (list == null) {
+                list = new List<object> ();
+            }
+
+            foreach (object obj in iDic.Keys) {
+                if (obj.ToString () == keyName) {
+                    if (!list.Contains (iDic [obj])) {
+                        list.Add (iDic [obj]);
+                    }
+                } else {
+                    IList asList;
+                    IDictionary asDic;
+                    if ((asList = iDic [obj] as IList) != null) {
+                        GetValue (asList, keyName, list);
+                    } else if ((asDic = iDic [obj] as IDictionary) != null) {
+                        GetValue (asDic as Dictionary<string, object>, keyName, list);
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Determines if is integer the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is integer the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsInteger (Type type)
         {
             return (
@@ -310,40 +336,92 @@ namespace Hellgate
             ); 
         }
 
+        /// <summary>
+        /// Determines if is float the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is float the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsFloat (Type type)
         {
             return (type == typeof(float) | type == typeof(double) | type == typeof(Decimal));
         }
 
+        /// <summary>
+        /// Determines if is numeric the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is numeric the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsNumeric (Type type)
         {
             if (!(
-                type == typeof(Byte) ||
-                type == typeof(Int16) ||
-                type == typeof(Int32) ||
-                type == typeof(Int64) ||
-                type == typeof(SByte) ||
-                type == typeof(UInt16) ||
-                type == typeof(UInt32) ||
-                type == typeof(UInt64) ||
-                type == typeof(Decimal) ||
-                type == typeof(Double) ||
-                type == typeof(Single)
-            )) {
+                    type == typeof(Byte) ||
+                    type == typeof(Int16) ||
+                    type == typeof(Int32) ||
+                    type == typeof(Int64) ||
+                    type == typeof(SByte) ||
+                    type == typeof(UInt16) ||
+                    type == typeof(UInt32) ||
+                    type == typeof(UInt64) ||
+                    type == typeof(Decimal) ||
+                    type == typeof(Double) ||
+                    type == typeof(Single)
+                )) {
                 return false;
             } else {
                 return true;
             }
         }
 
+        /// <summary>
+        /// Determines if is text the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is text the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsText (Type type)
         {
             return (type == typeof(String) || type == typeof(Char));
         }
 
+        /// <summary>
+        /// Determines if is value type the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is value type the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
         public static bool IsValueType (Type type)
         {
             return (IsText (type) || IsNumeric (type));
+        }
+
+        /// <summary>
+        /// Gets the device.
+        /// pc & ios & android
+        /// </summary>
+        /// <returns>The device.</returns>
+        public static string GetDevice ()
+        {
+            string typeCode = "";
+#if UNITY_EDITOR
+            if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
+                typeCode = ANDROID;
+            } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
+                typeCode = IOS;
+            } else {
+                typeCode = PC;
+            }
+
+#elif UNITY_ANDROID 
+            if (Application.platform == RuntimePlatform.Android) {
+            typeCode = ANDROID;
+            }
+#elif UNITY_IOS
+            if (Application.platform == RuntimePlatform.IPhonePlayer) {
+            typeCode = IOS;
+            }
+#elif UNITY_STANDALONE
+            typeCode = PC;
+#endif
+
+            return typeCode;
         }
     }
 }

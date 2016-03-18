@@ -19,7 +19,7 @@ public class HellgateWebViewEx : SceneController
 
         WebViewManager.Instance.ProgressReceivedEvent += OnProgress;
         WebViewManager.Instance.ErrorReceivedEvent += OnError;
-        WebViewManager.Instance.LoadURL (url, 50, 100, 50, 50);
+        WebViewManager.Instance.LoadURL (url, 50, 150, 50, 50);
 //        WebViewManager.Instance.SetBackground (false);
     }
 

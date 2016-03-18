@@ -85,7 +85,12 @@ namespace Hellgate
                 }
 
                 if (field.FieldType != data.GetType ()) {
-                    data = System.Convert.ChangeType (data, field.FieldType);
+                    try {
+                        data = System.Convert.ChangeType (data, field.FieldType);
+                    } catch (Exception e) {
+                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, type.Name, field.Name));
+                        continue;
+                    }
                 }
 
                 field.SetValue (obj, data);

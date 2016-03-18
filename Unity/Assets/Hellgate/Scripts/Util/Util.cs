@@ -64,9 +64,9 @@ namespace Hellgate
         /// <returns>The child object.</returns>
         /// <param name="GameObject">gameObject.</param>
         /// <param name="strName">String name.</param>
-        public static GameObject GetChildObject (GameObject gO, string strName)
+        public static GameObject GetChildObject (GameObject gObj, string strName)
         {
-            Transform[] AllData = gO.GetComponentsInChildren<Transform> (true);
+            Transform[] AllData = gObj.GetComponentsInChildren<Transform> (true);
             GameObject target = null;
 
             for (int i = 0; i < AllData.Length; i++) {
@@ -85,9 +85,9 @@ namespace Hellgate
         /// <returns>The child object.</returns>
         /// <param name="gO">GameObject.</param>
         /// <param name="strName">String name.</param>
-        public static GameObject FindChildObject (GameObject gO, string strName)
+        public static GameObject FindChildObject (GameObject gObj, string strName)
         {
-            Transform[] AllData = gO.GetComponentsInChildren<Transform> (true);
+            Transform[] AllData = gObj.GetComponentsInChildren<Transform> (true);
             GameObject target = null;
 
             for (int i = 0; i < AllData.Length; i++) {
@@ -107,9 +107,9 @@ namespace Hellgate
         /// <param name="gO">G o.</param>
         /// <param name="strName">String name.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T FindChildObject<T> (GameObject gO, string strName)
+        public static T FindChildObject<T> (GameObject gObj, string strName)
         {
-            GameObject target = FindChildObject (gO, strName);
+            GameObject target = FindChildObject (gObj, strName);
             if (target != null) {
                 return target.GetComponent<T> ();
             } else {
@@ -260,18 +260,61 @@ namespace Hellgate
         /// <returns>The distinct values.</returns>
         /// <param name="array">Array.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static List<T> GetDistinctValues<T> (T[] array)
+        public static T [] GetDistinctValues<T> (T[] array)
         {
-            List<T> temp = new List<T> ();
-            for (int i = 0; i < array.Length; i++) {
-                if (temp.Contains (array [i])) {
-                    continue;
-                }
+            return GetDistinctValues<T> (new List<T> (array)).ToArray ();
+        }
 
-                temp.Add (array [i]);
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="iList">IList.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="list">List.</param>
+        public static List<object> GetValue (IList iList, string keyName, List<object> list = null)
+        {
+            if (list == null) {
+                list = new List<object> ();
             }
 
-            return temp;
+            foreach (Dictionary<string, object> iDic in iList) {
+                GetValue (iDic, keyName, list);
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="iDic">IDictionary.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="list">List.</param>
+        public static List<object> GetValue (IDictionary iDic, string keyName, List<object> list = null)
+        {
+            if (list == null) {
+                list = new List<object> ();
+            }
+
+            foreach (object obj in iDic.Keys) {
+                if (obj.ToString () == keyName) {
+                    if (!list.Contains (iDic [obj])) {
+                        list.Add (iDic [obj]);
+                    }
+                } else {
+                    IList asList;
+                    IDictionary asDic;
+                    if ((asList = iDic [obj] as IList) != null) {
+                        GetValue (asList, keyName, list);
+                    } else if ((asDic = iDic [obj] as IDictionary) != null) {
+                        GetValue (asDic as Dictionary<string, object>, keyName, list);
+                    }
+                }
+            }
+
+            return list;
         }
 
         /// <summary>

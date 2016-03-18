@@ -123,7 +123,7 @@ public class HellgateDatabaseEx : SceneController
         title.text = intent ["title"].ToString ();
         idx = 0;
 
-        query = new Query ("Hellgate.db");
+        query = new Query ("hellgate.db");
         temp.SetActive (false);
     }
 
@@ -142,8 +142,10 @@ public class HellgateDatabaseEx : SceneController
     private void ListView ()
     {
         HellgateTempEx[] childs = grid.GetComponentsInChildren<HellgateTempEx> ();
-        for (int i = 0; i < childs.Length; i++) {
-            Destroy (childs [i].gameObject);
+        if (childs.Length > 0) {
+            for (int i = 0; i < childs.Length; i++) {
+                Destroy (childs [i].gameObject);
+            }
         }
 
         Board[] data = query.SELECT<Board> ();

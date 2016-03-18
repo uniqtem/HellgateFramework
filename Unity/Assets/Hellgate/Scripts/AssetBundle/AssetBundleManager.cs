@@ -138,6 +138,12 @@ namespace Hellgate
         {
             System.Action InnerLoadAssetBundle = () => {
                 System.Action InnerLoadAsset = () => {
+                    if (data.objName == string.Empty) {
+                        HDebug.LogWarning ("Set the object name in the assetbundle.");
+                        finished (null);
+                        return;
+                    }
+
                     if (data.async) {
                         StartCoroutine (LoadAssetAsync (data, finished));
                     } else {

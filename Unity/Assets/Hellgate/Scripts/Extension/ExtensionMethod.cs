@@ -158,6 +158,59 @@ namespace Hellgate
         {
             return Util.GetListObjects<T> (list);
         }
+
+        /// <summary>
+        /// Finds the child object.
+        /// </summary>
+        /// <returns>The child object.</returns>
+        /// <param name="gObj">G object.</param>
+        /// <param name="strName">String name.</param>
+        public static GameObject FindChildObject (this GameObject gObj, string strName)
+        {
+            return Util.FindChildObject (gObj, strName);
+        }
+
+        /// <summary>
+        /// Finds the child object.
+        /// </summary>
+        /// <returns>The child object.</returns>
+        /// <param name="gObj">G object.</param>
+        /// <param name="strName">String name.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T FindChildObject<T> (this GameObject gObj, string strName)
+        {
+            return Util.FindChildObject<T> (gObj, strName);
+        }
+
+        /// <summary>
+        /// Find the specified list and strName.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static Sprite Find (this List<Sprite> list, string strName)
+        {
+            return Util.FindSprite (list, strName);
+        }
+
+        /// <summary>
+        /// Find the specified list and strName.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static TextAsset Find (this List<TextAsset> list, string strName)
+        {
+            return Util.FindTextAsset (list, strName);
+        }
+
+        /// <summary>
+        /// Find the specified list and strName.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static GameObject Find (this List<GameObject> list, string strName)
+        {
+            return Util.FindGameObject (list, strName);
+        }
     }
 }
 

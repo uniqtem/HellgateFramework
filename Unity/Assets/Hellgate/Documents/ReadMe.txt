@@ -56,5 +56,5 @@ NEW : WebView
 FIX : Sqlite ORM
 FIX : BuildVersionBinding
 FIX : AssetBundleInitialDownloader
-NEW : Excel -> Json
+NEW : Excel -> Json (Attribute)
 NEW : ExtensionMethods

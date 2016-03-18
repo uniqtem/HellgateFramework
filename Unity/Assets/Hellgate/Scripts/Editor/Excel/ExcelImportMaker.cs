@@ -36,6 +36,20 @@ namespace HellgateEditor
             this.outputJsonPath = outputJsonPath;
         }
 
+        private StringBuilder Append (List<string> keys, Dictionary<string, object> dic)
+        {
+            StringBuilder stringBuilder = new StringBuilder ();
+            for (int i = 0; i < keys.Count; i++) {
+                if (i == 0) {
+                    stringBuilder.Append (dic [keys [i]]);
+                } else {
+                    stringBuilder.AppendFormat ("-{0}", dic [keys [i]]);
+                }
+            }
+
+            return stringBuilder;
+        }
+
         protected void AddData (ICell tCell, ICell vCell, Dictionary<string, object> dic)
         {
             if (vCell == null) {
@@ -89,31 +103,56 @@ namespace HellgateEditor
                 }
 
                 List<Dictionary<string, object>> list = CreateAttributeJson (type);
+                if (list == null) {
+                    return;
+                }
+
                 if (excel.IndexFlag) {
                     AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
-                    List<string> keys = new List<string> ();
+                    List<string> pks = new List<string> ();
+                    List<string> fks = new List<string> ();
                     foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
                         if (config.t != null) {
                             ColumnAttribute column = config.t as ColumnAttribute;
-                            if (column != null && column.CheckConstraints (DataConstraints.PK)) {
-                                keys.Add (config.name);
+                            if (column != null) {
+                                if (column.CheckConstraints (DataConstraints.PK)) {
+                                    pks.Add (config.name);
+                                }
+
+                                if (column.CheckConstraints (DataConstraints.FK)) {
+                                    fks.Add (config.name);
+                                }
                             }
                         }
                     }
 
-                    if (keys.Count > 0) {
+                    if (pks.Count > 0) {
                         foreach (Dictionary<string, object> dic in list) {
-                            StringBuilder stringBuilder = new StringBuilder ();
-                            for (int i = 0; i < keys.Count; i++) {
-                                if (i == 0) {
-                                    stringBuilder.Append (dic [keys [i]]);
-                                } else {
-                                    stringBuilder.AppendFormat ("-{0}", dic [keys [i]]);
+                            StringBuilder stringBuilder = Append (pks, dic);
+                            string createFileName = string.Format ("{0}{1}", excel.CreateFileName, stringBuilder.ToString ());
+                            EditorUtil.CreateJsonFile (createFileName, Json.Serialize (dic), outputJsonPath);
+                        }
+                    }
+
+                    if (fks.Count > 0) {
+                        List<string> fk = new List<string> ();
+                        foreach (Dictionary<string, object> dic in list) {
+                            StringBuilder stringBuilder = Append (fks, dic);
+                            fk.Add (stringBuilder.ToString ());
+                        }
+
+                        fk = Util.GetDistinctValues<string> (fk);
+                        foreach (string s in fk) {
+                            List<Dictionary<string, object>> fkList = new List<Dictionary<string, object>> ();
+                            foreach (Dictionary<string, object> dic in list) {
+                                StringBuilder stringBuilder = Append (fks, dic);
+                                if (s == stringBuilder.ToString ()) {
+                                    fkList.Add (dic);
                                 }
                             }
 
-                            string createFileName = string.Format ("{0}{1}", excel.CreateFileName, stringBuilder.ToString ());
-                            EditorUtil.CreateJsonFile (createFileName, Json.Serialize (dic), outputJsonPath);
+                            string createFileName = string.Format ("{0}{1}", excel.CreateFileName, s);
+                            EditorUtil.CreateJsonFile (createFileName, Json.Serialize (fkList), outputJsonPath);
                         }
                     }
                 } else {
@@ -188,6 +227,10 @@ namespace HellgateEditor
 
             if (configs.Length > 0) {
                 ISheet s = book.GetSheet (excel.SheetName);
+                if (s == null) {
+                    HDebug.LogWarning (type.Name + " sheet name is incorrect.");
+                    return null;
+                }
                 IRow titleRow = s.GetRow (0);
 
                 List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();

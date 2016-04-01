@@ -33,6 +33,21 @@ namespace Hellgate
         [DllImport ("__Internal")]
         private static extern void _WebViewSetBackground (bool flag);
 
+        [DllImport ("__Internal")]
+        private static extern void _WebViewGoBack ();
+
+        [DllImport ("__Internal")]
+        private static extern void _WebViewGoForward ();
+
+        [DllImport ("__Internal")]
+        private static extern bool _WebViewCanGoBack ();
+
+        [DllImport ("__Internal")]
+        private static extern bool _WebViewCanGoForward ();
+
+        [DllImport ("__Internal")]
+        private static extern void _WebViewReload ();
+
         /// <summary>
         /// Awake this instance.
         /// </summary>
@@ -96,6 +111,48 @@ namespace Hellgate
         public virtual void SetBackground (bool flag)
         {
             _WebViewSetBackground (flag);
+        }
+
+        /// <summary>
+        /// Gos the back.
+        /// </summary>
+        public virtual void GoBack ()
+        {
+            _WebViewGoBack ();
+        }
+
+        /// <summary>
+        /// Gos the forward.
+        /// </summary>
+        public virtual void GoForward ()
+        {
+            _WebViewGoForward ();
+        }
+
+        /// <summary>
+        /// Determines whether this instance can go back.
+        /// </summary>
+        /// <returns><c>true</c> if this instance can go back; otherwise, <c>false</c>.</returns>
+        public virtual bool CanGoBack ()
+        {
+            return _WebViewCanGoBack ();
+        }
+
+        /// <summary>
+        /// Determines whether this instance can go forward.
+        /// </summary>
+        /// <returns><c>true</c> if this instance can go forward; otherwise, <c>false</c>.</returns>
+        public virtual bool CanGoForward ()
+        {
+            return _WebViewCanGoForward ();
+        }
+
+        /// <summary>
+        /// Reload.
+        /// </summary>
+        public virtual void Reload ()
+        {
+            _WebViewReload ();
         }
 #endif
     }

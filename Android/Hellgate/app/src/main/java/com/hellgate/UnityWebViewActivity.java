@@ -174,4 +174,66 @@ public class UnityWebViewActivity {
             }
         });
     }
+
+    public void goBack()
+    {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.goBack();
+            }
+        });
+    }
+
+    public void goForward() {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.goForward();
+            }
+        });
+    }
+
+    public boolean canGoBack()
+    {
+        if (webView == null) {
+            return false;
+        }
+
+        return webView.canGoBack();
+    }
+
+    public boolean canGoForward()
+    {
+        if (webView == null) {
+            return false;
+        }
+
+        return  webView.canGoForward();
+    }
+
+    public void reload()
+    {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.reload();
+            }
+        });
+    }
 }

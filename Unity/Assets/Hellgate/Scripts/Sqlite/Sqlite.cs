@@ -8,7 +8,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Data;
+
+#if !UNITY_WEBPLAYER
 using Mono.Data.Sqlite;
+#endif
 
 namespace Hellgate
 {
@@ -27,10 +30,12 @@ namespace Hellgate
     public class Sqlite
     {
         public const string BASE_PATH = "URI=file:";
+#if !UNITY_WEBPLAYER
         protected SqliteConnection dbconn;
         protected SqliteCommand dbcmd;
         protected SqliteDataReader reader;
         protected SqliteTransaction dbtrans;
+#endif
         protected string pathDB;
         protected bool canQuery;
         protected bool isConnectionOpen;
@@ -60,6 +65,7 @@ namespace Hellgate
             }
 
             pathDB = Path.Combine (Application.persistentDataPath, db);
+#if !UNITY_WEBPLAYER
             // StreamingAssets folder
             string resourcePath = Path.Combine (Application.streamingAssetsPath, db);
 
@@ -89,14 +95,17 @@ namespace Hellgate
                     }
                 }
             }
+#endif
         }
 
         protected void Open (string conn)
         {
+#if !UNITY_WEBPLAYER
             conn = BASE_PATH + conn;
             dbconn = new SqliteConnection (conn);
             dbconn.Open (); //Open connection to the database.
             dbcmd = dbconn.CreateCommand ();
+#endif
         }
 
         /// <summary>
@@ -106,9 +115,11 @@ namespace Hellgate
         {
             Open (pathDB);
 
+#if !UNITY_WEBPLAYER
             if ((ConnectionState)dbconn.State == ConnectionState.Open) {
                 isConnectionOpen = true;
             }
+#endif
 
             return isConnectionOpen;
         }
@@ -118,6 +129,7 @@ namespace Hellgate
         /// </summary>
         public void Close ()
         {
+#if !UNITY_WEBPLAYER
             if (reader != null) {
                 reader.Close ();
                 reader = null;
@@ -137,6 +149,7 @@ namespace Hellgate
                 dbtrans.Dispose ();
                 dbtrans = null;
             }
+#endif
 
             isConnectionOpen = false;
         }
@@ -146,6 +159,7 @@ namespace Hellgate
         /// </summary>
         public void BeginTransaction ()
         {
+#if !UNITY_WEBPLAYER
             if (!isConnectionOpen) {
                 Open (pathDB);
 
@@ -156,6 +170,7 @@ namespace Hellgate
 
             dbtrans = dbconn.BeginTransaction ();
             dbcmd.Transaction = dbtrans;
+#endif
         }
 
         /// <summary>
@@ -163,6 +178,7 @@ namespace Hellgate
         /// </summary>
         public void Commit ()
         {
+#if !UNITY_WEBPLAYER
             try {
                 dbtrans.Commit ();
             } catch {
@@ -172,6 +188,7 @@ namespace Hellgate
                     HDebug.LogError (e2.Message);
                 }
             }
+#endif
 
             Close ();
         }
@@ -192,10 +209,12 @@ namespace Hellgate
                 Open (pathDB);
             }
 
+#if !UNITY_WEBPLAYER
             if ((ConnectionState)dbconn.State != ConnectionState.Open) {
                 HDebug.LogWarning ("Sqlite DB is not open");
                 return null;
             }
+
 
             dbcmd.CommandText = query;
             try {
@@ -205,8 +224,11 @@ namespace Hellgate
                 HDebug.LogError (e.Message);
                 return null;
             }
+#endif
 
             DataTable dataTable = new DataTable ();
+
+#if !UNITY_WEBPLAYER
             for (int i = 0; i < reader.FieldCount; i++) {
                 dataTable.Columns.Add (reader.GetName (i));
             }
@@ -219,6 +241,8 @@ namespace Hellgate
 
                 dataTable.Rows.Add (row);
             }
+#endif
+
 
             if (!isConnectionOpen) {
                 Close ();
@@ -241,7 +265,7 @@ namespace Hellgate
             if (!isConnectionOpen) {
                 Open (pathDB);
             }
-
+#if !UNITY_WEBPLAYER
             if ((ConnectionState)dbconn.State != ConnectionState.Open) {
                 HDebug.LogWarning ("Sqlite DB is not open");
                 return;
@@ -255,6 +279,7 @@ namespace Hellgate
                 HDebug.LogError (e.Message);
                 return;
             }
+#endif
 
             if (!isConnectionOpen) {
                 Close ();
@@ -283,6 +308,7 @@ namespace Hellgate
                 }
             }
 
+#if !UNITY_WEBPLAYER
             try {
                 SqliteConnection.CreateFile (resourcePath);
             } catch (Exception e) {
@@ -290,6 +316,7 @@ namespace Hellgate
 
                 return false;
             }
+#endif
 
             pathDB = resourcePath;
             UnityEditor.AssetDatabase.Refresh ();

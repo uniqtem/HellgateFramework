@@ -36,10 +36,10 @@ namespace Hellgate
             string path = Application.dataPath;
             DirectoryInfo dir = new DirectoryInfo (path);
             List<FileInfo> lst = DirSearch (dir, fileName);
-			
+
             if (lst.Count >= 1)
                 return lst [0];
-			
+
             return null;
         }
 
@@ -198,6 +198,24 @@ namespace Hellgate
         /// <param name="list">List.</param>
         /// <param name="strName">String name.</param>
         public static GameObject FindGameObject (List<GameObject> list, string strName)
+        {
+            var enumerator = list.GetEnumerator ();
+            while (enumerator.MoveNext ()) {
+                if (enumerator.Current.name == strName) {
+                    return enumerator.Current;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Finds the Object.
+        /// </summary>
+        /// <returns>The Object.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static UnityEngine.Object FindObject (List<UnityEngine.Object> list, string strName)
         {
             var enumerator = list.GetEnumerator ();
             while (enumerator.MoveNext ()) {

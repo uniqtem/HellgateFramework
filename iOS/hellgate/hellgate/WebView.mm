@@ -83,9 +83,43 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
     }
 }
 
-- (void)dealloc
+- (void)goBack
+{
+    [webView goBack];
+}
+
+- (void)goForward
+{
+    [webView goForward];
+}
+
+- (bool)canGoBack
+{
+    return [webView canGoBack];
+}
+
+- (bool)canGoForward
+{
+    return [webView canGoForward];
+}
+
+- (void)reload
+{
+    [webView reload];
+}
+
+- (void)destory
 {
     [webView removeFromSuperview];
+    webView = nil;
+}
+
+- (void)dealloc
+{
+    if (webView != nil) {
+        [webView removeFromSuperview];
+    }
+
     webView = nil;
 }
 
@@ -144,6 +178,11 @@ extern "C"
     void _WebViewSetMargin(int left, int top, int right, int bottom);
     void _WebViewSetVisibility(bool flag);
     void _WebViewSetBackground(bool flag);
+    void _WebViewGoBack();
+    void _WebViewGoForward();
+    bool _WebViewCanGoBack();
+    bool _WebViewCanGoForward();
+    void _WebViewReload();
 }
 
 void _WebViewInit()
@@ -162,6 +201,7 @@ void _WebViewLoadURL(const char *url)
 
 void _WebViewDestroy()
 {
+    [instance destory];
     instance = nil;
 }
 
@@ -190,4 +230,49 @@ void _WebViewSetBackground(bool flag)
     }
 
     [instance setBackground:flag];
+}
+
+void _WebViewGoBack()
+{
+    if (instance == nil) {
+        return;
+    }
+
+    [instance goBack];
+}
+
+void _WebViewGoForward()
+{
+    if (instance == nil) {
+        return;
+    }
+
+    [instance goForward];
+}
+
+bool _WebViewCanGoBack()
+{
+    if (instance == nil) {
+        return false;
+    }
+
+    return [instance canGoBack];
+}
+
+bool _WebViewCanGoForward()
+{
+    if (instance == nil) {
+        return false;
+    }
+
+    return [instance canGoForward];
+}
+
+void _WebViewReload()
+{
+    if (instance == nil) {
+        return;
+    }
+
+    [instance reload];
 }

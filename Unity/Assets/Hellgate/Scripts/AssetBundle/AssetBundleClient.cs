@@ -97,7 +97,7 @@ namespace Hellgate
                 while (!Caching.ready) {
                     yield return null;
                 }
-				
+
                 using (WWW www = WWW.LoadFromCacheOrDownload (url, version)) {
                     while (!www.isDone) {
                         progress = www.progress;
@@ -108,7 +108,7 @@ namespace Hellgate
                         AssetBundleRef assetBundleRef = new AssetBundleRef (url, version);
                         assetBundleRef.assetBundle = www.assetBundle;
                         dictionaryAssetBundleRef.Add (keyName, assetBundleRef);
-						
+
                         yield return null;
                     }
 

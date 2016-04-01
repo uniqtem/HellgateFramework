@@ -51,7 +51,9 @@ public class HellgateAssetEx : SceneController
         jobData.finishedDelegate = delegate (List<object> obj, LoadingJobController job) {
             TextAsset text = Util.GetListObject<TextAsset> (obj);
 
-            HellgateAssetData data = Reflection.Convert<HellgateAssetData> ((IDictionary)Json.Deserialize (text.text));
+//            HellgateAssetData data = Reflection.Convert<HellgateAssetData> ((IDictionary)Json.Deserialize (text.text));
+            IDictionary iDic = (IDictionary)Json.Deserialize (text.text);
+            HellgateAssetData data = iDic.Convert<HellgateAssetData> ();
 
             assetBundles = new List<AssetBundleData> ();
             for (int i = 0; i < data._Sprite.Length; i++) {
@@ -105,6 +107,7 @@ public class HellgateAssetEx : SceneController
             Destroy (cube);
         }
         Vector3 position = CameraUtil.Get3DWorldPosition (containers [0].gameObject, MenuController.Instance.UI3D);
+
         cube = Instantiate (prefabs [pIndex]) as GameObject;
         cube.transform.localPosition = position;
         cube.transform.parent = gObj.transform;

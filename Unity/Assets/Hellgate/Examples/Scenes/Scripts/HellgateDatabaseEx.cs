@@ -158,13 +158,17 @@ public class HellgateDatabaseEx : SceneController
 
             gObj.transform.parent = grid.transform;
             gObj.transform.localScale = new Vector3 (1f, 1f, 1f);
-            gObj.transform.localPosition = new Vector3 (0, i * 100, 0);
+            gObj.transform.localPosition = new Vector3 (0, -i, 0);
 
-            Util.FindChildObject<UILabel> (gObj, "Name").text = data [i].Name;
-            Util.FindChildObject<UILabel> (gObj, "Description").text = data [i].Description;
+//            Util.FindChildObject<UILabel> (gObj, "Name").text = data [i].Name;
+//            Util.FindChildObject<UILabel> (gObj, "Description").text = data [i].Description;
+            gObj.FindChildObject<UILabel> ("Name").text = data [i].Name;
+            gObj.FindChildObject<UILabel> ("Description").text = data [i].Description;
 
-            Util.FindChildObject (gObj, "Select").name = data [i].Idx.ToString ();
-            Util.FindChildObject (gObj, "Delete").name = data [i].Idx.ToString ();
+//            Util.FindChildObject (gObj, "Select").name = data [i].Idx.ToString ();
+//            Util.FindChildObject (gObj, "Delete").name = data [i].Idx.ToString ();
+            gObj.FindChildObject ("Select").name = data [i].Idx.ToString ();
+            gObj.FindChildObject ("Delete").name = data [i].Idx.ToString ();
 
             gObj.SetActive (true);
         }
@@ -279,7 +283,7 @@ public class HellgateDatabaseEx : SceneController
 
         Board data = new Board (uName.value, description.value);
 
-        query.UPDATE<Board> (data, "idx", idx);
+        query.UPDATE<Board> (data, "board.idx", idx);
         ListView ();
     }
 
@@ -298,7 +302,7 @@ public class HellgateDatabaseEx : SceneController
         string idx = UIButton.current.name;
 
         this.idx = int.Parse (idx);
-        Board[] data = query.SELECT<Board> ("idx", this.idx);
+        Board[] data = query.SELECT<Board> ("board.idx", this.idx);
         uName.value = data [0].Name;
         description.value = data [0].Description;
     }

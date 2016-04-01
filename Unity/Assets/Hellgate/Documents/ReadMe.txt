@@ -58,3 +58,7 @@ FIX : BuildVersionBinding
 FIX : AssetBundleInitialDownloader
 NEW : Excel -> Json (Attribute)
 NEW : ExtensionMethods
+2.3.0
+FIX : Scene System
+FIX : Loading Job
+NEW : WebView (GoBack, GoForward)

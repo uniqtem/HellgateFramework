@@ -4,6 +4,7 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 #if UNITY_EDITOR
@@ -138,6 +139,26 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Convert the specified IDictionary.
+        /// </summary>
+        /// <param name="iDic">I dic.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T Convert<T> (this IDictionary iDic)
+        {
+            return Reflection.Convert<T> (iDic);
+        }
+
+        /// <summary>
+        /// Convert the specified iList.
+        /// </summary>
+        /// <param name="iList">I list.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T[] Convert<T> (this IList iList)
+        {
+            return Reflection.Convert<T> (iList);
+        }
+
+        /// <summary>
         /// Gets the list object.
         /// </summary>
         /// <returns>The list object.</returns>
@@ -210,6 +231,16 @@ namespace Hellgate
         public static GameObject Find (this List<GameObject> list, string strName)
         {
             return Util.FindGameObject (list, strName);
+        }
+
+        /// <summary>
+        /// Find the specified list and strName.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static UnityEngine.Object Find (this List<UnityEngine.Object> list, string strName)
+        {
+            return Util.FindObject (list, strName);
         }
     }
 }

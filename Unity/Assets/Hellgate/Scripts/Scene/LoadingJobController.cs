@@ -24,8 +24,13 @@ namespace Hellgate
         public override void OnSet (object data)
         {
             base.OnSet (data);
+
             jobData = null;
             if ((jobData = data as LoadingJobData) != null) {
+                if (jobData.assetBundleAllUnload) {
+                    AssetBundleManager.Instance.AllUnload ();
+                }
+
                 nextSceneName = jobData.nextSceneName;
 
                 datas = new List<object> ();
@@ -37,11 +42,6 @@ namespace Hellgate
             }
         }
 
-        public override void OnDestroy ()
-        {
-            base.OnDestroy ();
-        }
-
         public override void OnKeyBack ()
         {
         }
@@ -49,10 +49,10 @@ namespace Hellgate
         private void OnNextScene ()
         {
             if (jobData.nextScenePopUp) {
-                if (jobData.shieldAlpha != 1f) {
+                if (jobData.shieldAlpha >= 0) {
                     SceneManager.Instance.ShieldAlpha = jobData.shieldAlpha;
                 }
-				
+
                 SceneManager.Instance.PopUp (nextSceneName, datas, active, deactive);
             } else {
                 SceneManager.Instance.Screen (nextSceneName, datas, active, deactive);
@@ -79,7 +79,7 @@ namespace Hellgate
                 index = 0;
                 jobData.https = list;
             }
-			
+
             if (jobData.https.Count <= 0 || jobData.https.Count <= index) {
                 if (httpData.Count > 0) {
                     datas.AddRange (new List<object> (httpData.Values));
@@ -89,24 +89,24 @@ namespace Hellgate
                         jobData.lEvent (LoadingJobStatus.HttpOver, this);
                     }
                 }
-				
+
                 if (list == null) {
                     index = 0;
                     LoadAssetBundle ();
                 } else {
                     GoNextScene ();
                 }
-				
+
                 return;
             }
-			
+
             string key = jobData.https [index].url;
             if (jobData.https [index].post) {
                 foreach (KeyValuePair<string, string> kVP in jobData.https [index].datas) {
                     key += kVP.Key + kVP.Value;
                 }
             }
-			
+
             if (httpData.ContainsKey (key)) {
                 index++;
                 Request ();
@@ -122,12 +122,12 @@ namespace Hellgate
                         }
                     } else {
                         httpData.Add (key, www);
-						
+
                         index++;
                         Request ();
                     }
                 };
-				
+
                 jobData.https [index].popUp = false;
                 HttpManager.Instance.Request (jobData.https [index]);
             }
@@ -154,9 +154,7 @@ namespace Hellgate
                 return;
             }
 
-            string key = jobData.assetBundles [index].url + jobData.assetBundles [index].objName +
-                jobData.assetBundles [index].type.ToString ();
-
+            string key = jobData.assetBundles [index].url + jobData.assetBundles [index].objName + jobData.assetBundles [index].type.ToString ();
             if (assetBundleData.ContainsKey (key)) {
                 index++;
                 LoadAssetBundle ();

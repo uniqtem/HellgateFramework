@@ -45,6 +45,7 @@ public class HellgateQuestEx : SceneController
 
         jobData.assetBundles = assetBundles;
         jobData.status = MainMenuStatus.Hide;
+        jobData.assetBundleAllUnload = true;
         SceneManager.Instance.LoadingJob (jobData, false);
     }
 

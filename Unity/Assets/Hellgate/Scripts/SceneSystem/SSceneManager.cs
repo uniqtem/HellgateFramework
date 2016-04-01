@@ -254,6 +254,10 @@ namespace Hellgate
             case SceneType.POPUP:
                 isAddtive = true;
             break;
+            case SceneType.SCREEN:
+            case SceneType.ADDSCREEN:
+                ClearPopUp ();
+            break;
             }
 
             SSceneApplication.LoadLevel (loadLevelData.sceneName, delegate (GameObject root) {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Hellgate
 {
@@ -40,11 +41,17 @@ namespace Hellgate
 
         private void Init (string url)
         {
+            StringBuilder stringBuilder = new StringBuilder ();
             if (!url.Contains ("http")) {
-                this.url += BASE_URL + "/";
+                if (!BASE_URL.EndsWith ("/")) {
+                    stringBuilder.AppendFormat ("{0}/", BASE_URL);
+                } else {
+                    stringBuilder.Append (BASE_URL);
+                }
             }
+            stringBuilder.Append (url);
 
-            this.url += url;
+            this.url = stringBuilder.ToString ();
             headers = AddStaticData (defaultHeaders);
             datas = AddStaticData (defaultDatas);
         }

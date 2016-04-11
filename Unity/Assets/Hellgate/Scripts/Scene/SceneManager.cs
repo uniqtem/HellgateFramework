@@ -38,20 +38,17 @@ namespace Hellgate
         /// The name of the loading job scene.
         /// </summary>
         [SerializeField]
-        protected string
-            LoadingJobSceneName;
+        protected string LoadingJobSceneName;
         /// <summary>
         /// The name of the pop up scene.
         /// </summary>
         [SerializeField]
-        protected string
-            popUpSceneName;
+        protected string popUpSceneName;
         /// <summary>
         /// The name of the menu scene.
         /// </summary>
         [SerializeField]
-        protected string
-            menuSceneName;
+        protected string menuSceneName;
 
 #endregion
 
@@ -61,8 +58,7 @@ namespace Hellgate
         /// The debug flag.
         /// </summary>
         [SerializeField]
-        private bool
-            showDebug = false;
+        private bool showDebug = false;
 
         void Start ()
         {

@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Hellgate
 {
@@ -119,14 +120,27 @@ namespace Hellgate
         /// <param name="assetBundeName">Asset bunde name.</param>
         protected void Init (string assetBundeName)
         {
+            StringBuilder urlString = new StringBuilder ();
+            StringBuilder assetBundleString = new StringBuilder ();
             if (BASE_URL != "") {
-                this.url += BASE_URL + "/" + assetBundeName;
+                if (!BASE_URL.EndsWith ("/")) {
+                    urlString.AppendFormat ("{0}/", BASE_URL);
+                } else {
+                    urlString.Append (BASE_URL);
+                }
+
+                urlString.Append (assetBundeName);
             }
-            this.assetBundleName = assetBundeName;
+            assetBundleString.Append (assetBundeName);
 
             if (EXTENSION != "") {
-                this.url += "." + EXTENSION;
-                this.assetBundleName += "." + EXTENSION;
+                if (urlString.Length > 0) {
+                    urlString.AppendFormat (".{0}", EXTENSION);
+                    this.url = urlString.ToString ();
+                }
+
+                assetBundleString.AppendFormat (".{0}", EXTENSION);
+                this.assetBundleName = assetBundleString.ToString ();
             }
 
             this.version = Register.GetInt (assetBundeName, 1);

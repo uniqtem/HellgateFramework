@@ -61,4 +61,5 @@ NEW : ExtensionMethods
 2.3.0
 FIX : Scene System
 FIX : Loading Job
-NEW : WebView (GoBack, GoForward)
+NEW : WebView (GoBack, GoForward, Reload)
+NEW : Support UGUI

@@ -21,6 +21,9 @@ public class HellgateWebViewEx : HellgateSceneControllerEx
         WebViewManager.Instance.ProgressReceivedEvent += OnProgress;
         WebViewManager.Instance.ErrorReceivedEvent += OnError;
         WebViewManager.Instance.LoadURL (url, 50, 150, 50, 50);
+
+        SetButton (backButton, false);
+        SetButton (forwardButton, false);
     }
 
     private void SetButton (GameObject button, bool flag)
@@ -54,6 +57,7 @@ public class HellgateWebViewEx : HellgateSceneControllerEx
         WebViewManager.Instance.ProgressReceivedEvent -= OnProgress;
         WebViewManager.Instance.ErrorReceivedEvent -= OnError;
         WebViewManager.Instance.Destroy ();
+
         OnClickClose ();
     }
 

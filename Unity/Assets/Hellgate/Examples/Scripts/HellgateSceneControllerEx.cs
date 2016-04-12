@@ -80,7 +80,7 @@ public class HellgateSceneControllerEx : SceneController
         SetProdValue (prod);
     }
 
-    protected void SetButtonDefaultColor (GameObject gObj, Color32 color)
+    protected void SetButtonDefaultColor (GameObject gObj, Color color)
     {
         ReflectionProduct prod = new ReflectionProduct (gObj, color);
         prod.nGUICompName = "UIButton";

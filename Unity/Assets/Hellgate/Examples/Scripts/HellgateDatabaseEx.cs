@@ -158,7 +158,7 @@ public class HellgateDatabaseEx : HellgateSceneControllerEx
 
             gObj.transform.SetParent (grid.transform);
             gObj.transform.localScale = new Vector3 (1f, 1f, 1f);
-            gObj.transform.localPosition = new Vector3 (0, -i, 0);
+            gObj.transform.localPosition = new Vector3 (0, i, 0);
 
             SetLabelTextValue (gObj.FindChildObject<Transform> ("Name").gameObject, data [i].Name);
             SetLabelTextValue (gObj.FindChildObject<Transform> ("Description").gameObject, data [i].Description);

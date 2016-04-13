@@ -17,7 +17,7 @@ namespace Hellgate
         /// <param name="cam">Cam.</param>
         public static Vector3 GetViewportToWorldPoint (GameObject ui, Camera cam, Camera guiCam = null)
         {
-            if (guiCam) {
+            if (guiCam == null) {
                 guiCam = SceneManager.Instance.NGUICamera;
                 if (guiCam == null) {
                     return Vector3.zero;

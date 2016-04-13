@@ -2,7 +2,7 @@ ManifestFileVersion: 0
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: hellgateobjectpol.unity3d
+      Name: hellgateobjectpool.unity3d
       Dependencies: {}
     Info_1:
       Name: hellgatescene.unity3d

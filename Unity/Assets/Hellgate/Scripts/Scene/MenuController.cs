@@ -26,9 +26,9 @@ namespace Hellgate
 #endregion
 
         [SerializeField]
-        private GameObject top;
+        protected GameObject top;
         [SerializeField]
-        private GameObject bottom;
+        protected GameObject bottom;
 
         public override void Awake ()
         {

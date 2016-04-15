@@ -33,7 +33,7 @@ namespace Hellgate
         public static object Convert (DataRow row, BindingFlags flag = BindingFlags.NonPublic, Type type = null)
         {
             object obj = Activator.CreateInstance (type, null);
-            FieldInfo[] fieldInfos = obj.GetType ().GetFields (BindingFlags.Instance | flag);
+            List<FieldInfo>fieldInfos = GetFields (obj.GetType (), flag);
 
             bool returnFlag = false;
             string tableName = Query.GetTableName (type);
@@ -98,7 +98,7 @@ namespace Hellgate
             }
 
             Type copyType = mapper.Type;
-            FieldInfo[] fieldInfos = mapper.Type.GetFields (BindingFlags.Instance | flag);
+            List<FieldInfo> fieldInfos = GetFields (mapper.Type, flag);
             foreach (FieldInfo field in fieldInfos) {
                 // table
                 mapper.SetType (copyType);

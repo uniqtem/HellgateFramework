@@ -25,6 +25,23 @@ namespace Hellgate
             return data;
         }
 
+        private static List<FieldInfo> GetFields (Type type, BindingFlags flag, List<FieldInfo> list = null)
+        {
+            FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
+
+            if (list == null) {
+                list = new List<FieldInfo> (fieldInfos);
+            } else {
+                list.AddRange (fieldInfos);
+            }
+
+            if (!(type.BaseType is System.Object)) {
+                return GetFields (type.BaseType, flag, list);
+            }
+
+            return list;
+        }
+
         /// <summary>
         /// Convert the specified dic, fieldInfo, flag and type.
         /// </summary>
@@ -33,7 +50,7 @@ namespace Hellgate
         /// <param name="flag">Flag.</param>
         /// <param name="type">Type.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static T Convert<T> (IDictionary dic, FieldInfo[] fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic, Type type = null)
+        public static T Convert<T> (IDictionary dic, List<FieldInfo> fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic, Type type = null)
         {
             object obj = (T)Activator.CreateInstance (typeof(T), null);
             if (type != null) {
@@ -41,7 +58,7 @@ namespace Hellgate
             }
 
             if (fieldInfos == null) {
-                fieldInfos = obj.GetType ().GetFields (BindingFlags.Instance | flag);
+                fieldInfos = GetFields (obj.GetType (), flag);
             }
 
             foreach (FieldInfo field in fieldInfos) {
@@ -75,7 +92,7 @@ namespace Hellgate
                         continue;
                     } else {
                         IDictionary iDic = (IDictionary)data;
-                        FieldInfo[] fields = field.FieldType.GetFields (BindingFlags.Instance | flag);
+                        List<FieldInfo> fields = GetFields (field.FieldType, flag);
                         data = Convert<object> (iDic, fields, flag, field.FieldType);
                     }
                 }
@@ -113,7 +130,7 @@ namespace Hellgate
                 obj = Activator.CreateInstance (type, null);
             }
 
-            FieldInfo[] fieldInfo = obj.GetType ().GetFields (BindingFlags.Instance | flag);
+            List<FieldInfo> fieldInfo = GetFields (obj.GetType (), flag);
             T[] ts = new T[list.Count];
             for (int i = 0; i < list.Count; i++) {
                 ts [i] = Convert<T> ((IDictionary)list [i], fieldInfo, flag, obj.GetType ());
@@ -129,14 +146,14 @@ namespace Hellgate
         /// <param name="fieldInfos">Field infos.</param>
         /// <param name="flag">Flag.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static Dictionary<string, object> Convert<T> (T t = default (T), FieldInfo[] fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic)
+        public static Dictionary<string, object> Convert<T> (T t = default (T), List<FieldInfo> fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic)
         {
             if (fieldInfos == null) {
                 if (t == null) {
                     t = (T)Activator.CreateInstance (typeof(T), null);
                 }
-
-                fieldInfos = t.GetType ().GetFields (BindingFlags.Instance | flag);
+                    
+                fieldInfos = GetFields (t.GetType (), flag);
             }
 
             Dictionary<string, object> data = new Dictionary<string, object> ();
@@ -165,7 +182,7 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static List<Dictionary<string, object>> Convert<T> (List<T> list, BindingFlags flag = BindingFlags.NonPublic)
         {
-            FieldInfo[] fieldInfos = list [0].GetType ().GetFields (BindingFlags.Instance | flag);
+            List<FieldInfo> fieldInfos = GetFields (list [0].GetType (), flag);
 
             List<Dictionary<string, object>> data = new List<Dictionary<string, object>> ();
             for (int i = 0; i < list.Count; i++) {
@@ -196,10 +213,10 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static AttributeMappingConfig<T>[] FieldAMCRetrieve<T> (Type type, BindingFlags flag = BindingFlags.NonPublic) where T : class
         {
-            FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
+            List<FieldInfo> fieldInfos = GetFields (type, flag);
 
-            AttributeMappingConfig<T>[] configs = new AttributeMappingConfig<T> [fieldInfos.Length];
-            for (int i = 0; i < fieldInfos.Length; i++) {
+            AttributeMappingConfig<T>[] configs = new AttributeMappingConfig<T> [fieldInfos.Count];
+            for (int i = 0; i < fieldInfos.Count; i++) {
                 AttributeMappingConfig<T> temp = new AttributeMappingConfig<T> ();
 
                 temp.t = fieldInfos [i].GetAttributeValue<T> ();

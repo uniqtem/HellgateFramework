@@ -284,6 +284,102 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Merge the specified dic and mergeDic.
+        /// </summary>
+        /// <param name="dic">Dic.</param>
+        /// <param name="mergeDic">Merge dic.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
+        {
+            if (dic == null) {
+                dic = mergeDic;
+                return;
+            }
+
+            if (dic == null) {
+                return;
+            }
+
+            foreach (KeyValuePair<K, V> pair in mergeDic) {
+                if (!dic.ContainsKey (pair.Key)) {
+                    dic.Add (pair.Key, pair.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Merge the specified list and mergeList.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="mergeList">Merge list.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
+        {
+            if (list == null) {
+                list = mergeList;
+                return;
+            }
+
+            if (list == null) {
+                return;
+            }
+
+            for (int i = 0; i < list.Count; i++) {
+                if (i > mergeList.Count) {
+                    Util.Merge<K, V> (list [i], mergeList [i]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Merge the specified iDic and mergeIDic.
+        /// </summary>
+        /// <param name="iDic">I dic.</param>
+        /// <param name="mergeIDic">Merge I dic.</param>
+        public static void Merge (IDictionary iDic, IDictionary mergeIDic)
+        {
+            if (iDic == null) {
+                iDic = mergeIDic;
+                return;
+            }
+
+            if (iDic == null) {
+                return;
+            }
+
+            foreach (object obj in mergeIDic.Keys) {
+                if (!iDic.Contains (obj)) {
+                    iDic.Add (obj, mergeIDic [obj]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Merge the specified iList and mergeIList.
+        /// </summary>
+        /// <param name="iList">I list.</param>
+        /// <param name="mergeIList">Merge I list.</param>
+        public static void Merge (IList iList, IList mergeIList)
+        {
+            if (iList == null) {
+                iList = mergeIList;
+                return;
+            }
+
+            if (iList == null) {
+                return;
+            }
+
+            for (int i = 0; i < iList.Count; i++) {
+                if (i < mergeIList.Count) {
+                    Util.Merge ((IDictionary)iList [i], (IDictionary)mergeIList [i]);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the value.
         /// </summary>
         /// <returns>The value.</returns>

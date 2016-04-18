@@ -58,6 +58,50 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Merge the specified dic and mergeDic.
+        /// </summary>
+        /// <param name="dic">Dictionary.</param>
+        /// <param name="mergeDic">Merge Dictionary.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
+        {
+            Util.Merge<K, V> (dic, mergeDic);
+        }
+
+        /// <summary>
+        /// Merge the specified list and mergeList.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="mergeList">Merge list.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
+        {
+            Util.Merge<K, V> (list, mergeList);
+        }
+
+        /// <summary>
+        /// Merge the specified iDic and mergeIDic.
+        /// </summary>
+        /// <param name="iDic">I dic.</param>
+        /// <param name="mergeIDic">Merge I dic.</param>
+        public static void Merge (this IDictionary iDic, IDictionary mergeIDic)
+        {
+            Util.Merge (iDic, mergeIDic);
+        }
+
+        /// <summary>
+        /// Merge the specified iList and mergeIList.
+        /// </summary>
+        /// <param name="iList">I list.</param>
+        /// <param name="mergeIList">Merge I list.</param>
+        public static void Merge (this IList iList, IList mergeIList)
+        {
+            Util.Merge (iList, mergeIList);
+        }
+
+        /// <summary>
         /// Gets the attribute value.
         /// </summary>
         /// <returns>The attribute value.</returns>
@@ -88,54 +132,6 @@ namespace Hellgate
         public static string UnderscoreName (this System.Reflection.FieldInfo fieldInfo)
         {
             return Util.ConvertCamelToUnderscore (fieldInfo.Name);
-        }
-
-        /// <summary>
-        /// Merge the specified dic and mergeDic.
-        /// </summary>
-        /// <param name="dic">Dictionary.</param>
-        /// <param name="mergeDic">Merge Dictionary.</param>
-        /// <typeparam name="K">The 1st type parameter.</typeparam>
-        /// <typeparam name="V">The 2nd type parameter.</typeparam>
-        public static void Merge<K, V> (this Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
-        {
-            if (dic == null) {
-                dic = mergeDic;
-                return;
-            }
-
-            if (dic == null) {
-                return;
-            }
-
-            foreach (KeyValuePair<K, V> pair in mergeDic) {
-                if (!dic.ContainsKey (pair.Key)) {
-                    dic.Add (pair.Key, pair.Value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Merge the specified list and mergeList.
-        /// </summary>
-        /// <param name="list">List.</param>
-        /// <param name="mergeList">Merge list.</param>
-        /// <typeparam name="K">The 1st type parameter.</typeparam>
-        /// <typeparam name="V">The 2nd type parameter.</typeparam>
-        public static void Merge<K, V> (this List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
-        {
-            if (list == null) {
-                list = mergeList;
-                return;
-            }
-
-            if (list == null) {
-                return;
-            }
-
-            for (int i = 0; i < list.Count; i++) {
-                list [i].Merge<K, V> (mergeList [i]);
-            }
         }
 
         /// <summary>

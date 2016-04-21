@@ -2,6 +2,7 @@
 using System.Collections;
 using Hellgate;
 
+/*
 [Excel ("avatar", "avatar", true)]
 public class Avatar
 {
@@ -25,3 +26,4 @@ public class Monster
     private string name;
     private string description;
 }
+*/

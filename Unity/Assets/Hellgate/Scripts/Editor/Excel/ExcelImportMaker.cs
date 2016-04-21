@@ -104,7 +104,7 @@ namespace HellgateEditor
 
                 List<Dictionary<string, object>> list = CreateAttributeJson (type);
                 if (list == null) {
-                    return;
+                    continue;
                 }
 
                 if (excel.IndexFlag) {

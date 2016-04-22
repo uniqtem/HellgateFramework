@@ -289,10 +289,6 @@ namespace Hellgate
             case SceneType.POPUP:
                 isAddtive = true;
             break;
-            case SceneType.SCREEN:
-            case SceneType.ADDSCREEN:
-                ClearPopUp ();
-            break;
             }
 
             SSceneApplication.LoadLevel (loadLevelData.sceneName, delegate (GameObject root) {
@@ -424,16 +420,25 @@ namespace Hellgate
         /// <summary>
         /// Clears the pop up.
         /// </summary>
-        protected virtual void ClearPopUp ()
+        protected virtual void ClearPopUp (CallbackDelegate callback = null)
         {
-            foreach (string popup in popups) {
-                SSceneController ctrl = scenes [popup].GetComponent<SSceneController> ();
+            if (popups.Count <= 0) {
+                if (callback != null) {
+                    callback ();
+                }
+                return;
+            }
+
+            for (int i = 0; i < popups.Count - 1; i++) {
+                SSceneController ctrl = scenes [popups.Peek ()].GetComponent<SSceneController> ();
                 if (ctrl.IsCache) {
-                    OnDeativeScreen (scenes [popup]);
+                    OnDeativeScreen (scenes [popups.Peek ()]);
                 } else {
-                    DestroyScene (popup);
+                    DestroyScene (popups.Peek ());
                 }
             }
+
+            Close (callback);
 
             popups.Clear ();
             ClearShield ();
@@ -624,8 +629,10 @@ namespace Hellgate
                 }
             }
 
-            LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            LoadLevel (loadLevel);
+            ClearPopUp (delegate() {
+                LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
+                LoadLevel (loadLevel);
+            });
         }
 
         /// <summary>
@@ -647,9 +654,11 @@ namespace Hellgate
                 }
             }
 
-            LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            loadLevel.type = SceneType.ADDSCREEN;
-            LoadLevel (loadLevel);
+            ClearPopUp (delegate() {
+                LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
+                loadLevel.type = SceneType.ADDSCREEN;
+                LoadLevel (loadLevel);
+            });
         }
 
         /// <summary>

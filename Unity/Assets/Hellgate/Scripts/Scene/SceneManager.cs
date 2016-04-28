@@ -157,7 +157,7 @@ namespace Hellgate
         {
             if (nowSceneName == sceneName) {
                 base.Screen ("HellgateEmpty", null, delegate(SSceneController ctrl) {
-                    nowSceneName = "";
+                    nowSceneName = sceneName;
                     base.Screen (sceneName, data, active, deactive);
                 });
 

@@ -52,6 +52,10 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T Convert<T> (IDictionary dic, List<FieldInfo> fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic, Type type = null)
         {
+            if (dic == null) {
+                return default (T);
+            }
+
             object obj = (T)Activator.CreateInstance (typeof(T), null);
             if (type != null) {
                 obj = Activator.CreateInstance (type, null);

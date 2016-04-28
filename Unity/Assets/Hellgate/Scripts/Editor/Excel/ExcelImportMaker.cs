@@ -226,6 +226,10 @@ namespace HellgateEditor
             AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
 
             if (configs.Length > 0) {
+                if (excel == null) {
+                    return null;
+                }
+
                 ISheet s = book.GetSheet (excel.SheetName);
                 if (s == null) {
                     HDebug.LogWarning (type.Name + " sheet name is incorrect.");

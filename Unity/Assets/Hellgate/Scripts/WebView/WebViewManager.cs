@@ -20,6 +20,10 @@ namespace Hellgate
 
         private static WebViewManager instance = null;
 
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>The instance.</value>
         public static WebViewManager Instance {
             get {
                 if (instance == null) {
@@ -36,6 +40,11 @@ namespace Hellgate
         }
 
 #endregion
+
+        /// <summary>
+        /// Occurs when URL change received event.
+        /// </summary>
+        public event Action<string> URLChangeReceivedEvent;
 
         /// <summary>
         /// Occurs when progress received event.
@@ -61,6 +70,13 @@ namespace Hellgate
             base.OnDestory ();
 
             instance = null;
+        }
+
+        protected virtual void OnURLChanged (string url)
+        {
+            if (URLChangeReceivedEvent != null) {
+                URLChangeReceivedEvent (url);
+            }
         }
 
         protected virtual void OnProgressChanged (string percent)

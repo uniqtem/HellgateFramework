@@ -4,6 +4,7 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 #if UNITY_EDITOR
@@ -57,6 +58,50 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Merge the specified dic and mergeDic.
+        /// </summary>
+        /// <param name="dic">Dictionary.</param>
+        /// <param name="mergeDic">Merge Dictionary.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
+        {
+            Util.Merge<K, V> (dic, mergeDic);
+        }
+
+        /// <summary>
+        /// Merge the specified list and mergeList.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="mergeList">Merge list.</param>
+        /// <typeparam name="K">The 1st type parameter.</typeparam>
+        /// <typeparam name="V">The 2nd type parameter.</typeparam>
+        public static void Merge<K, V> (this List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
+        {
+            Util.Merge<K, V> (list, mergeList);
+        }
+
+        /// <summary>
+        /// Merge the specified iDic and mergeIDic.
+        /// </summary>
+        /// <param name="iDic">I dic.</param>
+        /// <param name="mergeIDic">Merge I dic.</param>
+        public static void Merge (this IDictionary iDic, IDictionary mergeIDic)
+        {
+            Util.Merge (iDic, mergeIDic);
+        }
+
+        /// <summary>
+        /// Merge the specified iList and mergeIList.
+        /// </summary>
+        /// <param name="iList">I list.</param>
+        /// <param name="mergeIList">Merge I list.</param>
+        public static void Merge (this IList iList, IList mergeIList)
+        {
+            Util.Merge (iList, mergeIList);
+        }
+
+        /// <summary>
         /// Gets the attribute value.
         /// </summary>
         /// <returns>The attribute value.</returns>
@@ -90,51 +135,23 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Merge the specified dic and mergeDic.
+        /// Convert the specified IDictionary.
         /// </summary>
-        /// <param name="dic">Dictionary.</param>
-        /// <param name="mergeDic">Merge Dictionary.</param>
-        /// <typeparam name="K">The 1st type parameter.</typeparam>
-        /// <typeparam name="V">The 2nd type parameter.</typeparam>
-        public static void Merge<K, V> (this Dictionary<K, V> dic, Dictionary<K, V> mergeDic)
+        /// <param name="iDic">I dic.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T Convert<T> (this IDictionary iDic)
         {
-            if (dic == null) {
-                dic = mergeDic;
-                return;
-            }
-
-            if (dic == null) {
-                return;
-            }
-
-            foreach (KeyValuePair<K, V> pair in mergeDic) {
-                if (!dic.ContainsKey (pair.Key)) {
-                    dic.Add (pair.Key, pair.Value);
-                }
-            }
+            return Reflection.Convert<T> (iDic);
         }
 
         /// <summary>
-        /// Merge the specified list and mergeList.
+        /// Convert the specified iList.
         /// </summary>
-        /// <param name="list">List.</param>
-        /// <param name="mergeList">Merge list.</param>
-        /// <typeparam name="K">The 1st type parameter.</typeparam>
-        /// <typeparam name="V">The 2nd type parameter.</typeparam>
-        public static void Merge<K, V> (this List<Dictionary<K, V>> list, List<Dictionary<K, V>> mergeList)
+        /// <param name="iList">I list.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static T[] Convert<T> (this IList iList)
         {
-            if (list == null) {
-                list = mergeList;
-                return;
-            }
-
-            if (list == null) {
-                return;
-            }
-
-            for (int i = 0; i < list.Count; i++) {
-                list [i].Merge<K, V> (mergeList [i]);
-            }
+            return Reflection.Convert<T> (iList);
         }
 
         /// <summary>
@@ -210,6 +227,16 @@ namespace Hellgate
         public static GameObject Find (this List<GameObject> list, string strName)
         {
             return Util.FindGameObject (list, strName);
+        }
+
+        /// <summary>
+        /// Find the specified list and strName.
+        /// </summary>
+        /// <param name="list">List.</param>
+        /// <param name="strName">String name.</param>
+        public static UnityEngine.Object Find (this List<UnityEngine.Object> list, string strName)
+        {
+            return Util.FindObject (list, strName);
         }
     }
 }

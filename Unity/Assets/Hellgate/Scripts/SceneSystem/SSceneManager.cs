@@ -3,9 +3,9 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,6 +13,16 @@ using UnityEditor;
 
 namespace Hellgate
 {
+#region Enum
+
+    public enum UIType
+    {
+        UGUI,
+        NGUI
+    }
+
+#endregion
+
     /// <summary>
     /// Scene callback delegate.
     /// </summary>
@@ -67,7 +77,7 @@ namespace Hellgate
         /// <summary>
         /// Used for the calculation popUp depth.
         /// </summary>
-        protected const int POPUP_DEPTH = 100;
+        protected const int POPUP_DEPTH = 1001;
 
 #endregion
 
@@ -107,17 +117,20 @@ namespace Hellgate
 #region SerializeField
 
         /// <summary>
+        /// The type of the UI.
+        /// </summary>
+        [SerializeField]
+        protected UIType uIType = UIType.UGUI;
+        /// <summary>
         /// The default color of the shield.
         /// </summary>
         [SerializeField]
-        protected Color
-            defaultShieldColor = new Color (0, 0, 0, 0.25f);
+        protected Color defaultShieldColor = new Color (0, 0, 0, 0.25f);
         /// <summary>
         /// The first name of the scene.
         /// </summary>
         [SerializeField]
-        protected string
-            firstSceneName;
+        protected string firstSceneName;
 
 #endregion
 
@@ -162,13 +175,35 @@ namespace Hellgate
         /// </summary>
         protected GameObject solidCamera;
         /// <summary>
-        /// The user interface camera.
+        /// The NGUI camera.
         /// </summary>
-        protected GameObject uiCamera;
+        protected GameObject nGUICamera;
+
+        /// <summary>
+        /// Gets the UI type
+        /// </summary>
+        /// <value>The UI type</value>
+        public UIType _UIType {
+            get {
+                return uIType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the NGUI camera.
+        /// </summary>
+        /// <value>The NGUI camera.</value>
+        public Camera NGUICamera {
+            get {
+                return nGUICamera == null ? null : nGUICamera.GetComponent<Camera> ();
+            }
+        }
 
         protected virtual void Awake ()
         {
             instance = this;
+
+            nGUICamera = null;
 
             scenes = new Dictionary<string, GameObject> ();
             menus = new Dictionary<string, GameObject> ();
@@ -191,7 +226,7 @@ namespace Hellgate
 
             DontDestroyOnLoad (instance.gameObject);
 
-#if !UNITY_5_3 
+#if !UNITY_5_3
             DontDestroyOnLoad (gCamera);
             DontDestroyOnLoad (scene);
             DontDestroyOnLoad (shield);
@@ -267,25 +302,33 @@ namespace Hellgate
                         audio.enabled = false;
                     }
 
-                    if (uiCamera == null) {
-                        if (cam.GetComponent<UICamera> () != null) {
-                            cam.clearFlags = CameraClearFlags.Depth;
-                            uiCamera = Instantiate (cam.gameObject) as GameObject;
-                            uiCamera.name = "UICamera";
-                            uiCamera.transform.parent = gCamera.transform;
-                            uiCamera.transform.localPosition = Vector3.zero;
-                            uiCamera.SetActive (true);
+                    // ngui
+                    if (uIType == UIType.NGUI) {
+                        if (nGUICamera == null) {
+                            if (cam.GetComponent ("UICamera") != null) {
+                                cam.clearFlags = CameraClearFlags.Depth;
+                                nGUICamera = Instantiate (cam.gameObject) as GameObject;
+                                nGUICamera.name = "UICamera";
+                                nGUICamera.transform.parent = gCamera.transform;
+                                nGUICamera.transform.localPosition = Vector3.zero;
+                                nGUICamera.SetActive (true);
 
-                            cam.gameObject.SetActive (false);
-                        }
-                    } else {
-                        if (loadLevelData.type != SceneType.POPUP && cam.GetComponent<UICamera> () != null) {
-                            cam.gameObject.SetActive (false);
+                                cam.gameObject.SetActive (false);
+                            }
+                        } else {
+                            if (loadLevelData.type != SceneType.POPUP && cam.GetComponent ("UICamera") != null) {
+                                cam.gameObject.SetActive (false);
+                            }
                         }
                     }
                 }
 
                 SSceneController ctrl = root.GetComponent<SSceneController> ();
+                if (ctrl == null) {
+                    HDebug.LogError ("No SceneController.");
+                    return;
+                }
+
                 ctrl.active = loadLevelData.active;
                 ctrl.deactive = loadLevelData.deactive;
 
@@ -317,9 +360,12 @@ namespace Hellgate
                 break;
                 }
 
-                MonoBehaviour uicam = uiCamera.GetComponent<MonoBehaviour> ();
-                uicam.enabled = false;
-                uicam.enabled = true;
+                // ngui
+                if (nGUICamera != null) {
+                    MonoBehaviour uicam = nGUICamera.GetComponent<MonoBehaviour> ();
+                    uicam.enabled = false;
+                    uicam.enabled = true;
+                }
             }, isAddtive);
         }
 
@@ -379,19 +425,18 @@ namespace Hellgate
         /// <summary>
         /// Clears the pop up.
         /// </summary>
-        protected virtual void ClearPopUp ()
+        protected virtual void ClearPopUp (CallbackDelegate callback = null)
         {
-            foreach (string popup in popups) {
-                SSceneController ctrl = scenes [popup].GetComponent<SSceneController> ();
-                if (ctrl.IsCache) {
-                    OnDeativeScreen (scenes [popup]);
-                } else {
-                    DestroyScene (popup);
+            if (popups.Count <= 0) {
+                if (callback != null) {
+                    callback ();
                 }
+                return;
             }
 
-            popups.Clear ();
-            ClearShield ();
+            Close (delegate() {
+                ClearPopUp (callback);
+            });
         }
 
         /// <summary>
@@ -425,10 +470,18 @@ namespace Hellgate
             GameObject shield = null;
             for (int i = shields.Count - 1; i >= 0; i--) {
                 if (shields [i].activeSelf == flag) {
-                    Camera cam = Util.FindChildObject (shields [i], "Camera").GetComponent<Camera> ();
-                    if (cam.depth > depth) {
-                        depth = cam.depth;
-                        shield = shields [i];
+                    if (uIType == UIType.NGUI) { // ngui
+                        Camera cam = Util.FindChildObject (shields [i], "Camera").GetComponent<Camera> ();
+                        if (cam.depth > depth) {
+                            depth = cam.depth;
+                            shield = shields [i];
+                        }
+                    } else { // ugui
+                        Canvas canv = shields [i].GetComponent<Canvas> ();
+                        if (canv.sortingOrder > depth) {
+                            depth = canv.sortingOrder;
+                            shield = shields [i];
+                        }
                     }
                 }
             }
@@ -442,8 +495,10 @@ namespace Hellgate
         protected virtual void ClearShield ()
         {
             foreach (GameObject sh in shields) {
-                sh.SetActive (false);
+                Destroy (sh);
             }
+
+            shields.Clear ();
         }
 
         /// <summary>
@@ -452,54 +507,66 @@ namespace Hellgate
         /// <param name="root">Root.</param>
         protected virtual void DistancePopUp (GameObject root)
         {
-            int x = (popups.Count + 1) * DISTANCE;
-            root.transform.localPosition = new Vector3 (x, 0, 0);
-
             int depth = POPUP_DEPTH;
             if (popups.Count > 0) {
                 SSceneRoot lRoot = scenes [popups.Peek ()].GetComponent<SSceneRoot> ();
-                Camera lCam = lRoot.Cameras.Last ();
-                depth = (int)lCam.depth + 1;
+                if (uIType == UIType.NGUI) { // ngui
+                    Camera lCam = lRoot.Cameras [lRoot.Cameras.Length - 1];
+                    depth = (int)lCam.depth + 1;
+                } else { // ugui
+                    Canvas[] canvas = lRoot.GetComponentsInChildren<Canvas> ();
+                    depth = canvas [canvas.Length - 1].sortingOrder + 1;
+                }
             }
 
-            SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
             int d = depth;
-            foreach (Camera cam in sRoot.Cameras) {
-                d++;
-                cam.depth = d;
-                if (cam.GetComponent<UICamera> () != null) {
-                    cam.clearFlags = CameraClearFlags.Depth;
+            if (uIType == UIType.NGUI) { // ngui
+                SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
+                foreach (Camera cam in sRoot.Cameras) {
+                    d++;
+                    cam.depth = d;
+
+                    if (cam.GetComponent ("UICamera") != null) {
+                        cam.clearFlags = CameraClearFlags.Depth;
+                    }
+                }
+            } else { // ugui
+                Canvas[] canvas = root.GetComponentsInChildren<Canvas> ();
+                foreach (Canvas canv in canvas) {
+                    d++;
+                    canv.sortingOrder = d;
                 }
             }
 
-            bool createShield = true;
-            foreach (GameObject sh in shields) {
-                if (!sh.activeSelf) {
-                    createShield = false;
-                    break;
-                }
+            // ugui
+            string resource = "HellgateUGUIShield";
+            // ngui
+            if (uIType == UIType.NGUI) { 
+                resource = "HellgateNGUIShield";
             }
+            GameObject gShield = Instantiate (Resources.Load (resource)) as GameObject;
+            gShield.name = "Shield" + shields.Count;
+            gShield.transform.SetParent (shield.transform);
+            gShield.transform.localPosition = Vector3.zero;
+            shields.Add (gShield);
 
-            GameObject gShield = null;
-            if (createShield) {
-                gShield = Instantiate (Resources.Load ("HellgateShield")) as GameObject;
-                gShield.name = "Shield" + shields.Count;
-                gShield.transform.parent = shield.transform;
-                gShield.GetComponentInChildren<Camera> ().gameObject.AddComponent<UICamera> ();
-                shields.Add (gShield);
-            } else {
-                gShield = LastShield (false);
-                if (gShield != null) {
-                    gShield.SetActive (true);
-                }
+            if (uIType == UIType.NGUI) { // ngui
+                int x = (popups.Count + 1) * DISTANCE;
+                root.transform.localPosition = new Vector3 (x, 0, 0);
+
+                gShield.transform.localPosition = new Vector3 (x, -DISTANCE, 0);
+                Camera sCam = gShield.GetComponentInChildren<Camera> ();
+                sCam.depth = depth;
+
+                MeshRenderer mesh = gShield.GetComponentInChildren<MeshRenderer> ();
+                mesh.material.color = defaultShieldColor;
+            } else { // ugui
+                Canvas canv = gShield.GetComponentInChildren<Canvas> ();
+                canv.sortingOrder = depth;
+
+                Image image = gShield.GetComponentInChildren<Image> ();
+                image.color = defaultShieldColor;
             }
-			
-            gShield.transform.localPosition = new Vector3 (x, -DISTANCE, 0);
-            Camera sCam = gShield.GetComponentInChildren<Camera> ();
-            sCam.depth = depth;
-
-            MeshRenderer mesh = gShield.GetComponentInChildren<MeshRenderer> ();
-            mesh.material.color = defaultShieldColor;
         }
 
         /// <summary>
@@ -542,8 +609,10 @@ namespace Hellgate
                 }
             }
 
-            LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            LoadLevel (loadLevel);
+            ClearPopUp (delegate() {
+                LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
+                LoadLevel (loadLevel);
+            });
         }
 
         /// <summary>
@@ -565,9 +634,11 @@ namespace Hellgate
                 }
             }
 
-            LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            loadLevel.type = SceneType.ADDSCREEN;
-            LoadLevel (loadLevel);
+            ClearPopUp (delegate() {
+                LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
+                loadLevel.type = SceneType.ADDSCREEN;
+                LoadLevel (loadLevel);
+            });
         }
 
         /// <summary>
@@ -643,20 +714,27 @@ namespace Hellgate
             }
 
             string sceneName = popups.Peek ();
-            GameObject root = scenes [sceneName];
-            SSceneController ctrl = root.GetComponent<SSceneController> ();
-            ctrl.callback = callback;
+            if (scenes.ContainsKey (sceneName)) {
+                GameObject root = scenes [sceneName];
+                SSceneController ctrl = root.GetComponent<SSceneController> ();
+                ctrl.callback = callback;
 
-            if (ctrl.IsCache) {
-                OnDeativeScreen (root);
+                if (ctrl.IsCache) {
+                    OnDeativeScreen (root);
+                } else {
+                    DestroyScene (sceneName);
+                }
+                popups.Pop ();
+
+                GameObject shield = LastShield (true);
+                if (shield != null) {
+                    shields.Remove (shield);
+                    Destroy (shield);
+                }
             } else {
-                DestroyScene (sceneName);
-            }
-            popups.Pop ();
-
-            GameObject shield = LastShield (true);
-            if (shield != null) {
-                shield.SetActive (false);
+                if (callback != null) {
+                    callback ();
+                }
             }
         }
 

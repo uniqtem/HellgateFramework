@@ -92,7 +92,7 @@ namespace Hellgate
         {
             if (instance == null) {
                 instance = this;
-                DontDestroyOnLoad (this.gameObject);
+                DontDestroyOnLoad (gameObject);
             }
 
             popUp = null;
@@ -156,6 +156,14 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnDone (HttpData data, WWW www)
         {
+//            HDebug.Log (data.post == true ? "post : " + www.url : "get : " + www.url);
+//            if (data.post) {
+//                string log = "";
+//                foreach (KeyValuePair<string, string> kVP in data.datas) {
+//                    log += kVP.Key + " : " + kVP.Value + " \n";
+//                }
+//                HDebug.Log (log);
+//            }
 //            HDebug.Log ("Requst good!!");
             CallbackRequest (data, www);
         }

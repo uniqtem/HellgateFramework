@@ -26,17 +26,9 @@ namespace Hellgate
 #endregion
 
         [SerializeField]
-        private GameObject top;
+        protected GameObject top;
         [SerializeField]
-        private GameObject bottom;
-        [SerializeField]
-        private Camera uI3D;
-
-        public Camera UI3D {
-            get {
-                return uI3D;
-            }
-        }
+        protected GameObject bottom;
 
         public override void Awake ()
         {

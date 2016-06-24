@@ -72,15 +72,17 @@ namespace Hellgate
 
         private void SetText (GameObject go, string text)
         {
-            Component nGuiLabel = go.GetComponent ("UILabel");
-            if (nGuiLabel != null) {
-                SetColorReflection (nGuiLabel, text);
+            if (SceneManager.Instance._UIType == UIType.NGUI) { // ngui
+                Component nGUILabel = go.GetComponent ("UILabel");
+                if (nGUILabel != null) {
+                    Reflection.SetPropInvoke (nGUILabel, "text", text);
+                }
+            } else { // ugui
+                Component uGUIText = go.GetComponent ("Text");
+                if (uGUIText != null) {
+                    Reflection.SetPropInvoke (uGUIText, "text", text);
+                }
             }
-        }
-
-        private void SetColorReflection (Component comp, string text)
-        {
-            SSceneReflection.SetPropValue (comp, "text", text);
         }
     }
 }

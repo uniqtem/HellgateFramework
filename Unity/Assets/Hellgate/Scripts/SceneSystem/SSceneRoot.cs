@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,6 +22,11 @@ namespace Hellgate
         /// </summary>
         [SerializeField]
         protected Camera[] cameras;
+        /// <summary>
+        /// The event system.
+        /// </summary>
+        [SerializeField]
+        protected EventSystem eventSystem;
 
         /// <summary>
         /// Gets the cameras.
@@ -32,18 +38,35 @@ namespace Hellgate
             }
         }
 
+        /// <summary>
+        /// Gets the event system.
+        /// </summary>
+        /// <value>The event system.</value>
+        public EventSystem EventSystem {
+            get {
+                return eventSystem;
+            }
+        }
+
         protected virtual void Awake ()
         {
             if (!Application.isPlaying) {
+                // ngui
                 if (cameras == null) {
                     cameras = GameObject.FindObjectsOfType<Camera> ();
                 }
+
+                // ugui
+                if (eventSystem == null) {
+                    eventSystem = GameObject.FindObjectOfType<EventSystem> ();
+                }
+
 #if UNITY_EDITOR
-    #if UNITY_5_3
+                #if UNITY_5_3
                 gameObject.name = Path.GetFileNameWithoutExtension (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene ().name);
-    #else
+                #else
                 gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);
-    #endif
+                #endif
 #endif
             } else {
                 if (SSceneManager.Instance != null) {

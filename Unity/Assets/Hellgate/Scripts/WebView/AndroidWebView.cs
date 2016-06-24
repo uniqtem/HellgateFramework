@@ -11,6 +11,7 @@ namespace Hellgate
     public partial class WebView : MonoBehaviour
     {
 #if UNITY_EDITOR || UNITY_ANDROID
+//#if !UNITY_EDITOR
         /// <summary>
         /// Android class name.
         /// </summary>
@@ -107,6 +108,68 @@ namespace Hellgate
             }
 
             android.Call ("setBackground", flag);
+        }
+
+        /// <summary>
+        /// Gos the back.
+        /// </summary>
+        public virtual void GoBack ()
+        {
+            if (android == null) {
+                return;
+            }
+
+            android.Call ("goBack");
+        }
+
+        /// <summary>
+        /// Gos the forward.
+        /// </summary>
+        public virtual void GoForward ()
+        {
+            if (android == null) {
+                return;
+            }
+
+            android.Call ("goForward");
+        }
+
+        /// <summary>
+        /// Determines whether this instance can go back.
+        /// </summary>
+        /// <returns><c>true</c> if this instance can go back; otherwise, <c>false</c>.</returns>
+        public virtual bool CanGoBack ()
+        {
+            if (android == null) {
+                return false;
+            }
+
+            return android.Call<bool> ("canGoBack");
+        }
+
+        /// <summary>
+        /// Determines whether this instance can go forward.
+        /// </summary>
+        /// <returns><c>true</c> if this instance can go forward; otherwise, <c>false</c>.</returns>
+        public virtual bool CanGoForward ()
+        {
+            if (android == null) {
+                return false;
+            }
+
+            return android.Call<bool> ("canGoForward");
+        }
+
+        /// <summary>
+        /// Reload.
+        /// </summary>
+        public virtual void Reload ()
+        {
+            if (android == null) {
+                return;
+            }
+
+            android.Call ("reload");
         }
 #endif
     }

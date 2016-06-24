@@ -2,6 +2,7 @@ package com.hellgate;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.unity3d.player.UnityPlayer;
 public class UnityWebViewActivity {
     private static FrameLayout layout;
     private WebView webView;
+    private boolean flag = false;
 
     public UnityWebViewActivity() {
     }
@@ -47,14 +49,17 @@ public class UnityWebViewActivity {
                 });
 
                 webView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_URL_CHANGED, url);
+                    }
+
                     @TargetApi(android.os.Build.VERSION_CODES.M)
                     @Override
                     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                         Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_ERROR, error.getDescription().toString());
                     }
                 });
-
-                webView.setWebViewClient(new WebViewClient());
 
                 WebSettings webSettings = webView.getSettings();
                 webSettings.setSupportZoom(false);
@@ -171,6 +176,68 @@ public class UnityWebViewActivity {
                 } else {
                     webView.setBackgroundColor(Color.TRANSPARENT);
                 }
+            }
+        });
+    }
+
+    public void goBack()
+    {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.goBack();
+            }
+        });
+    }
+
+    public void goForward() {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.goForward();
+            }
+        });
+    }
+
+    public boolean canGoBack()
+    {
+        if (webView == null) {
+            return false;
+        }
+
+        return webView.canGoBack();
+    }
+
+    public boolean canGoForward()
+    {
+        if (webView == null) {
+            return false;
+        }
+
+        return  webView.canGoForward();
+    }
+
+    public void reload()
+    {
+        final Activity activity = UnityPlayer.currentActivity;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView == null) {
+                    return;
+                }
+
+                webView.reload();
             }
         });
     }

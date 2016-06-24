@@ -9,8 +9,6 @@ Thank you for buying Hellgate!
 To use the Hellgate
 -----------------
 1. Requires Unity(Personal or Professional Edition) 5.0 or higher.
-2. Requires NGUI: Next-Gen UI kit.
-3. Requires SS-System 3.0: UI and Scene Manager.
 
 -----------------
  Reference
@@ -63,3 +61,7 @@ FIX : Scene System
 FIX : Loading Job
 NEW : WebView (GoBack, GoForward, Reload)
 NEW : Support UGUI
+2.4.0
+NEW : Sound
+NEW : WebView Event (OnURLChanged)
+NEX : Excel -> Json (type join)

@@ -14,6 +14,8 @@ public class HellgateSceneManagerEx : SceneManager
 {
     [SerializeField]
     private string buildVersion = "1.0.0";
+    [SerializeField]
+    private AudioClip bgm;
 
     protected override void Awake ()
     {
@@ -38,5 +40,9 @@ public class HellgateSceneManagerEx : SceneManager
 //            ");");
 //        }
 #endif
+
+        // add BGM
+        SoundManager.Instance.AddBGM (bgm);
+        SoundManager.Instance.PlayBGM ();
     }
 }

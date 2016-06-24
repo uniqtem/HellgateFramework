@@ -21,9 +21,12 @@ namespace HellgateEditor
 
     public class ExcelImportMaker
     {
+        public delegate TResult TResultDelegate<out TResult> (string type);
+
         protected IWorkbook book;
         protected string excelFilePath;
         protected string outputJsonPath;
+        protected TResultDelegate<Type> joinType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HellgateEditor.ExcelImportMaker"/> class.
@@ -179,40 +182,60 @@ namespace HellgateEditor
 
             Dictionary<string, object> dic = new Dictionary<string, object> ();
             foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
-                if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (config.name))) {
-                    if (joinColumn != null) {
-                        foreach (KeyValuePair<string, object> pair in joinColumn) {
-                            if (pair.Key == config.name) {
-                                if (pair.Value.ToString () != sheetDic [Util.ConvertCamelToUnderscore (config.name)].ToString ()) {
-                                    return null;
-                                }
-                            }
-                        }
-                    }
-
-                    dic.Add (config.name, sheetDic [Util.ConvertCamelToUnderscore (config.name)]);
-                } else {
-                    if (!Util.IsValueType (config.type)) {
-                        if (!config.type.IsArray) {
-                            continue;
-                        }
-
-                        Dictionary<string, object> jDic = new Dictionary<string, object> ();
-                        AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type.GetElementType ());
-                        foreach (AttributeMappingConfig<ColumnAttribute> c in temp) {
-                            if (c.t != null) {
-                                ColumnAttribute column = c.t as ColumnAttribute;
-                                if (column != null) {
-                                    if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (column.Value))) {
-                                        jDic.Add (c.name, sheetDic [Util.ConvertCamelToUnderscore (column.Value)]);
+                if (Util.IsValueType (config.type)) {
+                    if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (config.name))) {
+                        if (joinColumn != null) {
+                            foreach (KeyValuePair<string, object> pair in joinColumn) {
+                                if (pair.Key == config.name) {
+                                    if (pair.Value.ToString () != sheetDic [Util.ConvertCamelToUnderscore (config.name)].ToString ()) {
+                                        return null;
                                     }
                                 }
                             }
                         }
 
-                        if (jDic.Count > 0) {
-                            dic.Add (config.name, CreateAttributeJson (config.type.GetElementType (), jDic));
+                        dic.Add (config.name, sheetDic [Util.ConvertCamelToUnderscore (config.name)]);
+                    }
+                } else {
+                    if (!config.type.IsArray) {
+                        continue;
+                    }
+
+                    Type type = config.type.GetElementType ();
+                    string value = "";
+                    if (config.t != null) {
+                        ColumnAttribute column = config.t as ColumnAttribute;
+                        if (column != null) {
+                            if (column.Value == "" && column.Type != "") {
+                                value = config.name;
+                            } else if (joinType != null) {
+                                Type tempType = joinType (sheetDic [column.Type].ToString ());
+                                type = tempType == null ? type : tempType;
+                                value = column.Value;
+                            }
                         }
+                    }
+
+                    Dictionary<string, object> jDic = new Dictionary<string, object> ();
+                    AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type.GetElementType ());
+                    foreach (AttributeMappingConfig<ColumnAttribute> c in temp) {
+                        if (c.t != null) {
+                            ColumnAttribute column = c.t as ColumnAttribute;
+                            if (column != null) {
+                                if (column.CheckConstraints (DataConstraints.PK)) {
+                                    jDic.Add (c.name, sheetDic [value]);
+                                    break;
+                                }
+
+                                if (sheetDic.ContainsKey (column.Value)) {
+                                    jDic.Add (c.name, sheetDic [column.Value]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (jDic.Count > 0) {
+                        dic.Add (config.name, CreateAttributeJson (type, jDic));
                     }
                 }
             }

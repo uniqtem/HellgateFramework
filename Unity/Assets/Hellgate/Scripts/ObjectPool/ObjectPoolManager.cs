@@ -74,7 +74,7 @@ namespace Hellgate
             GameObject obj = Spawn (gObj, count);
             obj.transform.position = position;
             obj.transform.rotation = rotation;
-			
+
             return obj;
         }
 

@@ -45,6 +45,8 @@ public class HellgateMainEx : HellgateSceneControllerEx
     {
         base.OnSet (data);
 
+        SoundManager.Instance.PlayBGM ();
+
         List<object> objs = data as List<object>;
         SetUI2DSpriteValue (panel_1, objs);
         SetUIButton (panel_100, objs);
@@ -71,5 +73,42 @@ public class HellgateMainEx : HellgateSceneControllerEx
     public void OnClickWebView ()
     {
         SceneManager.Instance.PopUp ("HellgateWebView", "https://www.google.com");
+    }
+
+    public void OnClickSound ()
+    {
+        string[] sounds = new string[] {
+            "bgm2", "sound1", "sound2"
+        };
+
+        List<AssetBundleData> assetBundles = new List<AssetBundleData> ();
+
+        for (int i = 0; i < sounds.Length; i++) {
+            AssetBundleData aBD = new AssetBundleData ("hellgatesound");
+            aBD.type = typeof(AudioClip);
+            aBD.objName = sounds [i];
+            assetBundles.Add (aBD);
+        }
+
+        LoadingJobData jobData = new LoadingJobData ();
+        jobData.assetBundles = assetBundles;
+
+        jobData.finishedDelegate = delegate(List<object> obj, LoadingJobController job) {
+            List<AudioClip> clips = obj.GetListObjects<AudioClip> ();
+            for (int i = 0; i < clips.Count; i++) {
+                if (clips [i].name == "bgm2") {
+                    SoundManager.Instance.AddBGM (clips [i]);
+                } else {
+                    SoundManager.Instance.AddSound (clips [i]);
+                }
+            }
+
+            SoundManager.Instance.PlayBGM ("bgm2");
+            SceneManager.Instance.Close (delegate() {
+                SceneManager.Instance.PopUp ("The bgm and menu sound has been set.", PopUpType.Ok);
+            });
+        };
+
+        SceneManager.Instance.LoadingJob (jobData);
     }
 }

@@ -63,7 +63,7 @@ namespace Hellgate
                 base.Awake ();
 
                 instance = this;
-                DontDestroyOnLoad (this.gameObject);
+                DontDestroyOnLoad (gameObject);
             }
         }
 

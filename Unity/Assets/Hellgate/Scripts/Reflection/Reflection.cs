@@ -87,6 +87,10 @@ namespace Hellgate
                         } else {
                             data = Convert<object> (iList, flag, tType);
                             Array someArray = data as Array;
+                            if (someArray == null) {
+                                continue;
+                            }
+
                             Array filledArray = Array.CreateInstance (tType, someArray.Length);
                             Array.Copy (someArray, filledArray, someArray.Length);
 
@@ -129,6 +133,10 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T[] Convert<T> (IList list, BindingFlags flag = BindingFlags.NonPublic, Type type = null)
         {
+            if (list == null) {
+                return null;
+            }
+
             object obj = (T)Activator.CreateInstance (typeof(T), null);
             if (type != null) {
                 obj = Activator.CreateInstance (type, null);

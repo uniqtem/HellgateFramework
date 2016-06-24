@@ -10,6 +10,10 @@ public class HellgateMenuEx : MenuController
 {
     public void OnClickTap (string name)
     {
+        if (SoundManager.Instance.Sounds != null) {
+            SoundManager.Instance.PlaySound (SoundManager.Instance.Sounds [Random.Range (0, SoundManager.Instance.Sounds.Count)].name);
+        }
+
         switch (name) {
         case "Main":
             HellgateMainEx.GoMain ();

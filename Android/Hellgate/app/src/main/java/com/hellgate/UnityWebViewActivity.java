@@ -2,6 +2,7 @@ package com.hellgate;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.unity3d.player.UnityPlayer;
 public class UnityWebViewActivity {
     private static FrameLayout layout;
     private WebView webView;
+    private boolean flag = false;
 
     public UnityWebViewActivity() {
     }
@@ -47,14 +49,17 @@ public class UnityWebViewActivity {
                 });
 
                 webView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_URL_CHANGED, url);
+                    }
+
                     @TargetApi(android.os.Build.VERSION_CODES.M)
                     @Override
                     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                         Util.sendMessage(Config.WEBVIEW_MANAGER, Config.WEBVIEW_ERROR, error.getDescription().toString());
                     }
                 });
-
-                webView.setWebViewClient(new WebViewClient());
 
                 WebSettings webSettings = webView.getSettings();
                 webSettings.setSupportZoom(false);

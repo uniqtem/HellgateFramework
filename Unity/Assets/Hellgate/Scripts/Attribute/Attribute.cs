@@ -156,6 +156,10 @@ namespace Hellgate
                 return false;
             }
 
+            if (this.constraints == null) {
+                return false;
+            }
+
             if (Array.FindIndex (this.constraints, c => c == constraints) < 0) {
                 return false;
             } else {

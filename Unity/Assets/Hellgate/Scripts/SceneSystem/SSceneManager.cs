@@ -226,7 +226,7 @@ namespace Hellgate
 
             DontDestroyOnLoad (instance.gameObject);
 
-#if !UNITY_5_3 
+#if !UNITY_5_3
             DontDestroyOnLoad (gCamera);
             DontDestroyOnLoad (scene);
             DontDestroyOnLoad (shield);
@@ -324,6 +324,11 @@ namespace Hellgate
                 }
 
                 SSceneController ctrl = root.GetComponent<SSceneController> ();
+                if (ctrl == null) {
+                    HDebug.LogError ("No SceneController.");
+                    return;
+                }
+
                 ctrl.active = loadLevelData.active;
                 ctrl.deactive = loadLevelData.deactive;
 
@@ -429,19 +434,9 @@ namespace Hellgate
                 return;
             }
 
-            for (int i = 0; i < popups.Count - 1; i++) {
-                SSceneController ctrl = scenes [popups.Peek ()].GetComponent<SSceneController> ();
-                if (ctrl.IsCache) {
-                    OnDeativeScreen (scenes [popups.Peek ()]);
-                } else {
-                    DestroyScene (popups.Peek ());
-                }
-            }
-
-            Close (callback);
-
-            popups.Clear ();
-            ClearShield ();
+            Close (delegate() {
+                ClearPopUp (callback);
+            });
         }
 
         /// <summary>
@@ -500,8 +495,10 @@ namespace Hellgate
         protected virtual void ClearShield ()
         {
             foreach (GameObject sh in shields) {
-                sh.SetActive (false);
+                Destroy (sh);
             }
+
+            shields.Clear ();
         }
 
         /// <summary>
@@ -541,34 +538,17 @@ namespace Hellgate
                 }
             }
 
-            bool createShield = true;
-            foreach (GameObject sh in shields) {
-                if (!sh.activeSelf) {
-                    createShield = false;
-                    break;
-                }
+            // ugui
+            string resource = "HellgateUGUIShield";
+            // ngui
+            if (uIType == UIType.NGUI) { 
+                resource = "HellgateNGUIShield";
             }
-
-            GameObject gShield = null;
-            if (createShield) {
-                // ugui
-                string resource = "HellgateUGUIShield";
-                // ngui
-                if (uIType == UIType.NGUI) { 
-                    resource = "HellgateNGUIShield";
-                }
-
-                gShield = Instantiate (Resources.Load (resource)) as GameObject;
-                gShield.name = "Shield" + shields.Count;
-                gShield.transform.SetParent (shield.transform);
-                gShield.transform.localPosition = Vector3.zero;
-                shields.Add (gShield);
-            } else {
-                gShield = LastShield (false);
-                if (gShield != null) {
-                    gShield.SetActive (true);
-                }
-            }
+            GameObject gShield = Instantiate (Resources.Load (resource)) as GameObject;
+            gShield.name = "Shield" + shields.Count;
+            gShield.transform.SetParent (shield.transform);
+            gShield.transform.localPosition = Vector3.zero;
+            shields.Add (gShield);
 
             if (uIType == UIType.NGUI) { // ngui
                 int x = (popups.Count + 1) * DISTANCE;
@@ -734,20 +714,27 @@ namespace Hellgate
             }
 
             string sceneName = popups.Peek ();
-            GameObject root = scenes [sceneName];
-            SSceneController ctrl = root.GetComponent<SSceneController> ();
-            ctrl.callback = callback;
+            if (scenes.ContainsKey (sceneName)) {
+                GameObject root = scenes [sceneName];
+                SSceneController ctrl = root.GetComponent<SSceneController> ();
+                ctrl.callback = callback;
 
-            if (ctrl.IsCache) {
-                OnDeativeScreen (root);
+                if (ctrl.IsCache) {
+                    OnDeativeScreen (root);
+                } else {
+                    DestroyScene (sceneName);
+                }
+                popups.Pop ();
+
+                GameObject shield = LastShield (true);
+                if (shield != null) {
+                    shields.Remove (shield);
+                    Destroy (shield);
+                }
             } else {
-                DestroyScene (sceneName);
-            }
-            popups.Pop ();
-
-            GameObject shield = LastShield (true);
-            if (shield != null) {
-                shield.SetActive (false);
+                if (callback != null) {
+                    callback ();
+                }
             }
         }
 

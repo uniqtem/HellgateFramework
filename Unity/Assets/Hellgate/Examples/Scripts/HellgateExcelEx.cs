@@ -2,7 +2,7 @@
 using System.Collections;
 using Hellgate;
 
-/*
+///*
 [Excel ("avatar", "avatar", true)]
 public class Avatar
 {
@@ -14,7 +14,9 @@ public class Avatar
     private string attack;
     private string defence;
     private int speed;
-    private Monster[] monster;
+    private Monster[] monsters;
+    [Column ("idx")]
+    private Monster monster;
 }
 
 [Excel ("monster", "monster")]
@@ -26,4 +28,4 @@ public class Monster
     private string name;
     private string description;
 }
-*/
+//*/

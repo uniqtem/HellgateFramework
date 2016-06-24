@@ -26,6 +26,11 @@ public class HellgateWebViewEx : HellgateSceneControllerEx
         SetButton (forwardButton, false);
     }
 
+    public override void OnKeyBack ()
+    {
+        OnClick ();
+    }
+
     private void SetButton (GameObject button, bool flag)
     {
         SetButtonEnabledValue (button, flag);

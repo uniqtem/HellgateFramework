@@ -38,7 +38,7 @@ namespace Hellgate
 
                     DontDestroyOnLoad (gObj);
                 }
-				
+
                 return instance;
             }
         }
@@ -62,7 +62,7 @@ namespace Hellgate
         {
             if (instance == null) {
                 instance = this;
-                DontDestroyOnLoad (this.gameObject);
+                DontDestroyOnLoad (gameObject);
             }
 
             assetBundleClient = new AssetBundleClient ();
@@ -172,33 +172,37 @@ namespace Hellgate
                 }
             };
 
-#if UNITY_EDITOR
 //          HDebug.Log (data.assetBundleName + " / " + data.objName);
-            string[] paths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName (data.assetBundleName, data.objName);
-            string path = "";
-            if (paths.Length <= 0) {
-                paths = AssetDatabase.GetAssetPathsFromAssetBundle (data.assetBundleName);
+#if UNITY_EDITOR
+            if (SceneManager.Instance.EditorLocalLoadAssetBundle) {
+                string[] paths = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName (data.assetBundleName, data.objName);
+                string path = "";
                 if (paths.Length <= 0) {
-                    InnerLoadAssetBundle ();
-                    return;
+                    paths = AssetDatabase.GetAssetPathsFromAssetBundle (data.assetBundleName);
+                    if (paths.Length <= 0) {
+                        InnerLoadAssetBundle ();
+                        return;
+                    }
+
+                    string[] files = Directory.GetFiles (paths [0], data.objName + ".*");
+                    if (files.Length <= 0) {
+                        InnerLoadAssetBundle ();
+                        return;
+                    }
+                    path = files [0];
+                } else {
+                    path = paths [0];
                 }
 
-                string[] files = Directory.GetFiles (paths [0], data.objName + ".*");
-                if (files.Length <= 0) {
-                    InnerLoadAssetBundle ();
-                    return;
+                object temp = AssetDatabase.LoadMainAssetAtPath (path);
+                if (data.type == typeof(Sprite)) {
+                    temp = TextureConvertSprite (temp);
                 }
-                path = files [0];
+
+                finished (temp);
             } else {
-                path = paths [0];
+                InnerLoadAssetBundle ();
             }
-
-            object temp = AssetDatabase.LoadMainAssetAtPath (path);
-            if (data.type == typeof(Sprite)) {
-                temp = TextureConvertSprite (temp);
-            }
-
-            finished (temp);
 #else
             InnerLoadAssetBundle ();
 #endif
@@ -262,22 +266,23 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Unload the specified url, version and flag.
+        /// Unload the specified url, version and unloadAllLoadedObjects.
         /// </summary>
         /// <param name="url">URL.</param>
         /// <param name="version">Version.</param>
-        /// <param name="flag">If set to <c>true</c> flag.</param>
-        public void Unload (string url, int version, bool flag = true)
+        /// <param name="unloadAllLoadedObjects">If set to <c>true</c> unload all loaded objects.</param>
+        public void Unload (string url, int version, bool unloadAllLoadedObjects = true)
         {
-            assetBundleClient.Unload (url, version, flag);
+            assetBundleClient.Unload (url, version, unloadAllLoadedObjects);
         }
 
         /// <summary>
         /// Alls the unload.
         /// </summary>
-        public void AllUnload ()
+        /// <param name="unloadAllLoadedObjects">If set to <c>true</c> unload all loaded objects.</param>
+        public void AllUnload (bool unloadAllLoadedObjects = true)
         {
-            assetBundleClient.AllUnload ();
+            assetBundleClient.AllUnload (unloadAllLoadedObjects);
         }
 
         /// <summary>

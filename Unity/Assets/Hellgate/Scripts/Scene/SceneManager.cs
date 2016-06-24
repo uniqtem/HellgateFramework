@@ -49,6 +49,11 @@ namespace Hellgate
         /// </summary>
         [SerializeField]
         protected string menuSceneName;
+        /// <summary>
+        /// The editor local load asset bundle.
+        /// </summary>
+        [SerializeField]
+        protected bool editorLocalLoadAssetBundle = true;
 
 #endregion
 
@@ -58,7 +63,7 @@ namespace Hellgate
         /// The debug flag.
         /// </summary>
         [SerializeField]
-        private bool showDebug = false;
+        private bool showDebug = true;
 
         void Start ()
         {
@@ -131,6 +136,16 @@ namespace Hellgate
             }
             get {
                 return shieldAlpha;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Hellgate.SceneManager"/> editor local load asset bundle.
+        /// </summary>
+        /// <value><c>true</c> if editor local load asset bundle; otherwise, <c>false</c>.</value>
+        public bool EditorLocalLoadAssetBundle {
+            get {
+                return editorLocalLoadAssetBundle;
             }
         }
 
@@ -247,7 +262,7 @@ namespace Hellgate
         public virtual void LoadMainMenu (SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
             if (menuSceneName == "") {
-                HDebug.LogWarning ("The default menu scene is not set");
+//                HDebug.LogWarning ("The default menu scene is not set");
                 return;
             }
 

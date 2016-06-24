@@ -123,17 +123,17 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Unload the specified url, version and allFlag.
+        /// Unload the specified url, version and unloadAllLoadedObjects.
         /// </summary>
         /// <param name="url">URL.</param>
         /// <param name="version">Version.</param>
-        /// <param name="allFlag">If set to <c>true</c> all flag.</param>
-        public void Unload (string url, int version, bool allFlag)
+        /// <param name="unloadAllLoadedObjects">If set to <c>true</c> unload all loaded objects.</param>
+        public void Unload (string url, int version, bool unloadAllLoadedObjects)
         {
             string keyName = url + version.ToString ();
             AssetBundleRef assetBundleRef;
             if (dictionaryAssetBundleRef.TryGetValue (keyName, out assetBundleRef)) {
-                assetBundleRef.assetBundle.Unload (allFlag);
+                assetBundleRef.assetBundle.Unload (unloadAllLoadedObjects);
                 assetBundleRef.assetBundle = null;
                 dictionaryAssetBundleRef.Remove (keyName);
             }
@@ -142,10 +142,11 @@ namespace Hellgate
         /// <summary>
         /// Alls the unload.
         /// </summary>
-        public void AllUnload ()
+        /// <param name="unloadAllLoadedObjects">If set to <c>true</c> unload all loaded objects.</param>
+        public void AllUnload (bool unloadAllLoadedObjects)
         {
             foreach (KeyValuePair<string, AssetBundleRef> kVP in dictionaryAssetBundleRef) {
-                kVP.Value.assetBundle.Unload (true);
+                kVP.Value.assetBundle.Unload (unloadAllLoadedObjects);
                 kVP.Value.assetBundle = null;
             }
 

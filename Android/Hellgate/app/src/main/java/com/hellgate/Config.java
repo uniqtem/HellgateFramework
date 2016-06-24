@@ -13,5 +13,6 @@ public class Config {
     public static final String REMOTE_NOTIFICATION_RECEIVED = "RemoteNotificationReceived";
     public static final String LOCAL_NOTIFICATION_RECEIVED = "LocalNotificationReceived";
     public static final String WEBVIEW_PROGRESS_CHANGED = "OnProgressChanged";
+    public static final String WEBVIEW_URL_CHANGED = "OnURLChanged";
     public static final String WEBVIEW_ERROR = "OnReceivedError";
 }

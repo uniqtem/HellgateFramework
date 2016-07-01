@@ -237,6 +237,10 @@ namespace Hellgate
 
             data.popUp = popUp;
             if (popUp) {
+                if (!data.active) {
+                    shieldAlpha = 0f;
+                }
+
                 PopUp (LoadingJobSceneName, data, active, deactive);
             } else {
                 Screen (LoadingJobSceneName, data, active, deactive);

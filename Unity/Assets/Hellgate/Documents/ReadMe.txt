@@ -65,3 +65,5 @@ NEW : Support UGUI
 NEW : Sound
 NEW : WebView Event (OnURLChanged)
 NEX : Excel -> Json (type join)
+2.5.0
+NEW : BuildAssetBundleOptions

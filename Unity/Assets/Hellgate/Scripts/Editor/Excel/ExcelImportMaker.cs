@@ -1,4 +1,8 @@
-﻿using UnityEditor;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//                  Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEditor;
 using UnityEngine;
 using System;
 using System.Collections;
@@ -27,6 +31,8 @@ namespace HellgateEditor
         protected string excelFilePath;
         protected string outputJsonPath;
         protected TResultDelegate<Type> joinType;
+        protected List<Type> listType;
+        protected int index;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HellgateEditor.ExcelImportMaker"/> class.
@@ -96,72 +102,90 @@ namespace HellgateEditor
             }
         }
 
-        protected void CreateAttributeJson ()
+        protected IEnumerator CreateAttributeJson ()
         {
-            Type[] types = Reflection.GetExecutingAssembly ();
-            foreach (Type type in types) {
-                ExcelAttribute excel = type.GetAttributeValue<ExcelAttribute> ();
-                if (excel == null || excel.CreateFileName == "") {
-                    continue;
-                }
+            EditorUtility.DisplayProgressBar ("[Excel -> Json] Converter",
+                                              string.Format ("{0}({1}/{2})",
+                                                             listType [index],
+                                                             index,
+                                                             listType.Count),
+                                              (float)index / (float)listType.Count);
+            CreateAttributeJson (index);
+            yield return null;
 
-                List<Dictionary<string, object>> list = CreateAttributeJson (type);
-                if (list == null) {
-                    continue;
-                }
+            if (index < listType.Count - 1) {
+                index++;
+                EditorUtil.StartCoroutine (CreateAttributeJson ());
+            } else {
+                EditorUtility.ClearProgressBar ();
+                AssetDatabase.Refresh ();
+            }
+        }
 
-                if (excel.IndexFlag) {
-                    AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
-                    List<string> pks = new List<string> ();
-                    List<string> fks = new List<string> ();
-                    foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
-                        if (config.t != null) {
-                            ColumnAttribute column = config.t as ColumnAttribute;
-                            if (column != null) {
-                                if (column.CheckConstraints (DataConstraints.PK)) {
-                                    pks.Add (config.name);
-                                }
+        protected void CreateAttributeJson (int index)
+        {
+            Type type = listType [index];
+            ExcelAttribute excel = type.GetAttributeValue<ExcelAttribute> ();
+            if (excel == null || excel.CreateFileName == "") {
+                return;
+            }
 
-                                if (column.CheckConstraints (DataConstraints.FK)) {
-                                    fks.Add (config.name);
-                                }
+            List<Dictionary<string, object>> list = CreateAttributeJson (type);
+            if (list == null) {
+                return;
+            }
+
+            if (excel.IndexFlag) {
+                AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
+                List<string> pks = new List<string> ();
+                List<string> fks = new List<string> ();
+                foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
+                    if (config.t != null) {
+                        ColumnAttribute column = config.t as ColumnAttribute;
+                        if (column != null) {
+                            if (column.CheckConstraints (DataConstraints.PK)) {
+                                pks.Add (config.name);
+                            }
+
+                            if (column.CheckConstraints (DataConstraints.FK)) {
+                                fks.Add (config.name);
                             }
                         }
                     }
+                }
 
-                    if (pks.Count > 0) {
-                        foreach (Dictionary<string, object> dic in list) {
-                            StringBuilder stringBuilder = Append (pks, dic);
-                            string createFileName = string.Format ("{0}{1}", excel.CreateFileName, stringBuilder.ToString ());
-                            EditorUtil.CreateJsonFile (createFileName, Json.Serialize (dic), outputJsonPath);
-                        }
+                if (pks.Count > 0) {
+                    foreach (Dictionary<string, object> dic in list) {
+                        StringBuilder stringBuilder = Append (pks, dic);
+                        string createFileName = string.Format ("{0}{1}", excel.CreateFileName, stringBuilder.ToString ());
+                        EditorUtil.CreateJsonFile (createFileName, Json.Serialize (dic), outputJsonPath, false);
+                    }
+                }
+
+                if (fks.Count > 0) {
+                    List<string> fk = new List<string> ();
+                    foreach (Dictionary<string, object> dic in list) {
+                        StringBuilder stringBuilder = Append (fks, dic);
+                        fk.Add (stringBuilder.ToString ());
                     }
 
-                    if (fks.Count > 0) {
-                        List<string> fk = new List<string> ();
+                    fk = Util.GetDistinctValues<string> (fk);
+                    foreach (string s in fk) {
+                        List<Dictionary<string, object>> fkList = new List<Dictionary<string, object>> ();
                         foreach (Dictionary<string, object> dic in list) {
                             StringBuilder stringBuilder = Append (fks, dic);
-                            fk.Add (stringBuilder.ToString ());
-                        }
-
-                        fk = Util.GetDistinctValues<string> (fk);
-                        foreach (string s in fk) {
-                            List<Dictionary<string, object>> fkList = new List<Dictionary<string, object>> ();
-                            foreach (Dictionary<string, object> dic in list) {
-                                StringBuilder stringBuilder = Append (fks, dic);
-                                if (s == stringBuilder.ToString ()) {
-                                    fkList.Add (dic);
-                                }
+                            if (s == stringBuilder.ToString ()) {
+                                fkList.Add (dic);
                             }
-
-                            string createFileName = string.Format ("{0}{1}", excel.CreateFileName, s);
-                            EditorUtil.CreateJsonFile (createFileName, Json.Serialize (fkList), outputJsonPath);
                         }
+
+                        string createFileName = string.Format ("{0}{1}", excel.CreateFileName, s);
+                        EditorUtil.CreateJsonFile (createFileName, Json.Serialize (fkList), outputJsonPath, false);
                     }
-                } else {
-                    if (list != null && list.Count > 0) {
-                        EditorUtil.CreateJsonFile (excel.CreateFileName, Json.Serialize (list), outputJsonPath);
-                    }
+                }
+            } else {
+                if (list != null && list.Count > 0) {
+                    EditorUtil.CreateJsonFile (excel.CreateFileName, Json.Serialize (list), outputJsonPath, false);
                 }
             }
         }
@@ -178,7 +202,6 @@ namespace HellgateEditor
 
                 AddData (tCell, vCell, sheetDic);
             }
-
 
             Dictionary<string, object> dic = new Dictionary<string, object> ();
             foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
@@ -261,7 +284,6 @@ namespace HellgateEditor
                 IRow titleRow = s.GetRow (0);
 
                 List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
-
                 for (int i = 1; i <= s.LastRowNum; i++) {
                     Dictionary<string, object> dic = CreateAttributeJson (titleRow, s.GetRow (i), configs, joinColumn);
 
@@ -281,7 +303,7 @@ namespace HellgateEditor
         /// </summary>
         /// <param name="type">Type.</param>
         /// <param name="ignores">Ignores.</param>
-        public void Create (ExcelImportType type, string[] ignores = null)
+        public void Create (ExcelImportType type, string[] ignores = null, TResultDelegate<Type> joinType = null)
         {
             using (FileStream stream = new FileStream (excelFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                 if (excelFilePath.EndsWith ("xls")) {
@@ -300,7 +322,21 @@ namespace HellgateEditor
                 if (type == ExcelImportType.NORMAL) {
                     CreateNormalJson (ignores);
                 } else {
-                    CreateAttributeJson ();
+                    this.joinType = joinType;
+
+                    listType = new List<Type> ();
+                    Type[] types = Reflection.GetExecutingAssembly ();
+                    for (int i = 0; i < types.Length; i++) {
+                        ExcelAttribute excel = types [i].GetAttributeValue<ExcelAttribute> ();
+                        if (excel == null || excel.CreateFileName == "") {
+                            continue;
+                        }
+
+                        listType.Add (types [i]);
+                    }
+
+                    index = 0;
+                    EditorUtil.StartCoroutine (CreateAttributeJson ());
                 }
             }
         }

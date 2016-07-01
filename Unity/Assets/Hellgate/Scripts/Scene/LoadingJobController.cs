@@ -31,6 +31,17 @@ namespace Hellgate
                     AssetBundleManager.Instance.AllUnload ();
                 }
 
+                if (!jobData.active) {
+                    GameObject gObj = gameObject;
+                    foreach (Transform trans in gObj.GetComponentInChildren<Transform> ()) {
+                        if (trans == gObj.transform) {
+                            continue;
+                        }
+
+                        trans.gameObject.SetActive (jobData.active);
+                    }
+                }
+
                 nextSceneName = jobData.nextSceneName;
 
                 datas = new List<object> ();

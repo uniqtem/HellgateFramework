@@ -2,7 +2,7 @@
 using System.Collections;
 using Hellgate;
 
-///*
+/*
 [Excel ("avatar", "avatar", true)]
 public class Avatar
 {

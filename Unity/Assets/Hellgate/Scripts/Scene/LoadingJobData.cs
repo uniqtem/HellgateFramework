@@ -72,6 +72,10 @@ namespace Hellgate
         /// </summary>
         public float shieldAlpha = -1f;
         /// <summary>
+        /// The active.
+        /// </summary>
+        public bool active = true;
+        /// <summary>
         /// The loading job of pop up and screen.
         /// </summary>
         public bool popUp = true;

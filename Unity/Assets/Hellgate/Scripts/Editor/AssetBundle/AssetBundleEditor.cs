@@ -17,13 +17,27 @@ namespace HellgateEditor
     public class AssetBundleEditor : EditorWindow
     {
         private const string HELLGATE_ASSETBUNDLE_PATH = "HellgateAssetBundlePath";
+        private const string HELLGATE_BUILD_ASSETBUNDLE_OPTIONS = "HellgateBuildAssetBundleOptions";
         public static string assetBundlesOutputPath = "";
+        // https://docs.unity3d.com/ScriptReference/BuildAssetBundleOptions.html
+        public static string[] buildAssetBundleOptions = new string[] {
+            "None",
+            "UncompressedAssetBundle",
+            "DisableWriteTypeTree",
+            "DeterministicAssetBundle", // recommend
+            "ForceRebuildAssetBundle",
+            "IgnoreTypeTreeChanges",
+            "AppendHashToAssetBundleName",
+            "ChunkBasedCompression"
+        };
+        public static int selected;
 
         public void OnEnable ()
         {
             string basePath = Application.dataPath + "AssetBundle";
             basePath = basePath.Replace ("Assets", "");
             assetBundlesOutputPath = PlayerPrefs.GetString (HELLGATE_ASSETBUNDLE_PATH, basePath);
+            selected = PlayerPrefs.GetInt (HELLGATE_BUILD_ASSETBUNDLE_OPTIONS, 3);
         }
 
         public void OnGUI ()
@@ -35,7 +49,7 @@ namespace HellgateEditor
             }
 
             if (assetBundlesOutputPath == "") {
-                GUILayout.Label ("Path :  Please set the path assetbundle.", EditorStyles.boldLabel);
+                GUILayout.Label ("Path : Please set the path assetbundle.", EditorStyles.boldLabel);
             } else {
                 GUILayout.Label ("Path : " + assetBundlesOutputPath, EditorStyles.boldLabel);
             }
@@ -47,6 +61,8 @@ namespace HellgateEditor
             if (GUILayout.Button ("...", EditorStyles.miniButtonRight, GUILayout.Width (22)))
                 assetBundlesOutputPath = EditorUtility.OpenFolderPanel ("Select your assetbundle save folder", "", "");
             EditorGUILayout.EndHorizontal ();
+
+            selected = EditorGUILayout.Popup ("buildAssetBundleOptions :", selected, buildAssetBundleOptions);
 
             if (GUILayout.Button ("Create", GUILayout.Height (40))) {
                 if (assetBundlesOutputPath != "") {
@@ -68,6 +84,7 @@ namespace HellgateEditor
         {
             // save
             PlayerPrefs.SetString (HELLGATE_ASSETBUNDLE_PATH, assetBundlesOutputPath);
+            PlayerPrefs.SetInt (HELLGATE_BUILD_ASSETBUNDLE_OPTIONS, selected);
 
             string[] names = AssetDatabase.GetAllAssetBundleNames ();
             string[] unNames = AssetDatabase.GetUnusedAssetBundleNames ();
@@ -102,7 +119,9 @@ namespace HellgateEditor
             if (!Directory.Exists (outputPath)) {
                 Directory.CreateDirectory (outputPath);
             }
-            BuildPipeline.BuildAssetBundles (outputPath, BuildAssetBundleOptions.DeterministicAssetBundle, EditorUserBuildSettings.activeBuildTarget);
+
+            BuildAssetBundleOptions option = (BuildAssetBundleOptions)Enum.Parse (typeof(BuildAssetBundleOptions), buildAssetBundleOptions [selected], true);
+            BuildPipeline.BuildAssetBundles (outputPath, option, EditorUserBuildSettings.activeBuildTarget);
         }
 
         /// <summary>

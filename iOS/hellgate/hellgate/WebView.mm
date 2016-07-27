@@ -1,7 +1,7 @@
 //
 //  WebView.mm
 //
-//  Copyright © 2015 Uniqtem Co., Ltd. All rights reserved.
+//  Copyright © 2016 Uniqtem Co., Ltd. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

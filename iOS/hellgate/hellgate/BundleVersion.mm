@@ -1,3 +1,9 @@
+//
+//  BungleVersion.mm
+//
+//  Copyright © 2016 Uniqtem Co., Ltd. All rights reserved.
+//
+
 #import <UIKit/UIKit.h>
 
 extern "C" {

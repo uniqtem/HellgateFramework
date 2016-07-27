@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PolicySet name="UnityFormatting.mdpolicy">
+<PolicySet name="Uniqtem.mdpolicy">
   <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp">
     <FileWidth>160</FileWidth>
   </TextStylePolicy>
@@ -22,7 +22,10 @@
     <Text />
     <IncludeInNewFiles>True</IncludeInNewFiles>
   </StandardHeader>
-  <TextStylePolicy inheritsSet="null" scope="application/xml" />
+  <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="application/xml">
+    <FileWidth>160</FileWidth>
+    <EolMarker>Unix</EolMarker>
+  </TextStylePolicy>
   <XmlFormattingPolicy inheritsSet="Mono" inheritsScope="application/xml" scope="application/xml" />
   <TextStylePolicy inheritsSet="null" scope="text/x-shader" />
   <TextStylePolicy inheritsSet="null" scope="text/x-unitytxt" />

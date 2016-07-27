@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E72EB4AD1C310907002A86F9 /* WebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E72EB4AB1C310907002A86F9 /* WebView.mm */; };
+		E757F4481D40ECD2002BDFA0 /* Clipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E757F4471D40ECD2002BDFA0 /* Clipboard.mm */; };
 		E75EC88B1C917210006AAC32 /* BundleVersion.mm in Sources */ = {isa = PBXBuildFile; fileRef = E75EC88A1C917210006AAC32 /* BundleVersion.mm */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 /* Begin PBXFileReference section */
 		E72EB49F1C3108B2002A86F9 /* libhellgate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhellgate.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E72EB4AB1C310907002A86F9 /* WebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebView.mm; sourceTree = "<group>"; };
+		E757F4471D40ECD2002BDFA0 /* Clipboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Clipboard.mm; sourceTree = "<group>"; };
 		E75EC88A1C917210006AAC32 /* BundleVersion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleVersion.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,6 +61,7 @@
 		E72EB4A11C3108B2002A86F9 /* hellgate */ = {
 			isa = PBXGroup;
 			children = (
+				E757F4471D40ECD2002BDFA0 /* Clipboard.mm */,
 				E75EC88A1C917210006AAC32 /* BundleVersion.mm */,
 				E72EB4AB1C310907002A86F9 /* WebView.mm */,
 			);
@@ -121,6 +124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E757F4481D40ECD2002BDFA0 /* Clipboard.mm in Sources */,
 				E75EC88B1C917210006AAC32 /* BundleVersion.mm in Sources */,
 				E72EB4AD1C310907002A86F9 /* WebView.mm in Sources */,
 			);

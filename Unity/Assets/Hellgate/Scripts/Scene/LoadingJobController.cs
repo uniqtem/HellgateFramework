@@ -150,6 +150,11 @@ namespace Hellgate
         /// <param name="list">List<AssetBundleData>.</param>
         public void LoadAssetBundle (List<AssetBundleData> list = null)
         {
+            System.Action innerLoadAssetBundle = delegate() {
+                index++;
+                LoadAssetBundle ();
+            };
+
             if (list != null) {
                 index = 0;
                 jobData.assetBundles = list;
@@ -165,16 +170,19 @@ namespace Hellgate
                 return;
             }
 
+            if (jobData.assetBundles [index] == null) {
+                innerLoadAssetBundle ();
+                return;
+            }
+
             string key = jobData.assetBundles [index].url + jobData.assetBundles [index].objName + jobData.assetBundles [index].type.ToString ();
             if (assetBundleData.ContainsKey (key)) {
-                index++;
-                LoadAssetBundle ();
+                innerLoadAssetBundle ();
             } else {
                 AssetBundleManager.Instance.LoadAssetBundle (jobData.assetBundles [index], delegate (object obj) {
                     assetBundleData.Add (key, obj);
 
-                    index++;
-                    LoadAssetBundle ();
+                    innerLoadAssetBundle ();
                 });
             }
         }

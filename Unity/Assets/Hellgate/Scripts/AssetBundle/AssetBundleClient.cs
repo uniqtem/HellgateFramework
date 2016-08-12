@@ -104,6 +104,7 @@ namespace Hellgate
                         yield return null;
                     }
                     if (www.error != null) {
+                        HDebug.LogError (www.error);
                     } else {
                         AssetBundleRef assetBundleRef = new AssetBundleRef (url, version);
                         assetBundleRef.assetBundle = www.assetBundle;

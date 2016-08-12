@@ -291,7 +291,7 @@ namespace Hellgate
             break;
             }
 
-            SSceneApplication.LoadLevel (loadLevelData.sceneName, delegate (GameObject root) {
+            SSceneApplication.LoadLevel (loadLevelData.sceneName, delegate(GameObject root) {
                 root.transform.parent = scene.transform;
                 root.transform.localPosition = Vector3.zero;
 

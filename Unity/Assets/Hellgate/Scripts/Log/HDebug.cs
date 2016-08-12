@@ -102,7 +102,7 @@ namespace Hellgate
                     text.normal.textColor = Color.white;
                 break;
                 }
-				
+
                 GUILayout.Label (list [i].condition, text);
                 GUILayout.Label (list [i].stackTrace, text);
             }

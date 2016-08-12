@@ -179,7 +179,7 @@ namespace Hellgate
             if (assetBundleData.ContainsKey (key)) {
                 innerLoadAssetBundle ();
             } else {
-                AssetBundleManager.Instance.LoadAssetBundle (jobData.assetBundles [index], delegate (object obj) {
+                AssetBundleManager.Instance.LoadAssetBundle (jobData.assetBundles [index], delegate(object obj) {
                     assetBundleData.Add (key, obj);
 
                     innerLoadAssetBundle ();

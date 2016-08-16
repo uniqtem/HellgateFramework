@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -26,12 +26,12 @@ namespace Hellgate
     /// <summary>
     /// Scene callback delegate.
     /// </summary>
-	public delegate void SceneCallbackDelegate (SSceneController ctrl);
+    public delegate void SceneCallbackDelegate (SSceneController ctrl);
 
     /// <summary>
     /// Callback delegate.
     /// </summary>
-	public delegate void CallbackDelegate ();
+    public delegate void CallbackDelegate ();
 
     public class SSceneManager : MonoBehaviour
     {
@@ -283,12 +283,48 @@ namespace Hellgate
         /// <param name="loadLevelData">Load level data.</param>
         protected virtual void LoadLevel (LoadLevelData loadLevelData)
         {
-            bool isAddtive = false;
             switch (loadLevelData.type) {
-            case SceneType.MENU:
             case SceneType.POPUP:
-                isAddtive = true;
+            case SceneType.SCREEN:
+            case SceneType.ADDSCREEN:
+                if (scenes.ContainsKey (loadLevelData.sceneName)) {
+                    GameObject root = scenes [loadLevelData.sceneName];
+                    if (!root.activeSelf) {
+                        if (loadLevelData.type == SceneType.POPUP) {
+                            DistancePopUp (root);
+                            popups.Push (loadLevelData.sceneName);
+                        }
+
+                        OnActiveScreen (root);
+
+                        if (loadLevelData.type == SceneType.SCREEN || loadLevelData.type == SceneType.ADDSCREEN) {
+                            ClearScene (loadLevelData.sceneName);
+                        }
+
+                        if (loadLevelData.type == SceneType.ADDSCREEN) {
+                            screens.Push (loadLevelData.sceneName);
+                        }
+                    }
+
+                    SSceneController ctrl = root.GetComponent<SSceneController> ();
+                    ctrl.OnReset (loadLevelData.data);
+                    return;
+                }
             break;
+            case SceneType.MENU:
+                if (menus.ContainsKey (loadLevelData.sceneName)) {
+                    GameObject root = menus [loadLevelData.sceneName];
+                    if (!root.activeSelf) {
+                        OnActiveScreen (root);
+                        return;
+                    }
+                }
+            break;
+            }
+
+            bool isAddtive = false;
+            if (loadLevelData.type == SceneType.MENU || loadLevelData.type == SceneType.POPUP) {
+                isAddtive = true;
             }
 
             SSceneApplication.LoadLevel (loadLevelData.sceneName, delegate(GameObject root) {
@@ -600,15 +636,6 @@ namespace Hellgate
         /// <param name="deactive">Deactive.</param>
         public virtual void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
-            if (scenes.ContainsKey (sceneName)) {
-                GameObject root = scenes [sceneName];
-                if (!root.activeSelf) {
-                    OnActiveScreen (root);
-                    ClearScene (sceneName);
-                    return;
-                }
-            }
-
             ClearPopUp (delegate() {
                 LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
                 LoadLevel (loadLevel);
@@ -624,16 +651,6 @@ namespace Hellgate
         /// <param name="deactive">Deactive.</param>
         public virtual void AddScreen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
-            if (scenes.ContainsKey (sceneName)) {
-                GameObject root = scenes [sceneName];
-                if (!root.activeSelf) {
-                    OnActiveScreen (root);
-                    ClearScene (sceneName);
-                    screens.Push (sceneName);
-                    return;
-                }
-            }
-
             ClearPopUp (delegate() {
                 LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
                 loadLevel.type = SceneType.ADDSCREEN;
@@ -650,21 +667,6 @@ namespace Hellgate
         /// <param name="deactive">Deactive.</param>
         public virtual void PopUp (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
-            if (scenes.ContainsKey (sceneName)) {
-                GameObject root = scenes [sceneName];
-                if (root.activeSelf) {
-                    if (popups.Peek () == sceneName) {
-                        Close ();
-                    }
-                } else {
-                    DistancePopUp (root);
-                    popups.Push (sceneName);
-                    OnActiveScreen (root);
-
-                    return;
-                }
-            }
-
             LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
             loadLevel.type = SceneType.POPUP;
             LoadLevel (loadLevel);

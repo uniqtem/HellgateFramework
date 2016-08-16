@@ -58,7 +58,6 @@ extern "C"
 {
     void _ImagePickerInit();
     void _ImagePickerOpen();
-
 }
 
 void _ImagePickerInit()

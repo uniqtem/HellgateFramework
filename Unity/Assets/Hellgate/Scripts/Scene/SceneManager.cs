@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -149,6 +149,16 @@ namespace Hellgate
             }
         }
 
+        /// <summary>
+        /// Gets the now scene.
+        /// </summary>
+        /// <value>The now scene.</value>
+        public string NowScene {
+            get {
+                return nowSceneName;
+            }
+        }
+
         protected override void Awake ()
         {
             base.Awake ();
@@ -170,16 +180,7 @@ namespace Hellgate
         /// <param name="deactive">Deactive.</param>
         public override void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
-            if (nowSceneName == sceneName) {
-                base.Screen ("HellgateEmpty", null, delegate(SSceneController ctrl) {
-                    nowSceneName = sceneName;
-                    base.Screen (sceneName, data, active, deactive);
-                });
-
-                return;
-            }
             nowSceneName = sceneName;
-
             base.Screen (sceneName, data, active, deactive);
         }
 

@@ -40,5 +40,14 @@ namespace Hellgate
         {
             this.StartCoroutine (SceneManager.Instance.CWait (duration, callback));
         }
+
+        /// <summary>
+        /// Destroies all child of object.
+        /// </summary>
+        /// <param name="gObj">GameObject.</param>
+        public void DestroyAllChildOfObject (GameObject gObj)
+        {
+            Util.DestroyAllChildOfObject (gObj);
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace Hellgate
             foreach (FieldInfo field in fieldInfos) {
                 object data = null;
                 if (Util.IsValueType (field.FieldType)) {
-                    string key = new SQLMaker ().Underline (tableName, field.UnderscoreName ());
+                    string key = new SQLMaker ().Underline (tableName, field.Name);
                     if (row.ContainsKey (key)) {
                         data = row [key];
                         data = ConvertIgnoreData (field, data);
@@ -107,7 +107,7 @@ namespace Hellgate
                 ColumnAttribute column = field.GetAttributeValue<ColumnAttribute> ();
                 if (column != null && column.CheckConstraints (DataConstraints.FK)) {
                     if (column.Key != null && column.Value != "") {
-                        mapper.SetJoin (column.Key, column.Value, field.UnderscoreName ());
+                        mapper.SetJoin (column.Key, column.Value, field.Name);
                     } else {
                         HDebug.LogWarning (field.Name + " the column attribute is set problem");
                     }
@@ -115,7 +115,7 @@ namespace Hellgate
 
                 // select
                 if (Util.IsValueType (field.FieldType)) {
-                    mapper.SetSelect (field.UnderscoreName ());
+                    mapper.SetSelect (field.Name);
                 } else {
                     if (mapper.SetType (field.FieldType, copyType) == "") {
                         HDebug.LogWarning (field.FieldType + " the table is not set.");

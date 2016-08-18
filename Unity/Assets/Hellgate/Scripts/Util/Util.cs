@@ -524,6 +524,18 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Destroies all child of object.
+        /// </summary>
+        /// <param name="gObj">GameObject.</param>
+        public static void DestroyAllChildOfObject (GameObject gObj)
+        {
+            Transform[] all = gObj.GetComponentsInChildren<Transform> ();
+            for (int i = 1; i < all.Length; i++) {
+                GameObject.Destroy (all [i].gameObject);
+            }
+        }
+
+        /// <summary>
         /// Gets the device.
         /// pc & ios & android
         /// </summary>

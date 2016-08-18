@@ -206,18 +206,18 @@ namespace HellgateEditor
             Dictionary<string, object> dic = new Dictionary<string, object> ();
             foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
                 if (Util.IsValueType (config.type)) {
-                    if (sheetDic.ContainsKey (Util.ConvertCamelToUnderscore (config.name))) {
+                    if (sheetDic.ContainsKey (config.name)) {
                         if (joinColumn != null) {
                             foreach (KeyValuePair<string, object> pair in joinColumn) {
                                 if (pair.Key == config.name) {
-                                    if (pair.Value.ToString () != sheetDic [Util.ConvertCamelToUnderscore (config.name)].ToString ()) {
+                                    if (pair.Value.ToString () != sheetDic [config.name].ToString ()) {
                                         return null;
                                     }
                                 }
                             }
                         }
 
-                        dic.Add (config.name, sheetDic [Util.ConvertCamelToUnderscore (config.name)]);
+                        dic.Add (config.name, sheetDic [config.name]);
                     }
                 } else {
                     if (!config.type.IsArray) {

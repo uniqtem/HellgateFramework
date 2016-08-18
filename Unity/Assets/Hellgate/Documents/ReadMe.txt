@@ -69,3 +69,5 @@ NEX : Excel -> Json (type join)
 NEW : BuildAssetBundleOptions
 NEW : Scene Event OnReset
 NEW : Clipboard
+2.5.1
+FIX : Delete ConvertCamelToUnderscore

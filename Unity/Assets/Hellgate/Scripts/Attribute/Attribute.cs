@@ -141,7 +141,7 @@ namespace Hellgate
         /// <value>The value.</value>
         public string Value {
             get {
-                return Util.ConvertCamelToUnderscore (this.value);
+                return this.value;
             }
         }
 

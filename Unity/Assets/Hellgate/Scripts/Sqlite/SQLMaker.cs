@@ -57,7 +57,7 @@ namespace Hellgate
         /// <param name="columnName">Column name.</param>
         protected string ConvertCamelToUnderscore (string tableName, string columnName)
         {
-            return Underline (tableName, Util.ConvertCamelToUnderscore (columnName));
+            return Underline (tableName, columnName);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Hellgate
 
             for (int i = 0; i < configs.Length; i++) {
                 StringBuilder temp = new StringBuilder ();
-                temp.AppendFormat ("'{0}'", Util.ConvertCamelToUnderscore (configs [i].name));
+                temp.AppendFormat ("'{0}'", configs [i].name);
 
                 if (configs [i].t == null || configs [i].t.Type == "") {
                     temp.Append (ConvertToSQLType (configs [i].type));
@@ -312,7 +312,7 @@ namespace Hellgate
         public string GenerateSelectAliasSQL (string tableName, string columnName)
         {
             return string.Format ("{0} as {1}",
-                                  Period (tableName, Util.ConvertCamelToUnderscore (columnName)),
+                                  Period (tableName, columnName),
                                   ConvertCamelToUnderscore (tableName,
                                                             columnName));
         }

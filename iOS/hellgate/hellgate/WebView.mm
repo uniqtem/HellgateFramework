@@ -1,7 +1,7 @@
 //
 //  WebView.mm
 //
-//  Copyright © 2015 Uniqtem Co., Ltd. All rights reserved.
+//  Copyright © 2016 Uniqtem Co., Ltd. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -130,7 +130,7 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
     sendProgress = 0;
     isFinish = FALSE;
 
-    UnitySendMessage(WEBVIEW_MANAGER, WEBVIEW_URL_CHANGED, [webView.request.URL.absoluteString UTF8String]);
+    UnitySendMessage (WEBVIEW_MANAGER, WEBVIEW_URL_CHANGED, [webView.request.URL.absoluteString UTF8String]);
     UnitySendMessage (WEBVIEW_MANAGER, WEBVIEW_PROGRESS_CHANGED, [@"0" UTF8String]);
     timer = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timer) userInfo:nil repeats:YES];
 }

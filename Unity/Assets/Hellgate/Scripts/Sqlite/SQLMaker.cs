@@ -1,6 +1,7 @@
-﻿/// <summary>
-/// SQL maker.
-/// </summary>
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//                  Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

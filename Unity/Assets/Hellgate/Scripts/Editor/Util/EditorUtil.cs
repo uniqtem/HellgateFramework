@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEditor;
@@ -17,7 +17,8 @@ namespace HellgateEditor
         /// <param name="name">Name.</param>
         /// <param name="text">Text.</param>
         /// <param name="path">Path.</param>
-        public static void CreateJsonFile (string name, string text, string path)
+        /// <param name="refresh">If set to <c>true</c> refresh.</param>
+        public static void CreateJsonFile (string name, string text, string path, bool refresh = true)
         {
             if (name == "" || text == "" || text == "[]") {
                 return;
@@ -41,7 +42,9 @@ namespace HellgateEditor
                 }
             }
 
-            AssetDatabase.Refresh ();
+            if (refresh) {
+                AssetDatabase.Refresh ();
+            }
         }
 
         public static void CreateDirectory (string path)
@@ -49,6 +52,12 @@ namespace HellgateEditor
             if (!Directory.Exists (path)) {
                 Directory.CreateDirectory (path);
             }
+        }
+
+        public static void StartCoroutine (IEnumerator coroutine)
+        {
+            EditorCoroutine editor = new EditorCoroutine (coroutine);
+            editor.Start ();
         }
     }
 }

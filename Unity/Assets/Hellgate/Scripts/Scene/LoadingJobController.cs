@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -31,6 +31,17 @@ namespace Hellgate
                     AssetBundleManager.Instance.AllUnload ();
                 }
 
+                if (!jobData.active) {
+                    GameObject gObj = gameObject;
+                    foreach (Transform trans in gObj.GetComponentInChildren<Transform> ()) {
+                        if (trans == gObj.transform) {
+                            continue;
+                        }
+
+                        trans.gameObject.SetActive (jobData.active);
+                    }
+                }
+
                 nextSceneName = jobData.nextSceneName;
 
                 datas = new List<object> ();
@@ -40,6 +51,12 @@ namespace Hellgate
                 index = 0;
                 Request ();
             }
+        }
+
+        public override void OnReset (object data)
+        {
+            base.OnReset (data);
+            OnSet (data);
         }
 
         public override void OnKeyBack ()
@@ -139,6 +156,11 @@ namespace Hellgate
         /// <param name="list">List<AssetBundleData>.</param>
         public void LoadAssetBundle (List<AssetBundleData> list = null)
         {
+            System.Action innerLoadAssetBundle = delegate() {
+                index++;
+                LoadAssetBundle ();
+            };
+
             if (list != null) {
                 index = 0;
                 jobData.assetBundles = list;
@@ -154,16 +176,19 @@ namespace Hellgate
                 return;
             }
 
+            if (jobData.assetBundles [index] == null) {
+                innerLoadAssetBundle ();
+                return;
+            }
+
             string key = jobData.assetBundles [index].url + jobData.assetBundles [index].objName + jobData.assetBundles [index].type.ToString ();
             if (assetBundleData.ContainsKey (key)) {
-                index++;
-                LoadAssetBundle ();
+                innerLoadAssetBundle ();
             } else {
-                AssetBundleManager.Instance.LoadAssetBundle (jobData.assetBundles [index], delegate (object obj) {
+                AssetBundleManager.Instance.LoadAssetBundle (jobData.assetBundles [index], delegate(object obj) {
                     assetBundleData.Add (key, obj);
 
-                    index++;
-                    LoadAssetBundle ();
+                    innerLoadAssetBundle ();
                 });
             }
         }
@@ -178,25 +203,32 @@ namespace Hellgate
             jobData.PutExtra (key, value);
         }
 
-        /// <summary>
-        /// Gos the next scene.
-        /// </summary>
-        /// <param name="sceneName">Scene name.</param>
-        public void GoNextScene (string sceneName = "")
+        private void GoNextScene ()
         {
-            if (sceneName != "") {
-                nextSceneName = sceneName;
-            }
-
             if (nextSceneName == "") {
                 if (jobData.finishedDelegate != null) {
                     jobData.finishedDelegate (datas, this);
 //                    jobData.finishedDelegate = null;
-                }
 
+                    return;
+                }
+            }
+
+            GoNextScene (nextSceneName);
+        }
+
+        /// <summary>
+        /// Gos the next scene.
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        public void GoNextScene (string sceneName)
+        {
+            if (sceneName == "") {
+                HDebug.LogWarning ("Setting the next scene name required");
                 return;
             }
 
+            nextSceneName = sceneName;
             if (jobData.intent.Count > 0) {
                 datas.Add (jobData.intent);
             }

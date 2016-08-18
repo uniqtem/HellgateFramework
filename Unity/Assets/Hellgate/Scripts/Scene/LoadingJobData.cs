@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -71,6 +71,10 @@ namespace Hellgate
         /// The shield alpha.
         /// </summary>
         public float shieldAlpha = -1f;
+        /// <summary>
+        /// The active.
+        /// </summary>
+        public bool active = true;
         /// <summary>
         /// The loading job of pop up and screen.
         /// </summary>

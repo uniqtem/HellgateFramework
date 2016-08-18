@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -300,7 +300,7 @@ namespace Hellgate
             if (!Directory.Exists (streamingAssetsPath)) {
                 Directory.CreateDirectory (streamingAssetsPath);
             }
-			
+
             string resourcePath = Path.Combine (streamingAssetsPath, db);
             if (!resetDB) {
                 if (File.Exists (resourcePath)) {

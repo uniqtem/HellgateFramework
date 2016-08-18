@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//                  Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;

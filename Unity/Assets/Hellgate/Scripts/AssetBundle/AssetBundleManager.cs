@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -78,23 +78,6 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Textures the convert sprite.
-        /// </summary>
-        /// <returns>The convert sprite.</returns>
-        /// <param name="obj">Object.</param>
-        protected object TextureConvertSprite (object obj)
-        {
-            if (obj is Texture2D) {
-                Texture2D tempTexture2D = obj as Texture2D;
-                Sprite tempSprite = Sprite.Create (tempTexture2D, new Rect (0, 0, tempTexture2D.width, tempTexture2D.height), Vector2.zero);
-                tempSprite.name = tempTexture2D.name;
-                obj = tempSprite;
-            }
-
-            return obj;
-        }
-
-        /// <summary>
         /// Loads the asset async.
         /// </summary>
         /// <returns>The asset async.</returns>
@@ -107,7 +90,7 @@ namespace Hellgate
 
             object obj = request.asset as object;
             if (data.type == typeof(Sprite)) {
-                obj = TextureConvertSprite (obj);
+                obj = Util.TextureConvertSprite (obj);
             }
 
             finished (obj);
@@ -122,7 +105,7 @@ namespace Hellgate
         {
             object obj = data.assetBundle.LoadAsset (data.objName, data.type) as object;
             if (data.type == typeof(Sprite)) {
-                obj = TextureConvertSprite (obj);
+                obj = Util.TextureConvertSprite (obj);
             }
 
             finished (obj);
@@ -196,7 +179,7 @@ namespace Hellgate
 
                 object temp = AssetDatabase.LoadMainAssetAtPath (path);
                 if (data.type == typeof(Sprite)) {
-                    temp = TextureConvertSprite (temp);
+                    temp = Util.TextureConvertSprite (temp);
                 }
 
                 finished (temp);

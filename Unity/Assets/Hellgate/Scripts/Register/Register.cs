@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using System;
@@ -15,6 +15,16 @@ namespace Hellgate
     public class Register
     {
         public const string DEFAULT = "0";
+
+        /// <summary>
+        /// Sets the bool.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">If set to <c>true</c> value.</param>
+        public static void SetBool (string key, bool value)
+        {
+            SetInt (key, value ? 1 : 0);
+        }
 
         /// <summary>
         /// Sets the int.
@@ -44,6 +54,16 @@ namespace Hellgate
         public static void SetString (string key, string value)
         {
             PlayerPrefs.SetString (Encrypt.SHA1Key (key), Encrypt.TripleDESC (key, value));
+        }
+
+        /// <summary>
+        /// Gets the bool.
+        /// </summary>
+        /// <returns><c>true</c>, if bool was gotten, <c>false</c> otherwise.</returns>
+        /// <param name="key">Key.</param>
+        public static bool GetBool (string key)
+        {
+            return GetInt (key, 0) > 0;
         }
 
         /// <summary>

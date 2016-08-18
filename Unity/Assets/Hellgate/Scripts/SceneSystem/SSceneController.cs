@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -83,6 +83,14 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         public virtual void OnSet (object data)
+        {
+        }
+
+        /// <summary>
+        /// Raises the reset event.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public virtual void OnReset (object data)
         {
         }
 

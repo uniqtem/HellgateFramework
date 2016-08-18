@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -102,7 +102,7 @@ namespace Hellgate
                     text.normal.textColor = Color.white;
                 break;
                 }
-				
+
                 GUILayout.Label (list [i].condition, text);
                 GUILayout.Label (list [i].stackTrace, text);
             }

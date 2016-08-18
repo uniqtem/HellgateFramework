@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -507,6 +507,23 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Textures the convert sprite.
+        /// </summary>
+        /// <returns>The convert sprite.</returns>
+        /// <param name="obj">Object.</param>
+        public static object TextureConvertSprite (object obj)
+        {
+            if (obj is Texture2D) {
+                Texture2D tempTexture2D = obj as Texture2D;
+                Sprite tempSprite = Sprite.Create (tempTexture2D, new Rect (0, 0, tempTexture2D.width, tempTexture2D.height), Vector2.zero);
+                tempSprite.name = tempTexture2D.name;
+                obj = tempSprite;
+            }
+
+            return obj;
+        }
+
+        /// <summary>
         /// Gets the device.
         /// pc & ios & android
         /// </summary>
@@ -525,11 +542,11 @@ namespace Hellgate
 
 #elif UNITY_ANDROID 
             if (Application.platform == RuntimePlatform.Android) {
-            typeCode = ANDROID;
+                typeCode = ANDROID;
             }
 #elif UNITY_IOS
             if (Application.platform == RuntimePlatform.IPhonePlayer) {
-            typeCode = IOS;
+                typeCode = IOS;
             }
 #elif UNITY_STANDALONE
             typeCode = PC;

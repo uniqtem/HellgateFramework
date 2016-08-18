@@ -1,5 +1,5 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
@@ -65,3 +65,7 @@ NEW : Support UGUI
 NEW : Sound
 NEW : WebView Event (OnURLChanged)
 NEX : Excel -> Json (type join)
+2.5.0
+NEW : BuildAssetBundleOptions
+NEW : Scene Event OnReset
+NEW : Clipboard

@@ -68,3 +68,4 @@ NEX : Excel -> Json (type join)
 2.5.0
 NEW : BuildAssetBundleOptions
 NEW : Scene Event OnReset
+NEW : Clipboard

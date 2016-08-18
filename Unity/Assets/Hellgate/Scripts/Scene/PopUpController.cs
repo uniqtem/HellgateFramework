@@ -25,6 +25,8 @@ namespace Hellgate
 
         public override void OnSet (object data)
         {
+            base.OnSet (data);
+
             PopUpData popupData = (PopUpData)data;
 
             SetText (text, popupData.Title);
@@ -35,9 +37,17 @@ namespace Hellgate
             buttonOk.SetActive (type == PopUpType.Ok);
         }
 
+        public override void OnReset (object data)
+        {
+            base.OnReset (data);
+
+            OnSet (data);
+        }
+
         public override void OnDestroy ()
         {
             base.OnDestroy ();
+
             if (finishedDelegate != null) {
                 finishedDelegate (ynType);
             }

@@ -36,7 +36,9 @@ namespace Hellgate
 #elif !UNITY_EDITOR && UNITY_IOS
             _SetText (text);
 #else
+            #if UNITY_5_2 || UNITY_5_3 || UNITY_5_4
             GUIUtility.systemCopyBuffer = text;
+            #endif
 #endif
         }
     }

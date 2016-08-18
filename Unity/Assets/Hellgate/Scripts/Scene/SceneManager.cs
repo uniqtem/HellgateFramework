@@ -181,6 +181,7 @@ namespace Hellgate
         public override void Screen (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
             nowSceneName = sceneName;
+
             base.Screen (sceneName, data, active, deactive);
         }
 

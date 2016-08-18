@@ -53,6 +53,12 @@ namespace Hellgate
             }
         }
 
+        public override void OnReset (object data)
+        {
+            base.OnReset (data);
+            OnSet (data);
+        }
+
         public override void OnKeyBack ()
         {
         }
@@ -197,25 +203,32 @@ namespace Hellgate
             jobData.PutExtra (key, value);
         }
 
-        /// <summary>
-        /// Gos the next scene.
-        /// </summary>
-        /// <param name="sceneName">Scene name.</param>
-        public void GoNextScene (string sceneName = "")
+        private void GoNextScene ()
         {
-            if (sceneName != "") {
-                nextSceneName = sceneName;
-            }
-
             if (nextSceneName == "") {
                 if (jobData.finishedDelegate != null) {
                     jobData.finishedDelegate (datas, this);
 //                    jobData.finishedDelegate = null;
-                }
 
+                    return;
+                }
+            }
+
+            GoNextScene (nextSceneName);
+        }
+
+        /// <summary>
+        /// Gos the next scene.
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        public void GoNextScene (string sceneName)
+        {
+            if (sceneName == "") {
+                HDebug.LogWarning ("Setting the next scene name required");
                 return;
             }
 
+            nextSceneName = sceneName;
             if (jobData.intent.Count > 0) {
                 datas.Add (jobData.intent);
             }

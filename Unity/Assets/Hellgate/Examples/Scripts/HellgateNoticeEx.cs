@@ -1,11 +1,14 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System.Collections;
 using Hellgate;
 
-public class HellgateNoticeEx : SceneController
+namespace HellgeteEx
 {
+    public class HellgateNoticeEx : SceneController
+    {
+    }
 }

@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//              Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -10,27 +10,29 @@ using Hellgate;
 using UnityEditor;
 #endif
 
-public class HellgateSceneManagerEx : SceneManager
+namespace HellgeteEx
 {
-    [SerializeField]
-    private string buildVersion = "1.0.0";
-    [SerializeField]
-    private AudioClip bgm;
-
-    protected override void Awake ()
+    public class HellgateSceneManagerEx : SceneManager
     {
-        base.Awake ();
+        [SerializeField]
+        private string buildVersion = "1.0.0";
+        [SerializeField]
+        private AudioClip bgm;
+
+        protected override void Awake ()
+        {
+            base.Awake ();
 
 #if UNITY_EDITOR
-        PlayerSettings.bundleVersion = buildVersion;
+            PlayerSettings.bundleVersion = buildVersion;
 
-        // set db
-        // The example does not use the auto-generation db and table(DDL).
-        Sqlite sql = new Sqlite ();
-        if (sql.CreateFile ("hellgate.db")) {
-            sql.CreateTable ("hellgate.db", new Board ().GetType ());
-            sql.CreateTable ("hellgate.db", new Comment ().GetType ());
-        }
+            // set db
+            // The example does not use the auto-generation db and table(DDL).
+            Sqlite sql = new Sqlite ();
+            if (sql.CreateFile ("hellgate.db")) {
+                sql.CreateTable ("hellgate.db", new Board ().GetType ());
+                sql.CreateTable ("hellgate.db", new Comment ().GetType ());
+            }
 
 //        if (sql.CreateFile ("Hellgate.db")) {
 //            sql.ExecuteNonQuery ("CREATE TABLE `board` ( " +
@@ -41,8 +43,9 @@ public class HellgateSceneManagerEx : SceneManager
 //        }
 #endif
 
-        // add BGM
-        SoundManager.Instance.AddBGM (bgm);
-        SoundManager.Instance.PlayBGM ();
+            // add BGM
+            SoundManager.Instance.AddBGM (bgm);
+            SoundManager.Instance.PlayBGM ();
+        }
     }
 }

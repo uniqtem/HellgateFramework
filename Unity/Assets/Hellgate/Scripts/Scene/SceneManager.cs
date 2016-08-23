@@ -209,14 +209,6 @@ namespace Hellgate
         /// <param name="finished">Finished.</param>
         public virtual void PopUp (string text, PopUpType type, PopUpController.FinishedDelegate finished = null)
         {
-            if (popUpSceneName == "") {
-                HDebug.LogWarning ("The default popup scene is not set");
-                if (finished != null) {
-                    finished (PopUpYNType.Yes);
-                }
-                return;
-            }
-
             PopUp (popUpSceneName, new PopUpData (text, type), delegate(SSceneController ctrl) {
                 PopUpController popUp = (PopUpController)ctrl;
                 popUp.finishedDelegate = finished;

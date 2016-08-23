@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using System;
 using System.Collections;
 
 #if UNITY_EDITOR
@@ -18,11 +19,13 @@ namespace Hellgate
         void Awake ()
         {
             AutoAddEmptyScene ();
+            AutoAddNGUISheildCamera ();
         }
 
         void OnValidate ()
         {
             AutoAddEmptyScene ();
+            AutoAddNGUISheildCamera ();
         }
 
         private void AutoAddEmptyScene ()
@@ -54,6 +57,52 @@ namespace Hellgate
                 EditorBuildSettings.scenes = newScenes;
                 EditorApplication.SaveAssets ();
             }
+        }
+
+        private void AutoAddNGUISheildCamera ()
+        {
+            if (gameObject.GetComponent<SceneManager> ()._UIType == UIType.NGUI) {
+                GameObject shiled = Resources.Load ("HellgateNGUIShield") as GameObject;
+                System.Type type = FindType ("UICamera");
+                if (type != null) {
+                    Camera camera = shiled.GetComponentInChildren<Camera> ();
+                    if (camera.GetComponent ("UICamera") == null) {
+                        camera.gameObject.AddComponent (type);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds the type.
+        /// https://github.com/lordofduct/spacepuppy-unity-framework/blob/master/SpacepuppyBase/Utils/TypeUtil.cs
+        /// </summary>
+        /// <returns>The type.</returns>
+        /// <param name="typeName">Type name.</param>
+        /// <param name="useFullName">If set to <c>true</c> use full name.</param>
+        /// <param name="ignoreCase">If set to <c>true</c> ignore case.</param>
+        private System.Type FindType (string typeName, bool useFullName = false, bool ignoreCase = false)
+        {
+            if (string.IsNullOrEmpty (typeName))
+                return null;
+
+            StringComparison e = (ignoreCase) ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            if (useFullName) {
+                foreach (var assemb in System.AppDomain.CurrentDomain.GetAssemblies()) {
+                    foreach (var t in assemb.GetTypes()) {
+                        if (string.Equals (t.FullName, typeName, e))
+                            return t;
+                    }
+                }
+            } else {
+                foreach (var assemb in System.AppDomain.CurrentDomain.GetAssemblies()) {
+                    foreach (var t in assemb.GetTypes()) {
+                        if (string.Equals (t.FullName, typeName, e))
+                            return t;
+                    }
+                }
+            }
+            return null;
         }
 #endif
     }

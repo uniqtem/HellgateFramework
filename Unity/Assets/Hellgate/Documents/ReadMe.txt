@@ -71,3 +71,7 @@ NEW : Scene Event OnReset
 NEW : Clipboard
 2.5.1
 FIX : Delete ConvertCamelToUnderscore
+2.5.2
+NEX : Scene Event sceneOnDeactive
+NEX : HellgateEx
+FIX : NGUI PopUp Shield

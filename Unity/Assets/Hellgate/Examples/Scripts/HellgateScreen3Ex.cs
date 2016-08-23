@@ -1,22 +1,25 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System.Collections;
 using Hellgate;
 
-public class HellgateScreen3Ex : SceneController
+namespace HellgeteEx
 {
-    public override void OnSet (object data)
+    public class HellgateScreen3Ex : SceneController
     {
-        base.OnSet (data);
+        public override void OnSet (object data)
+        {
+            base.OnSet (data);
 
-        MenuController.Instance.SetActiveBottom (false);
-    }
+            MenuController.Instance.SetActiveBottom (false);
+        }
 
-    public void OnClickBack ()
-    {
-        HellgateSceneEx.GoScene ();
+        public void OnClickBack ()
+        {
+            HellgateSceneEx.GoScene ();
+        }
     }
 }

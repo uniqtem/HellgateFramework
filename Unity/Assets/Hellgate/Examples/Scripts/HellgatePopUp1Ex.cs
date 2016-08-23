@@ -7,18 +7,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Hellgate;
 
-public class HellgatePopUp1Ex : HellgateSceneControllerEx
+namespace HellgeteEx
 {
-    [SerializeField]
-    private GameObject label;
-
-    public override void OnSet (object data)
+    public class HellgatePopUp1Ex : HellgateSceneControllerEx
     {
-        base.OnSet (data);
+        [SerializeField]
+        private GameObject label;
 
-        List<object> objs = data as List<object>;
-        Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
+        public override void OnSet (object data)
+        {
+            base.OnSet (data);
 
-        SetLabelTextValue (label, intent ["label"].ToString ());
+            List<object> objs = data as List<object>;
+            Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
+
+            SetLabelTextValue (label, intent ["label"].ToString ());
+        }
     }
 }

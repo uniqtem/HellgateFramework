@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -7,25 +7,28 @@ using System.Collections;
 using System.Collections.Generic;
 using Hellgate;
 
-public class HellgateScreen2Ex : HellgateSceneControllerEx
+namespace HellgeteEx
 {
-    [SerializeField]
-    private GameObject title;
-
-    public override void OnSet (object data)
+    public class HellgateScreen2Ex : HellgateSceneControllerEx
     {
-        base.OnSet (data);
+        [SerializeField]
+        private GameObject title;
 
-        List<object> objs = data as List<object>;
-        Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
+        public override void OnSet (object data)
+        {
+            base.OnSet (data);
 
-        SetLabelTextValue (title, intent ["title"].ToString ());
+            List<object> objs = data as List<object>;
+            Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
 
-        MenuController.Instance.SetActiveTop (false);
-    }
+            SetLabelTextValue (title, intent ["title"].ToString ());
 
-    public void OnClickBack ()
-    {
-        HellgateSceneEx.GoScene ();
+            MenuController.Instance.SetActiveTop (false);
+        }
+
+        public void OnClickBack ()
+        {
+            HellgateSceneEx.GoScene ();
+        }
     }
 }

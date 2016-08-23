@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -7,56 +7,59 @@ using System.Collections;
 using System.Collections.Generic;
 using Hellgate;
 
-public class HellgateQuestDataEx
+namespace HellgeteEx
 {
-    public class User
+    public class HellgateQuestDataEx
     {
-        private string prefab = "";
-        private int speed = 0;
+        public class User
+        {
+            private string prefab = "";
+            private int speed = 0;
 
-        public string Prefab {
-            get {
-                return prefab;
+            public string Prefab {
+                get {
+                    return prefab;
+                }
+            }
+
+            public float Speed {
+                get {
+                    return (float)speed / 100;
+                }
             }
         }
 
-        public float Speed {
-            get {
-                return (float)speed / 100;
+        public class Missile
+        {
+            private string prefab = "";
+            private int speed = 0;
+
+            public string Prefab {
+                get {
+                    return prefab;
+                }
+            }
+
+            public float Speed {
+                get {
+                    return (float)speed / 100;
+                }
             }
         }
-    }
 
-    public class Missile
-    {
-        private string prefab = "";
-        private int speed = 0;
+        private User user = null;
+        private Missile[] missile = null;
 
-        public string Prefab {
+        public User _User {
             get {
-                return prefab;
+                return user;
             }
         }
 
-        public float Speed {
+        public List<Missile> _Missile {
             get {
-                return (float)speed / 100;
+                return new List<Missile> (missile);
             }
-        }
-    }
-
-    private User user = null;
-    private Missile[] missile = null;
-
-    public User _User {
-        get {
-            return user;
-        }
-    }
-
-    public List<Missile> _Missile {
-        get {
-            return new List<Missile> (missile);
         }
     }
 }

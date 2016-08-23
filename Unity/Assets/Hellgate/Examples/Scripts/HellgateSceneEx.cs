@@ -1,5 +1,5 @@
 ﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//					Hellgate Framework
+//                  Hellgate Framework
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
@@ -8,141 +8,144 @@ using System.Collections.Generic;
 using MiniJSON;
 using Hellgate;
 
-public class HellgateSceneData
+namespace HellgeteEx
 {
-    private string[] sprite = null;
+    public class HellgateSceneData
+    {
+        private string[] sprite = null;
 
-    public string[] _Sprite {
-        get {
-            return sprite;
+        public string[] _Sprite {
+            get {
+                return sprite;
+            }
         }
     }
-}
 
-public class HellgateSceneEx : HellgateSceneControllerEx
-{
-    [SerializeField]
-    private GameObject title;
-    private bool menu1Flag;
-    private bool menu2Flag;
-    private bool menu3Flag;
-
-    public static void GoScene ()
+    public class HellgateSceneEx : HellgateSceneControllerEx
     {
-        LoadingJobData jobData = new LoadingJobData ();
+        [SerializeField]
+        private GameObject title;
+        private bool menu1Flag;
+        private bool menu2Flag;
+        private bool menu3Flag;
 
-        List<AssetBundleData> assetBundles = new List<AssetBundleData> ();
-        assetBundles.Add (new AssetBundleData ("hellgatemaster", "scene", typeof(TextAsset)));
+        public static void GoScene ()
+        {
+            LoadingJobData jobData = new LoadingJobData ();
 
-        jobData.assetBundles = assetBundles;
-        jobData.finishedDelegate = delegate (List<object> obj, LoadingJobController job) {
-            TextAsset text = Util.GetListObject<TextAsset> (obj);
+            List<AssetBundleData> assetBundles = new List<AssetBundleData> ();
+            assetBundles.Add (new AssetBundleData ("hellgatemaster", "scene", typeof(TextAsset)));
 
-            HellgateSceneData data = Reflection.Convert<HellgateSceneData> ((IDictionary)Json.Deserialize (text.text));
+            jobData.assetBundles = assetBundles;
+            jobData.finishedDelegate = delegate (List<object> obj, LoadingJobController job) {
+                TextAsset text = Util.GetListObject<TextAsset> (obj);
 
-            assetBundles = new List<AssetBundleData> ();
-            for (int i = 0; i < data._Sprite.Length; i++) {
-                assetBundles.Add (new AssetBundleData ("hellgatescene", data._Sprite [i], typeof(Sprite)));
-            }
+                HellgateSceneData data = Reflection.Convert<HellgateSceneData> ((IDictionary)Json.Deserialize (text.text));
 
-            job.nextSceneName = "HellgateScene";
-            job.LoadAssetBundle (assetBundles);
-        };
+                assetBundles = new List<AssetBundleData> ();
+                for (int i = 0; i < data._Sprite.Length; i++) {
+                    assetBundles.Add (new AssetBundleData ("hellgatescene", data._Sprite [i], typeof(Sprite)));
+                }
 
-        jobData.PutExtra ("title", "Scene");
-        SceneManager.Instance.LoadingJob (jobData);
-    }
+                job.nextSceneName = "HellgateScene";
+                job.LoadAssetBundle (assetBundles);
+            };
 
-    public override void OnSet (object data)
-    {
-        base.OnSet (data);
+            jobData.PutExtra ("title", "Scene");
+            SceneManager.Instance.LoadingJob (jobData);
+        }
 
-        List<object> objs = data as List<object>;
-        Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
+        public override void OnSet (object data)
+        {
+            base.OnSet (data);
 
-        SetUIButton (gameObject, objs);
+            List<object> objs = data as List<object>;
+            Dictionary<string, object> intent = Util.GetListObject<Dictionary<string, object>> (objs);
 
-        SetLabelTextValue (title, intent ["title"].ToString ());
+            SetUIButton (gameObject, objs);
 
-        menu1Flag = true;
-        menu2Flag = true;
-        menu3Flag = true;
-    }
+            SetLabelTextValue (title, intent ["title"].ToString ());
 
-    public override void OnKeyBack ()
-    {
-        base.Quit ("Exit ?");
-    }
+            menu1Flag = true;
+            menu2Flag = true;
+            menu3Flag = true;
+        }
 
-    public void OnClickScreen1 ()
-    {
-        LoadingJobData jobData = new LoadingJobData ("HellgateScreen1");
-        jobData.status = MainMenuStatus.Hide;
-        jobData.PutExtra ("title", "Screen1");
+        public override void OnKeyBack ()
+        {
+            base.Quit ("Exit ?");
+        }
 
-        SceneManager.Instance.LoadingJob (jobData, false);
-    }
+        public void OnClickScreen1 ()
+        {
+            LoadingJobData jobData = new LoadingJobData ("HellgateScreen1");
+            jobData.status = MainMenuStatus.Hide;
+            jobData.PutExtra ("title", "Screen1");
 
-    public void OnClickScreen2 ()
-    {
-        LoadingJobData jobData = new LoadingJobData ("HellgateScreen2");
-        jobData.PutExtra ("title", "Screen2");
+            SceneManager.Instance.LoadingJob (jobData, false);
+        }
 
-        SceneManager.Instance.LoadingJob (jobData);
-    }
+        public void OnClickScreen2 ()
+        {
+            LoadingJobData jobData = new LoadingJobData ("HellgateScreen2");
+            jobData.PutExtra ("title", "Screen2");
 
-    public void OnClickScreen3 ()
-    {
-        SceneManager.Instance.Screen ("HellgateScreen3");
-    }
+            SceneManager.Instance.LoadingJob (jobData);
+        }
 
-    public void OnClickPopUp1 ()
-    {
-        LoadingJobData jobData = new LoadingJobData ("HellgatePopUp1");
-        jobData.PutExtra ("label", "PopUp Test\nAlpha = 0");
-        jobData.nextScenePopUp = true;
-        jobData.shieldAlpha = 0;
+        public void OnClickScreen3 ()
+        {
+            SceneManager.Instance.Screen ("HellgateScreen3");
+        }
 
-        SceneManager.Instance.LoadingJob (jobData);
-    }
+        public void OnClickPopUp1 ()
+        {
+            LoadingJobData jobData = new LoadingJobData ("HellgatePopUp1");
+            jobData.PutExtra ("label", "PopUp Test\nAlpha = 0");
+            jobData.nextScenePopUp = true;
+            jobData.shieldAlpha = 0;
 
-    public void OnClickPopUp2 ()
-    {
-        SceneManager.Instance.PopUp ("HellgatePopUp2", "PopUp Test");
-    }
+            SceneManager.Instance.LoadingJob (jobData);
+        }
 
-    public void OnClickPopUp3 ()
-    {
-        SceneManager.Instance.PopUp ("Yes and No.", PopUpType.YesAndNo, delegate(PopUpYNType type) {
-            if (type == PopUpYNType.Yes) {
-                SceneManager.Instance.PopUp ("Okay.", PopUpType.Ok);
-            }
-        });
-    }
+        public void OnClickPopUp2 ()
+        {
+            SceneManager.Instance.PopUp ("HellgatePopUp2", "PopUp Test");
+        }
 
-    public void OnClickMenu1 ()
-    {
-        menu1Flag = !menu1Flag;
-        MenuController.Instance.SetActiveTop (menu1Flag);
-    }
+        public void OnClickPopUp3 ()
+        {
+            SceneManager.Instance.PopUp ("Yes and No.", PopUpType.YesAndNo, delegate(PopUpYNType type) {
+                if (type == PopUpYNType.Yes) {
+                    SceneManager.Instance.PopUp ("Okay.", PopUpType.Ok);
+                }
+            });
+        }
 
-    public void OnClickMenu2 ()
-    {
-        menu2Flag = !menu2Flag;
-        MenuController.Instance.SetActiveBottom (menu2Flag);
-    }
+        public void OnClickMenu1 ()
+        {
+            menu1Flag = !menu1Flag;
+            MenuController.Instance.SetActiveTop (menu1Flag);
+        }
 
-    public void OnClickMenu3 ()
-    {
-        menu3Flag = !menu3Flag;
-        if (menu3Flag) {
-            SceneManager.Instance.DestroyScenesFrom ("HellgateNotice");
-        } else {
-            if (GameObject.Find ("HellgateNotice") != null) {
+        public void OnClickMenu2 ()
+        {
+            menu2Flag = !menu2Flag;
+            MenuController.Instance.SetActiveBottom (menu2Flag);
+        }
+
+        public void OnClickMenu3 ()
+        {
+            menu3Flag = !menu3Flag;
+            if (menu3Flag) {
                 SceneManager.Instance.DestroyScenesFrom ("HellgateNotice");
-                menu3Flag = true;
             } else {
-                SceneManager.Instance.LoadMenu ("HellgateNotice");
+                if (GameObject.Find ("HellgateNotice") != null) {
+                    SceneManager.Instance.DestroyScenesFrom ("HellgateNotice");
+                    menu3Flag = true;
+                } else {
+                    SceneManager.Instance.LoadMenu ("HellgateNotice");
+                }
             }
         }
     }

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+using System;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -87,6 +89,8 @@ namespace Hellgate
 
         public delegate void SceneActivedDelegate (string sceneName);
 
+        public delegate void SceneDeactivedDelegate (string sceneName);
+
         /// <summary>
         /// The screen start change event.
         /// </summary>
@@ -95,6 +99,10 @@ namespace Hellgate
         /// The scene on active event.
         /// </summary>
         public SceneActivedDelegate sceneOnActive;
+        /// <summary>
+        /// The scene on deactive event.
+        /// </summary>
+        public SceneDeactivedDelegate sceneOnDeactive;
 
 #endregion
 
@@ -625,6 +633,10 @@ namespace Hellgate
         protected virtual void OnDeativeScreen (GameObject root)
         {
             root.SetActive (false);
+
+            if (sceneOnDeactive != null) {
+                sceneOnDeactive (root.name);
+            }
         }
 
         /// <summary>

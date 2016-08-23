@@ -1,6 +1,12 @@
-﻿using UnityEngine;
+﻿//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+//                  Hellgate Framework
+// Copyright © Uniqtem Co., Ltd.
+//*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+using UnityEngine;
 using System.Collections;
 
+namespace HellgeteEx
+{
 public class HellgateRotationEx : MonoBehaviour
 {
     private Transform trans;
@@ -16,4 +22,5 @@ public class HellgateRotationEx : MonoBehaviour
     {
         trans.Rotate (0, 0, -Time.deltaTime * time);
     }
+}
 }

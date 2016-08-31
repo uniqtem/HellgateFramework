@@ -48,7 +48,7 @@ namespace HellgateEditor
             }
             EditorGUILayout.EndHorizontal ();
 
-            selected = EditorGUILayout.Popup ("Option : ", selected, Enum.GetNames (typeof(ExcelImportType)));
+            selected = EditorGUILayout.Popup ("Option : ", selected, Enum.GetNames (typeof(JsonImportType)));
 
             GUILayout.Label ("Set Ignore table name", EditorStyles.boldLabel);
             GUILayout.Label ("Ex) Info,Version,Description  or  Info|Version|Description");
@@ -56,10 +56,8 @@ namespace HellgateEditor
 
             if (GUILayout.Button ("Create", GUILayout.Height (40))) {
                 if (excelFilePath != "" && outputJsonPath != "") {
-                    if (excelFilePath.EndsWith ("xls")) {
-                        Create ("xls");
-                    } else if (excelFilePath.EndsWith ("xlsx")) {
-                        Create ("xlsx");
+                    if (excelFilePath.EndsWith ("xls") || excelFilePath.EndsWith ("xlsx")) {
+                        Create ();
                     } else {
                         Debug.LogWarning ("Please set .xls and .xlsx file.");
                     }
@@ -77,15 +75,15 @@ namespace HellgateEditor
         /// Create the specified extension.
         /// </summary>
         /// <param name="extension">Extension.</param>
-        public static void Create (string extension)
+        public static void Create ()
         {
             ExcelImportMaker maker = new ExcelImportMaker (excelFilePath, outputJsonPath);
 
             string[] ignores = ignoreSheetName.Split (new string[] { ",", "|" }, System.StringSplitOptions.None);
             if (selected == 0) {
-                maker.Create (ExcelImportType.NORMAL, ignores);
+                maker.Create (JsonImportType.NORMAL, ignores);
             } else {
-                maker.Create (ExcelImportType.ATTRIBUTE, ignores);
+                maker.Create (JsonImportType.ATTRIBUTE, ignores);
             }
 
             PlayerPrefs.SetString (HELLGATE_EXCEL_PATH, excelFilePath);

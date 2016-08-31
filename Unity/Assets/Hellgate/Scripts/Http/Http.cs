@@ -14,7 +14,7 @@ namespace Hellgate
     {
 #region Const
 
-        private const float DEFAULT_TIMEOUT = 7f;
+        public const float DEFAULT_TIMEOUT = 7f;
 
 #endregion
 

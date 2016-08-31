@@ -25,7 +25,8 @@ namespace Hellgate
     public enum MainMenuStatus
     {
         Show = 1,
-        Hide
+        Hide,
+        Destroy
     }
 
     public class LoadingJobData

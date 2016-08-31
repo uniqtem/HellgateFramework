@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 932480070
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9c9f1ce6d3eac5b9e39efd029cb77635
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c516f2a3b2b6b67ef759f6410a790acd
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Sound/sound1.wav
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Sound/sound2.wav
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Sound/bgm2.ogg
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Sound/bgm1.ogg
+Dependencies: []

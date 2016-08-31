@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-#if UNITY_5_3
+#if UNITY_5_3 || UNITY_5_4
 using SceneManagement = UnityEngine.SceneManagement;
 #endif
 
@@ -37,7 +37,7 @@ namespace Hellgate
         public static void LoadLevel (string sceneName, OnLoadDelegate onLoaded = null, bool isAdditive = false)
         {
             if (AddScene (sceneName, onLoaded)) {
-#if UNITY_5_3
+#if UNITY_5_3 || UNITY_5_4
                 if (isAdditive) {
                     SceneManagement.SceneManager.LoadScene (sceneName, SceneManagement.LoadSceneMode.Additive);
                 } else {
@@ -62,7 +62,7 @@ namespace Hellgate
         public static void LoadLevelAsync (string sceneName, OnLoadDelegate onLoaded = null, bool isAdditive = false)
         {
             if (AddScene (sceneName, onLoaded)) {
-#if UNITY_5_3
+#if UNITY_5_3 || UNITY_5_4
                 if (isAdditive) {
                     SceneManagement.SceneManager.LoadSceneAsync (sceneName, SceneManagement.LoadSceneMode.Additive);
                 } else {
@@ -98,7 +98,7 @@ namespace Hellgate
             if (onLoadeds.ContainsKey (root.name)) {
                 onLoadeds.Remove (root.name);
 
-#if UNITY_5_3
+#if UNITY_5_3 || UNITY_5_4
                 SceneManagement.SceneManager.UnloadScene (root.name);
 #endif
             }

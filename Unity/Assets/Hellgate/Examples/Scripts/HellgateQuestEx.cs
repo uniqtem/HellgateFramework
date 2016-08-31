@@ -46,7 +46,7 @@ namespace HellgeteEx
             };
 
             jobData.assetBundles = assetBundles;
-            jobData.status = MainMenuStatus.Hide;
+            jobData.status = MainMenuStatus.Destroy;
             jobData.assetBundleAllUnload = true;
             SceneManager.Instance.LoadingJob (jobData, false);
         }

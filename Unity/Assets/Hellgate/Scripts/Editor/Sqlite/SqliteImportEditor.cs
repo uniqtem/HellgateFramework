@@ -16,7 +16,7 @@ namespace HellgateEditor
     {
         private string type = "";
         private string name = "";
-        private string tblName = "";
+        private string tbl_name = "";
         private int rootpage = 0;
         private string sql = "";
 
@@ -34,7 +34,7 @@ namespace HellgateEditor
 
         public string TblName {
             get {
-                return tblName;
+                return tbl_name;
             }
         }
 

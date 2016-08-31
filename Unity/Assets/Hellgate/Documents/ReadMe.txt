@@ -11,6 +11,13 @@ To use the Hellgate
 1. Requires Unity(Personal or Professional Edition) 5.0 or higher.
 
 -----------------
+ Document
+-----------------
+https://dl.dropboxusercontent.com/u/95277951/hellgate_ko.pdf
+https://dl.dropboxusercontent.com/u/95277951/hellgate_en.pdf
+https://dl.dropboxusercontent.com/u/95277951/hellgate_ja.pdf
+
+-----------------
  Reference
 -----------------
 https://dl.dropboxusercontent.com/u/95277951/hellgate/reference/index.html
@@ -75,3 +82,8 @@ FIX : Delete ConvertCamelToUnderscore
 NEX : Scene Event sceneOnDeactive
 NEX : HellgateEx
 FIX : NGUI PopUp Shield
+2.6.0
+NEW : HTTP Debug
+NEW : AssetBundle Debug
+NEW : MainMenuStatus.Destroy
+NEW : Excel -> Sqlite DB

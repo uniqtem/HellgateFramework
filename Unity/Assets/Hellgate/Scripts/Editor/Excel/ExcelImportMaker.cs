@@ -5,24 +5,18 @@
 using UnityEditor;
 using UnityEngine;
 using System;
+using System.IO;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using MiniJSON;
 using NPOI.HSSF.UserModel;
 using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
+using MiniJSON;
 using Hellgate;
 
 namespace HellgateEditor
 {
-    public enum ExcelImportType
-    {
-        NORMAL = 1,
-        ATTRIBUTE
-    }
-
     public class ExcelImportMaker
     {
         public delegate TResult TResultDelegate<out TResult> (string type);
@@ -39,7 +33,7 @@ namespace HellgateEditor
         /// </summary>
         /// <param name="excelFilePath">Excel file path.</param>
         /// <param name="outputJsonPath">Output json path.</param>
-        public ExcelImportMaker (string excelFilePath, string outputJsonPath)
+        public ExcelImportMaker (string excelFilePath, string outputJsonPath = "")
         {
             this.excelFilePath = excelFilePath;
             this.outputJsonPath = outputJsonPath;
@@ -59,45 +53,34 @@ namespace HellgateEditor
             return stringBuilder;
         }
 
-        protected void AddData (ICell tCell, ICell vCell, Dictionary<string, object> dic)
-        {
-            if (vCell == null) {
-                return;
-            }
-
-            if (vCell.CellType == CellType.String) {
-                int n;
-                if (int.TryParse (vCell.StringCellValue, out n)) {
-                    dic.Add (tCell.StringCellValue, n);
-                } else {
-                    dic.Add (tCell.StringCellValue, vCell.StringCellValue);
-                }
-            } else if (vCell.CellType == CellType.Numeric) {
-                dic.Add (tCell.StringCellValue, vCell.NumericCellValue);
-            }
-        }
-
         protected void CreateNormalJson (string[] ignores)
         {
-            for (int i = 0; i < book.NumberOfSheets; ++i) {
+            for (int i = 0; i < book.NumberOfSheets; i++) {
                 ISheet s = book.GetSheetAt (i);
 
                 if (Array.IndexOf (ignores, s.SheetName) < 0) {
                     IRow titleRow = s.GetRow (0);
                     List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
 
-                    for (int j = 1; j <= s.LastRowNum; j++) {
+                    for (int j = 1; j < s.LastRowNum; j++) {
                         Dictionary<string, object> dic = new Dictionary<string, object> ();
-                        for (int k = 0; k <= titleRow.LastCellNum; k++) {
+                        for (int k = 0; k < titleRow.LastCellNum; k++) {
                             ICell tCell = titleRow.GetCell (k);
                             ICell vCell = s.GetRow (j).GetCell (k);
 
                             AddData (tCell, vCell, dic);
                         }
-                        list.Add (dic);
+
+                        if (dic.Count > 0) {
+                            list.Add (dic);
+                        }
                     }
 
-                    EditorUtil.CreateJsonFile (s.SheetName, Json.Serialize (list), outputJsonPath);
+                    bool reflash = false;
+                    if (i >= book.NumberOfSheets - 1) {
+                        reflash = true;
+                    }
+                    EditorUtil.CreateJsonFile (s.SheetName, Json.Serialize (list), outputJsonPath, reflash);
                 }
             }
         }
@@ -299,11 +282,65 @@ namespace HellgateEditor
         }
 
         /// <summary>
-        /// Create Json the specified type and ignores.
+        /// Adds the data.
         /// </summary>
-        /// <param name="type">Type.</param>
-        /// <param name="ignores">Ignores.</param>
-        public void Create (ExcelImportType type, string[] ignores = null, TResultDelegate<Type> joinType = null)
+        /// <param name="title">Title.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="dic">Dic.</param>
+        public Type AddData (ICell title, ICell value, Dictionary<string, object> dic)
+        {
+            Type type = null;
+            if (title == null || value == null) {
+                return type;
+            }
+
+            if (dic == null) {
+                dic = new Dictionary<string, object> ();
+            }
+
+            string temp = "";
+            Action innerAddData = () => {
+                int i;
+                long l;
+                float f;
+                double d;
+                if (int.TryParse (temp, out i)) {
+                    type = typeof(int);
+                    dic.Add (title.StringCellValue, i);
+                } else if (long.TryParse (temp, out l)) {
+                    type = typeof(long);
+                    dic.Add (title.StringCellValue, l);
+                } else if (float.TryParse (temp, out f)) {
+                    type = typeof(float);
+                    dic.Add (title.StringCellValue, f);
+                } else if (double.TryParse (temp, out d)) {
+                    type = typeof(double);
+                    dic.Add (title.StringCellValue, d);
+                } else {
+                    type = typeof(string);
+                    dic.Add (title.StringCellValue, temp);
+                }
+            };
+
+            if (value.CellType == CellType.String) {
+                temp = value.StringCellValue;
+                innerAddData ();
+            } else if (value.CellType == CellType.Numeric) {
+                temp = value.NumericCellValue.ToString ();
+                innerAddData ();
+            } else if (value.CellType == CellType.Boolean) {
+                type = typeof(bool);
+                dic.Add (title.StringCellValue, value.BooleanCellValue);
+            }
+
+            return type;
+        }
+
+        /// <summary>
+        /// Files the stream.
+        /// </summary>
+        /// <returns>The stream.</returns>
+        public IWorkbook FileStream ()
         {
             using (FileStream stream = new FileStream (excelFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                 if (excelFilePath.EndsWith ("xls")) {
@@ -311,33 +348,53 @@ namespace HellgateEditor
                 } else if (excelFilePath.EndsWith ("xlsx")) {
                     if (Application.platform == RuntimePlatform.OSXEditor) {
                         Debug.LogWarning ("xlsx is not supported on OSX.");
-                        return;
+                        return null;
                     } else {
                         book = new XSSFWorkbook (stream);
                     }
                 } else {
+                    return null;
+                }
+
+                return book;
+            }
+        }
+
+        /// <summary>
+        /// Create Json the specified type and ignores.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="ignores">Ignores.</param>
+        public void Create (JsonImportType type, string[] ignores = null, TResultDelegate<Type> joinType = null)
+        {
+            book = FileStream ();
+            if (book == null) {
+                return;
+            }
+
+            if (type == JsonImportType.NORMAL) {
+                CreateNormalJson (ignores);
+            } else {
+                this.joinType = joinType;
+
+                listType = new List<Type> ();
+                Type[] types = Reflection.GetExecutingAssembly ();
+                for (int i = 0; i < types.Length; i++) {
+                    ExcelAttribute excel = types [i].GetAttributeValue<ExcelAttribute> ();
+                    if (excel == null || excel.CreateFileName == "") {
+                        continue;
+                    }
+
+                    listType.Add (types [i]);
+                }
+
+                if (listType.Count <= 0) {
+                    Debug.LogWarning ("No class is set to Excel Attribute.");
                     return;
                 }
 
-                if (type == ExcelImportType.NORMAL) {
-                    CreateNormalJson (ignores);
-                } else {
-                    this.joinType = joinType;
-
-                    listType = new List<Type> ();
-                    Type[] types = Reflection.GetExecutingAssembly ();
-                    for (int i = 0; i < types.Length; i++) {
-                        ExcelAttribute excel = types [i].GetAttributeValue<ExcelAttribute> ();
-                        if (excel == null || excel.CreateFileName == "") {
-                            continue;
-                        }
-
-                        listType.Add (types [i]);
-                    }
-
-                    index = 0;
-                    EditorUtil.StartCoroutine (CreateAttributeJson ());
-                }
+                index = 0;
+                EditorUtil.StartCoroutine (CreateAttributeJson ());
             }
         }
     }

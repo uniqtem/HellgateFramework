@@ -280,7 +280,7 @@ namespace Hellgate
 
             for (int i = 0; i < configs.Length; i++) {
                 StringBuilder temp = new StringBuilder ();
-                temp.AppendFormat ("'{0}'", configs [i].name);
+                temp.AppendFormat ("'{0}' ", configs [i].name);
 
                 if (configs [i].t == null || configs [i].t.Type == "") {
                     temp.Append (ConvertToSQLType (configs [i].type));
@@ -301,6 +301,11 @@ namespace Hellgate
 
             stringBuilder.Append (");");
             return stringBuilder.ToString ();
+        }
+
+        public string GenerateDropTableSQL (string tableName)
+        {
+            return string.Format ("DROP TABLE IF EXISTS '{0}';", tableName);
         }
 
         /// <summary>

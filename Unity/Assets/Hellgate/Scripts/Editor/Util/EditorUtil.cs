@@ -18,15 +18,28 @@ namespace HellgateEditor
         /// <param name="text">Text.</param>
         /// <param name="path">Path.</param>
         /// <param name="refresh">If set to <c>true</c> refresh.</param>
-        public static void CreateJsonFile (string name, string text, string path, bool refresh = true)
+        public static void CreateJsonFile (string name, string text, string path, bool refresh = true, string extension = ".json")
         {
-            if (name == "" || text == "" || text == "[]") {
+            CreateTextFile (name, text, path, refresh, extension);
+        }
+
+        /// <summary>
+        /// Creates the text file.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="text">Text.</param>
+        /// <param name="path">Path.</param>
+        /// <param name="refresh">If set to <c>true</c> refresh.</param>
+        /// <param name="extension">Extension.</param>
+        public static void CreateTextFile (string name, string text, string path, bool refresh, string extension)
+        {
+            if (name == "" || text == "") {
                 return;
             }
 
             CreateDirectory (path);
 
-            path = path + "/" + name + ".json";
+            path = string.Format ("{0}/{1}{2}", path, name, extension);
             Debug.Log ("saved name : " + path);
             if (!File.Exists (path)) {
                 File.Create (path).Dispose ();

@@ -31,16 +31,44 @@ namespace Hellgate
         /// Set default data.
         /// </summary>
         public static Dictionary<string, string> defaultDatas = null;
+        /// <summary>
+        /// The default timeout.
+        /// </summary>
+        public static float defaultTimeout = Http.DEFAULT_TIMEOUT;
 
 #endregion
 
+        /// <summary>
+        /// The URL.
+        /// </summary>
         public string url;
+        /// <summary>
+        /// The headers.
+        /// </summary>
         public Dictionary<string, string> headers;
+        /// <summary>
+        /// The datas.
+        /// </summary>
         public Dictionary<string, string> datas;
+        /// <summary>
+        /// The finished delegate.
+        /// </summary>
         public Http.FinishedDelegate finishedDelegate = null;
+        /// <summary>
+        /// The timeout.
+        /// </summary>
+        public float timeout = defaultTimeout;
+        /// <summary>
+        /// The retry.
+        /// </summary>
         public int retry = DEFAULT_RETRY;
-        public float timeout = 0;
+        /// <summary>
+        /// The post.
+        /// </summary>
         public bool post = false;
+        /// <summary>
+        /// The pop up.
+        /// </summary>
         public bool popUp = true;
 
         private void Init (string url)

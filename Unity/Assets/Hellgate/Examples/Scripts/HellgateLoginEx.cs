@@ -33,7 +33,7 @@ namespace HellgeteEx
             base.OnSet (data);
 
             string encrypt = Encrypt.SHA1Key (BuildVersionBindings.GetBuildVersion () + "Hellgate");
-//        HDebug.Log (encrypt);
+//            HDebug.Log (encrypt);
             List<string> param = new List<string> ();
             param.Add (BASE_URL);
             param.Add (encrypt);

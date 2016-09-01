@@ -32,16 +32,12 @@ namespace Hellgate
             return stringBuilder.ToString ();
         }
 
-        protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA, bool apostrophe = false)
+        protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA)
         {
-            string apos = apostrophe ? "'" : "";
+            for (int i = 0; i < sA.Length; i++) {
+                stringBuilder.AppendFormat ("'{0}'", sA [i]);
 
-            int index = 0;
-            foreach (string s in sA) {
-                index++;
-                stringBuilder.AppendFormat ("{0}{1}{2}", apos, s, apos);
-
-                if (sA.Length > index) {
+                if (i < sA.Length - 1) {
                     stringBuilder.Append (", ");
                 }
             }
@@ -77,7 +73,7 @@ namespace Hellgate
             stringBuilder.AppendFormat ("INSERT INTO {0} (", tableName);
             stringBuilder = GenerateInsertSQL (stringBuilder, columnName);
             stringBuilder.Append (") VALUES (");
-            stringBuilder = GenerateInsertSQL (stringBuilder, data, true);
+            stringBuilder = GenerateInsertSQL (stringBuilder, data);
             stringBuilder.Append (");");
 
             return stringBuilder.ToString ();

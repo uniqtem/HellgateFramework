@@ -46,8 +46,32 @@ namespace HellgateEditor
                                                              listSheet.Count),
                                               (float)index / (float)listSheet.Count);
 
+            Action innerCreateTable = () => {
+                if (index < listSheet.Count - 1) {
+                    index++;
+                    EditorUtil.StartCoroutine (CreateTable ());
+                } else {
+                    if (stringBuilder.ToString () != "") {
+                        EditorUtil.CreateTextFile (Path.GetFileNameWithoutExtension (dbName), stringBuilder.ToString (), dbPath, false, ".sql");
+                    }
+                    Debug.Log ("saved name : " + path);
+
+                    EditorUtility.ClearProgressBar ();
+                    AssetDatabase.Refresh ();
+                }
+            };
+
             ISheet sheet = listSheet [index];
+            if (sheet.LastRowNum <= 1) {
+                innerCreateTable ();
+                yield break;
+            }
+
             IRow titleRow = sheet.GetRow (0);
+            if (titleRow == null) {
+                innerCreateTable ();
+                yield break;
+            }
 
             AttributeMappingConfig<ColumnAttribute>[] configs = new AttributeMappingConfig<ColumnAttribute>[titleRow.LastCellNum];
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
@@ -58,6 +82,9 @@ namespace HellgateEditor
                     ICell valueCell = sheet.GetRow (i).GetCell (j);
 
                     Type type = maker.AddData (titleCell, valueCell, dic);
+                    if (type == null) {
+                        continue;
+                    }
 
                     if (configs [j] == null) {
                         configs [j] = new AttributeMappingConfig<ColumnAttribute> ();
@@ -97,18 +124,7 @@ namespace HellgateEditor
                 stringBuilder = new StringBuilder ();
             }
 
-            if (index < listSheet.Count - 1) {
-                index++;
-                EditorUtil.StartCoroutine (CreateTable ());
-            } else {
-                if (stringBuilder.ToString () != "") {
-                    EditorUtil.CreateTextFile (Path.GetFileNameWithoutExtension (dbName), stringBuilder.ToString (), dbPath, false, ".sql");
-                }
-                Debug.Log ("saved name : " + path);
-
-                EditorUtility.ClearProgressBar ();
-                AssetDatabase.Refresh ();
-            }
+            innerCreateTable ();
         }
 
         /// <summary>

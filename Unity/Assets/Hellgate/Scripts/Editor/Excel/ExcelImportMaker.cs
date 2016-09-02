@@ -7,6 +7,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NPOI.HSSF.UserModel;
@@ -19,6 +20,33 @@ namespace HellgateEditor
 {
     public class ExcelImportMaker
     {
+        protected class ExcelData
+        {
+            public string sheetName;
+            public List<Dictionary<string, object>> data;
+
+            public String[] Columns {
+                get {
+                    return data [0].Keys.ToArray ();
+                }
+            }
+
+            public ExcelData (string sheetName, List<Dictionary<string, object>> data)
+            {
+                this.sheetName = sheetName;
+                this.data = data;
+            }
+
+            public List<Dictionary<string, object>> Join (Dictionary<string, object> joinData)
+            {
+                if (joinData == null || joinData.Count <= 0) {
+                    return data;
+                }
+
+                return data.Where (x => joinData.All (y => x.ContainsKey (y.Key) && x [y.Key].Equals (y.Value))).ToList ();
+            }
+        }
+
         public delegate TResult TResultDelegate<out TResult> (string type);
 
         protected IWorkbook book;
@@ -26,6 +54,9 @@ namespace HellgateEditor
         protected string outputJsonPath;
         protected TResultDelegate<Type> joinType;
         protected List<Type> listType;
+
+
+        protected List<ExcelData> listExcel;
         protected int index;
 
         /// <summary>
@@ -53,55 +84,86 @@ namespace HellgateEditor
             return stringBuilder;
         }
 
-        protected void CreateNormalJson (string[] ignores)
+        protected void DisplayProgressBar (string text, int index, int maxIndex)
         {
-            for (int i = 0; i < book.NumberOfSheets; i++) {
-                ISheet s = book.GetSheetAt (i);
+            EditorUtility.DisplayProgressBar ("[Excel -> Json] Converter",
+                                              string.Format ("{0}({1}/{2})",
+                                                             text,
+                                                             index,
+                                                             maxIndex),
+                                              (float)index / (float)maxIndex);
+        }
 
-                if (Array.IndexOf (ignores, s.SheetName) < 0) {
-                    IRow titleRow = s.GetRow (0);
-                    List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
+        protected void ClearProgressBar ()
+        {
+            EditorUtility.ClearProgressBar ();
+            AssetDatabase.Refresh ();
+        }
 
-                    for (int j = 1; j < s.LastRowNum; j++) {
-                        Dictionary<string, object> dic = new Dictionary<string, object> ();
-                        for (int k = 0; k < titleRow.LastCellNum; k++) {
-                            ICell tCell = titleRow.GetCell (k);
-                            ICell vCell = s.GetRow (j).GetCell (k);
+        protected IEnumerator CreateExcelData (Action finish)
+        {
+            ISheet sheet = book.GetSheetAt (index);
+            DisplayProgressBar ("Load sheet " + sheet.SheetName, index, book.NumberOfSheets);
 
-                            AddData (tCell, vCell, dic);
-                        }
+            IRow titleRow = sheet.GetRow (0);
+            List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
+            for (int j = 1; j < sheet.LastRowNum; j++) {
+                Dictionary<string, object> dic = new Dictionary<string, object> ();
+                for (int k = 0; k < titleRow.LastCellNum; k++) {
+                    ICell titleCell = titleRow.GetCell (k);
+                    ICell valueCell = sheet.GetRow (j).GetCell (k);
 
-                        if (dic.Count > 0) {
-                            list.Add (dic);
-                        }
-                    }
-
-                    bool reflash = false;
-                    if (i >= book.NumberOfSheets - 1) {
-                        reflash = true;
-                    }
-                    EditorUtil.CreateJsonFile (s.SheetName, Json.Serialize (list), outputJsonPath, reflash);
+                    AddData (titleCell, valueCell, dic);
                 }
+
+                if (dic.Count > 0) {
+                    list.Add (dic);
+                }
+            }
+
+            if (list.Count > 0) {
+                listExcel.Add (new ExcelData (sheet.SheetName, list));
+            }
+
+            yield return null;
+
+            if (index < book.NumberOfSheets - 1) {
+                index++;
+                EditorUtil.StartCoroutine (CreateExcelData (finish));
+            } else {
+                finish ();
+            }
+        }
+
+        protected IEnumerator CreateNormalJson ()
+        {
+            ExcelData data = listExcel [index];
+            DisplayProgressBar ("Create json " + data.sheetName, index, listExcel.Count);
+
+            EditorUtil.CreateJsonFile (data.sheetName, Json.Serialize (data.data), outputJsonPath, false);
+
+            yield return null;
+
+            if (index < listExcel.Count - 1) {
+                index++;
+                EditorUtil.StartCoroutine (CreateNormalJson ());
+            } else {
+                ClearProgressBar ();
             }
         }
 
         protected IEnumerator CreateAttributeJson ()
         {
-            EditorUtility.DisplayProgressBar ("[Excel -> Json] Converter",
-                                              string.Format ("{0}({1}/{2})",
-                                                             listType [index],
-                                                             index,
-                                                             listType.Count),
-                                              (float)index / (float)listType.Count);
             CreateAttributeJson (index);
+            DisplayProgressBar ("Create json " + listType [index], index, listType.Count);
+
             yield return null;
 
             if (index < listType.Count - 1) {
                 index++;
                 EditorUtil.StartCoroutine (CreateAttributeJson ());
             } else {
-                EditorUtility.ClearProgressBar ();
-                AssetDatabase.Refresh ();
+                ClearProgressBar ();
             }
         }
 
@@ -109,12 +171,8 @@ namespace HellgateEditor
         {
             Type type = listType [index];
             ExcelAttribute excel = type.GetAttributeValue<ExcelAttribute> ();
-            if (excel == null || excel.CreateFileName == "") {
-                return;
-            }
-
             List<Dictionary<string, object>> list = CreateAttributeJson (type);
-            if (list == null) {
+            if (list == null || list.Count <= 0) {
                 return;
             }
 
@@ -167,40 +225,18 @@ namespace HellgateEditor
                     }
                 }
             } else {
-                if (list != null && list.Count > 0) {
-                    EditorUtil.CreateJsonFile (excel.CreateFileName, Json.Serialize (list), outputJsonPath, false);
-                }
+                EditorUtil.CreateJsonFile (excel.CreateFileName, Json.Serialize (list), outputJsonPath, false);
             }
         }
 
-        protected Dictionary<string, object> CreateAttributeJson (IRow titleRow,
-                                                                  IRow row,
-                                                                  AttributeMappingConfig<ColumnAttribute>[] configs,
-                                                                  Dictionary<string, object> joinColumn)
+        protected Dictionary<string, object> CreateAttributeJson (Dictionary<string, object> data,
+                                                                  AttributeMappingConfig<ColumnAttribute>[] configs)
         {
-            Dictionary<string, object> sheetDic = new Dictionary<string, object> ();
-            for (int k = 0; k <= titleRow.LastCellNum; k++) {
-                ICell tCell = titleRow.GetCell (k);
-                ICell vCell = row.GetCell (k);
-
-                AddData (tCell, vCell, sheetDic);
-            }
-
             Dictionary<string, object> dic = new Dictionary<string, object> ();
             foreach (AttributeMappingConfig<ColumnAttribute> config in configs) {
                 if (Util.IsValueType (config.type)) {
-                    if (sheetDic.ContainsKey (config.name)) {
-                        if (joinColumn != null) {
-                            foreach (KeyValuePair<string, object> pair in joinColumn) {
-                                if (pair.Key == config.name) {
-                                    if (pair.Value.ToString () != sheetDic [config.name].ToString ()) {
-                                        return null;
-                                    }
-                                }
-                            }
-                        }
-
-                        dic.Add (config.name, sheetDic [config.name]);
+                    if (data.ContainsKey (config.name)) {
+                        dic.Add (config.name, data [config.name]);
                     }
                 } else {
                     if (!config.type.IsArray) {
@@ -215,33 +251,33 @@ namespace HellgateEditor
                             if (column.Value == "" && column.Type != "") {
                                 value = config.name;
                             } else if (joinType != null) {
-                                Type tempType = joinType (sheetDic [column.Type].ToString ());
+                                Type tempType = joinType (data [column.Type].ToString ());
                                 type = tempType == null ? type : tempType;
                                 value = column.Value;
                             }
                         }
                     }
 
-                    Dictionary<string, object> jDic = new Dictionary<string, object> ();
-                    AttributeMappingConfig<ColumnAttribute>[] temp = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type.GetElementType ());
-                    foreach (AttributeMappingConfig<ColumnAttribute> c in temp) {
-                        if (c.t != null) {
-                            ColumnAttribute column = c.t as ColumnAttribute;
+                    Dictionary<string, object> join = new Dictionary<string, object> ();
+                    AttributeMappingConfig<ColumnAttribute>[] tempConfigs = Reflection.FieldAMCRetrieve<ColumnAttribute> (config.type.GetElementType ());
+                    foreach (AttributeMappingConfig<ColumnAttribute> tempConfig in tempConfigs) {
+                        if (tempConfig.t != null) {
+                            ColumnAttribute column = tempConfig.t as ColumnAttribute;
                             if (column != null) {
                                 if (column.CheckConstraints (DataConstraints.PK)) {
-                                    jDic.Add (c.name, sheetDic [value]);
+                                    join.Add (tempConfig.name, data [value]);
                                     break;
                                 }
 
-                                if (sheetDic.ContainsKey (column.Value)) {
-                                    jDic.Add (c.name, sheetDic [column.Value]);
+                                if (data.ContainsKey (column.Value)) {
+                                    join.Add (tempConfig.name, data [column.Value]);
                                 }
                             }
                         }
                     }
 
-                    if (jDic.Count > 0) {
-                        dic.Add (config.name, CreateAttributeJson (type, jDic));
+                    if (join.Count > 0) {
+                        dic.Add (config.name, CreateAttributeJson (type, join));
                     }
                 }
             }
@@ -249,7 +285,7 @@ namespace HellgateEditor
             return dic;
         }
 
-        protected List<Dictionary<string, object>> CreateAttributeJson (Type type, Dictionary<string, object> joinColumn = null)
+        protected List<Dictionary<string, object>> CreateAttributeJson (Type type, Dictionary<string, object> join = null)
         {
             ExcelAttribute excel = type.GetAttributeValue<ExcelAttribute> ();
             AttributeMappingConfig<ColumnAttribute>[] configs = Reflection.FieldAMCRetrieve<ColumnAttribute> (type);
@@ -259,18 +295,19 @@ namespace HellgateEditor
                     return null;
                 }
 
-                ISheet s = book.GetSheet (excel.SheetName);
-                if (s == null) {
-                    HDebug.LogWarning (type.Name + " sheet name is incorrect.");
+                ExcelData excelData = listExcel.Find (x => x.sheetName == excel.SheetName);
+                if (excelData == null) {
+                    Debug.LogWarning (type.Name + " sheet name is incorrect.");
                     return null;
                 }
-                IRow titleRow = s.GetRow (0);
 
                 List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
-                for (int i = 1; i <= s.LastRowNum; i++) {
-                    Dictionary<string, object> dic = CreateAttributeJson (titleRow, s.GetRow (i), configs, joinColumn);
+                List<Dictionary<string, object>> data = excelData.Join (join);
 
-                    if (dic != null && dic.Count > 0) {
+                for (int i = 0; i < data.Count; i++) {
+                    Dictionary<string, object> dic = CreateAttributeJson (data [i], configs);
+
+                    if (dic.Count > 0) {
                         list.Add (dic);
                     }
                 }
@@ -284,6 +321,7 @@ namespace HellgateEditor
         /// <summary>
         /// Adds the data.
         /// </summary>
+        /// <returns>The data.</returns>
         /// <param name="title">Title.</param>
         /// <param name="value">Value.</param>
         /// <param name="dic">Dic.</param>
@@ -361,10 +399,11 @@ namespace HellgateEditor
         }
 
         /// <summary>
-        /// Create Json the specified type and ignores.
+        /// Create the specified type, ignores and joinType.
         /// </summary>
         /// <param name="type">Type.</param>
         /// <param name="ignores">Ignores.</param>
+        /// <param name="joinType">Join type.</param>
         public void Create (JsonImportType type, string[] ignores = null, TResultDelegate<Type> joinType = null)
         {
             book = FileStream ();
@@ -372,29 +411,61 @@ namespace HellgateEditor
                 return;
             }
 
+            if (book.NumberOfSheets <= 0) {
+                Debug.LogWarning ("No sheet.");
+                return;
+            }
+
+            index = 0;
+            listExcel = new List<ExcelData> ();
+
             if (type == JsonImportType.NORMAL) {
-                CreateNormalJson (ignores);
+                EditorUtil.StartCoroutine (CreateExcelData (delegate() {
+                    if (listExcel.Count <= 0) {
+                        Debug.LogWarning ("No data on the sheet.");
+                        ClearProgressBar ();
+                        return;
+                    }
+
+                    if (ignores != null) {
+                        for (int i = 0; i < ignores.Length; i++) {
+                            listExcel.Remove (listExcel.Find (x => x.sheetName == ignores [i]));
+                        }
+                    }
+
+                    index = 0;
+                    EditorUtil.StartCoroutine (CreateNormalJson ());
+                }));
             } else {
                 this.joinType = joinType;
 
-                listType = new List<Type> ();
-                Type[] types = Reflection.GetExecutingAssembly ();
-                for (int i = 0; i < types.Length; i++) {
-                    ExcelAttribute excel = types [i].GetAttributeValue<ExcelAttribute> ();
-                    if (excel == null || excel.CreateFileName == "") {
-                        continue;
+                EditorUtil.StartCoroutine (CreateExcelData (delegate() {
+                    if (listExcel.Count <= 0) {
+                        Debug.LogWarning ("No data on the sheet.");
+                        ClearProgressBar ();
+                        return;
                     }
 
-                    listType.Add (types [i]);
-                }
+                    listType = new List<Type> ();
+                    Type[] types = Reflection.GetExecutingAssembly ();
+                    for (int i = 0; i < types.Length; i++) {
+                        ExcelAttribute excel = types [i].GetAttributeValue<ExcelAttribute> ();
+                        if (excel == null || excel.CreateFileName == "") {
+                            continue;
+                        }
 
-                if (listType.Count <= 0) {
-                    Debug.LogWarning ("No class is set to Excel Attribute.");
-                    return;
-                }
+                        listType.Add (types [i]);
+                    }
 
-                index = 0;
-                EditorUtil.StartCoroutine (CreateAttributeJson ());
+                    if (listType.Count <= 0) {
+                        Debug.LogWarning ("No class is set to Excel Attribute.");
+                        ClearProgressBar ();
+                        return;
+                    }
+
+                    index = 0;
+                    EditorUtil.StartCoroutine (CreateAttributeJson ());
+                }));
             }
         }
     }

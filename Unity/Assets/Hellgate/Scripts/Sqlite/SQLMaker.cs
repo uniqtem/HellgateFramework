@@ -32,16 +32,12 @@ namespace Hellgate
             return stringBuilder.ToString ();
         }
 
-        protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA, bool apostrophe = false)
+        protected StringBuilder GenerateInsertSQL (StringBuilder stringBuilder, string[] sA)
         {
-            string apos = apostrophe ? "'" : "";
+            for (int i = 0; i < sA.Length; i++) {
+                stringBuilder.AppendFormat ("'{0}'", sA [i]);
 
-            int index = 0;
-            foreach (string s in sA) {
-                index++;
-                stringBuilder.AppendFormat ("{0}{1}{2}", apos, s, apos);
-
-                if (sA.Length > index) {
+                if (i < sA.Length - 1) {
                     stringBuilder.Append (", ");
                 }
             }
@@ -77,7 +73,7 @@ namespace Hellgate
             stringBuilder.AppendFormat ("INSERT INTO {0} (", tableName);
             stringBuilder = GenerateInsertSQL (stringBuilder, columnName);
             stringBuilder.Append (") VALUES (");
-            stringBuilder = GenerateInsertSQL (stringBuilder, data, true);
+            stringBuilder = GenerateInsertSQL (stringBuilder, data);
             stringBuilder.Append (");");
 
             return stringBuilder.ToString ();
@@ -279,8 +275,12 @@ namespace Hellgate
             stringBuilder.AppendFormat ("CREATE TABLE '{0}' (", tableName);
 
             for (int i = 0; i < configs.Length; i++) {
+                if (configs [i] == null) {
+                    continue;
+                }
+
                 StringBuilder temp = new StringBuilder ();
-                temp.AppendFormat ("'{0}'", configs [i].name);
+                temp.AppendFormat ("'{0}' ", configs [i].name);
 
                 if (configs [i].t == null || configs [i].t.Type == "") {
                     temp.Append (ConvertToSQLType (configs [i].type));
@@ -301,6 +301,11 @@ namespace Hellgate
 
             stringBuilder.Append (");");
             return stringBuilder.ToString ();
+        }
+
+        public string GenerateDropTableSQL (string tableName)
+        {
+            return string.Format ("DROP TABLE IF EXISTS '{0}';", tableName);
         }
 
         /// <summary>

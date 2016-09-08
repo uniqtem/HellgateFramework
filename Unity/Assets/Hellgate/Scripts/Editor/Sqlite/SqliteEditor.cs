@@ -37,7 +37,7 @@ namespace HellgateEditor
             }
         }
 
-        [MenuItem ("Window/Hellgate/Create sqlite db", false, 12)]
+        [MenuItem ("Window/Hellgate/Create Sqlite DB", false, 13)]
         public static void ShowWindow ()
         {
             EditorWindow.GetWindow (typeof(SqliteEditor));

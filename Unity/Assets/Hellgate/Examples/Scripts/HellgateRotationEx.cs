@@ -7,20 +7,20 @@ using System.Collections;
 
 namespace HellgeteEx
 {
-public class HellgateRotationEx : MonoBehaviour
-{
-    private Transform trans;
-    [SerializeField]
-    private float time = 200f;
-
-    void Start ()
+    public class HellgateRotationEx : MonoBehaviour
     {
-        trans = transform;
-    }
+        private Transform trans;
+        [SerializeField]
+        private float time = 200f;
 
-    void Update ()
-    {
-        trans.Rotate (0, 0, -Time.deltaTime * time);
+        void Start ()
+        {
+            trans = transform;
+        }
+
+        void Update ()
+        {
+            trans.Rotate (0, 0, -Time.deltaTime * time);
+        }
     }
-}
 }

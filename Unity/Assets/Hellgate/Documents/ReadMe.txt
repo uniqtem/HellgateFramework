@@ -11,9 +11,16 @@ To use the Hellgate
 1. Requires Unity(Personal or Professional Edition) 5.0 or higher.
 
 -----------------
+ Document
+-----------------
+http://www.uniqtem.net/hellgate_ko.pdf
+http://www.uniqtem.net/hellgate_en.pdf
+http://www.uniqtem.net/hellgate_ja.pdf
+
+-----------------
  Reference
 -----------------
-https://dl.dropboxusercontent.com/u/95277951/hellgate/reference/index.html
+http://www.uniqtem.net/hellgate/reference/index.html
 
 -----------------
  Forum
@@ -54,7 +61,7 @@ NEW : WebView
 FIX : Sqlite ORM
 FIX : BuildVersionBinding
 FIX : AssetBundleInitialDownloader
-NEW : Excel -> Json (Attribute)
+NEW : Excel -> Json (Attribute) editor
 NEW : ExtensionMethods
 2.3.0
 FIX : Scene System
@@ -64,7 +71,7 @@ NEW : Support UGUI
 2.4.0
 NEW : Sound
 NEW : WebView Event (OnURLChanged)
-NEX : Excel -> Json (type join)
+NEX : Excel -> Json (type join) editor
 2.5.0
 NEW : BuildAssetBundleOptions
 NEW : Scene Event OnReset
@@ -75,3 +82,9 @@ FIX : Delete ConvertCamelToUnderscore
 NEX : Scene Event sceneOnDeactive
 NEX : HellgateEx
 FIX : NGUI PopUp Shield
+2.6.0
+NEW : Debug HttpManager
+NEW : Debug AssetBundleManager
+NEW : LoadingJob MainMenuStatus.Destroy
+NEW : Excel -> Sqlite DB editor
+NEW : JsonUtil

@@ -1,0 +1,28 @@
+ManifestFileVersion: 0
+CRC: 1407368347
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: hellgateobjectpool.unity3d
+      Dependencies: {}
+    Info_1:
+      Name: hellgatescene.unity3d
+      Dependencies: {}
+    Info_2:
+      Name: hellgatemaster.unity3d
+      Dependencies: {}
+    Info_3:
+      Name: hellgatemain.unity3d
+      Dependencies: {}
+    Info_4:
+      Name: hellgatesound.unity3d
+      Dependencies: {}
+    Info_5:
+      Name: hellgatequest.unity3d
+      Dependencies: {}
+    Info_6:
+      Name: hellgatehttp.unity3d
+      Dependencies: {}
+    Info_7:
+      Name: hellgateasset.unity3d
+      Dependencies: {}

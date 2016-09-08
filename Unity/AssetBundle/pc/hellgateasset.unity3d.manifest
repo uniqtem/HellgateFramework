@@ -1,0 +1,52 @@
+ManifestFileVersion: 0
+CRC: 2299804728
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: fc3a76435d5bbf6a9ba3c9543ed28672
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 8a873c5b1cebb68cf08b89e72e6d7b48
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: d74dc5297ffbe4658b52f75aa874c2a6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Elements_Nature.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Elements_Water.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Boots.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/CubeRed.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Vest.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Elements_Life.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/CubeGreen.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Pants.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Inventory_Arrow.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Helmet.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/CubeBlue.prefab
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Gloves.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Inventory_Bone.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/Equipment_Shield.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Asset/CubeYellow.prefab
+Dependencies: []

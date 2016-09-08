@@ -507,6 +507,16 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Determines if is array the specified type.
+        /// </summary>
+        /// <returns><c>true</c> if is array the specified type; otherwise, <c>false</c>.</returns>
+        /// <param name="type">Type.</param>
+        public static bool IsArray (Type type)
+        {
+            return (type.IsArray || typeof(IList).IsAssignableFrom (type));
+        }
+
+        /// <summary>
         /// Textures the convert sprite.
         /// </summary>
         /// <returns>The convert sprite.</returns>

@@ -62,7 +62,7 @@ namespace Hellgate
                 }
 
 #if UNITY_EDITOR
-                #if UNITY_5_3
+                #if UNITY_5_3 || UNITY_5_4
                 gameObject.name = Path.GetFileNameWithoutExtension (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene ().name);
                 #else
                 gameObject.name = Path.GetFileNameWithoutExtension (EditorApplication.currentScene);

@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 3951454088
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 54ee3cf4b904f1b444d3f6e2e5d3e3b8
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1033bf7ddfd4c6d43e7a6382c0a0a61a
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Master/asset.json
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Master/quest.json
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Master/objectpool.json
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Master/scene.json
+Dependencies: []

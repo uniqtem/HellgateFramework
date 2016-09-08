@@ -292,25 +292,31 @@ namespace Hellgate
         /// <summary>
         /// Creates the Sqlite db file.
         /// </summary>
-        /// <param name="db">DB Name.</param>
+        /// <param name="db">DB Name or Path.</param>
         /// <param name="resetDB">If set to <c>true</c> Reset Db.</param>
         public bool CreateFile (string db, bool resetDB = false)
         {
-            string streamingAssetsPath = Application.streamingAssetsPath;
-            if (!Directory.Exists (streamingAssetsPath)) {
-                Directory.CreateDirectory (streamingAssetsPath);
+            string path = Application.streamingAssetsPath;
+            string file = db;
+            if (db.Contains ("/")) {
+                path = Path.GetDirectoryName (db);
+            } else {
+                file = Path.Combine (path, db);
             }
 
-            string resourcePath = Path.Combine (streamingAssetsPath, db);
+            if (!Directory.Exists (path)) {
+                Directory.CreateDirectory (path);
+            }
+
             if (!resetDB) {
-                if (File.Exists (resourcePath)) {
+                if (File.Exists (file)) {
                     return false;
                 }
             }
 
 #if !UNITY_WEBPLAYER
             try {
-                SqliteConnection.CreateFile (resourcePath);
+                SqliteConnection.CreateFile (file);
             } catch (Exception e) {
                 HDebug.LogError (e.Message);
 
@@ -318,9 +324,19 @@ namespace Hellgate
             }
 #endif
 
-            pathDB = resourcePath;
+            pathDB = file;
             UnityEditor.AssetDatabase.Refresh ();
             return true;
+        }
+
+        /// <summary>
+        /// Creates the file.
+        /// </summary>
+        /// <returns><c>true</c>, if file was created, <c>false</c> otherwise.</returns>
+        /// <param name="resetDB">If set to <c>true</c> reset D.</param>
+        public bool CreateFile (bool resetDB = false)
+        {
+            return CreateFile (pathDB, resetDB);
         }
 
         /// <summary>

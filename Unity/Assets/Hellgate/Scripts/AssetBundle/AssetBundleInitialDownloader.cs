@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
 
 namespace Hellgate
 {
@@ -120,8 +119,7 @@ namespace Hellgate
                 response (www);
             }
 
-            assetBundleData = Reflection.Convert<AssetBundleInitialData> ((IDictionary)Json.Deserialize (www.text));
-
+            assetBundleData = JsonUtil.FromJson<AssetBundleInitialData> (www.text);
             if (assetBundleData._Resource.Major != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR)) {
 
 #if UNITY_EDITOR

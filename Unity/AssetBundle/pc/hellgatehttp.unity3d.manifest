@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 611354473
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 1b60db56461e42e47f1eb5d803d7bcfd
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9dea23ffc7e96552740e12d1ee5309d8
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Bullet.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Book.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Key.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Potion.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Carrot.png
+- Assets/Hellgate/Examples/_Resources/AssetBundle/Http/Inventory_Moneybag.png
+Dependencies: []

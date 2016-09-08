@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
 using Hellgate;
 
 namespace HellgeteEx
@@ -44,7 +43,7 @@ namespace HellgeteEx
                 TextAsset text = Util.GetListObject<TextAsset> (objs);
 
                 assetBundles = new List<AssetBundleData> ();
-                HellgateObjectPoolData data = Reflection.Convert<HellgateObjectPoolData> ((IDictionary)Json.Deserialize (text.text));
+                HellgateObjectPoolData data = JsonUtil.FromJson<HellgateObjectPoolData> (text.text);
                 for (int i = 0; i < data.Prefab.Length; i++) {
                     assetBundles.Add (new AssetBundleData ("hellgateobjectpool", data.Prefab [i]));
                 }

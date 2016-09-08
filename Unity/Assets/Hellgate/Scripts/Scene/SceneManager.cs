@@ -54,28 +54,11 @@ namespace Hellgate
         /// </summary>
         [SerializeField]
         protected bool editorLocalLoadAssetBundle = true;
-
-#endregion
-
-#region show Debug
-
         /// <summary>
         /// The debug flag.
         /// </summary>
         [SerializeField]
         private bool showDebug = true;
-
-        void Start ()
-        {
-            GameObject gObj = gameObject;
-            if (showDebug) {
-                if (!gObj.GetComponent<HDebug> ()) {
-                    gObj.AddComponent<HDebug> ();
-                }
-            } else {
-                Destroy (gObj.GetComponent<HDebug> ());
-            }
-        }
 
 #endregion
 
@@ -95,6 +78,10 @@ namespace Hellgate
         /// The name of the now scene.
         /// </summary>
         protected string nowSceneName;
+        /// <summary>
+        /// The is loading job.
+        /// </summary>
+        protected bool isLoadingJob;
 
         /// <summary>
         /// Gets the default name of the loading job scene.
@@ -159,6 +146,16 @@ namespace Hellgate
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is loading job.
+        /// </summary>
+        /// <value><c>true</c> if this instance is loading job; otherwise, <c>false</c>.</value>
+        public bool IsLoadingJob {
+            get {
+                return isLoadingJob;
+            }
+        }
+
         protected override void Awake ()
         {
             base.Awake ();
@@ -168,6 +165,17 @@ namespace Hellgate
 
                 defaultShieldAlpha = defaultShieldColor.a;
                 shieldAlpha = defaultShieldAlpha;
+            }
+        }
+
+        protected virtual void Start ()
+        {
+            if (showDebug) {
+                if (!gameObject.GetComponent<HDebug> ()) {
+                    gameObject.AddComponent<HDebug> ();
+                }
+            } else {
+                Destroy (gameObject.GetComponent<HDebug> ());
             }
         }
 
@@ -249,7 +257,13 @@ namespace Hellgate
         /// <param name="deactive">Deactive.</param>
         public virtual void LoadingJob (LoadingJobData data, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
-            LoadingJob (data, data.popUp, active, deactive);
+            isLoadingJob = true;
+            LoadingJob (data, data.popUp, active, delegate(SSceneController ctrl) {
+                isLoadingJob = false;
+                if (deactive != null) {
+                    deactive (ctrl);
+                }
+            });
         }
 
         /// <summary>

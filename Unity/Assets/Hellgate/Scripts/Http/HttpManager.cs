@@ -32,7 +32,9 @@ namespace Hellgate
                     instance = gObj.AddComponent<HttpManager> ();
                     gObj.name = HTTP_MANAGER;
 
+#if !UNITY_5_3 && !UNITY_5_4
                     DontDestroyOnLoad (gObj);
+#endif
                 }
 
                 return instance;
@@ -64,7 +66,15 @@ namespace Hellgate
 
 #endregion
 
+#region SerializeField
+
+        [SerializeField]
+        protected bool debug = false;
+
+#endregion
+
         protected SSceneController popUp;
+        protected float time;
 
         /// <summary>
         /// Sets the pre request.
@@ -92,10 +102,56 @@ namespace Hellgate
         {
             if (instance == null) {
                 instance = this;
+
+#if !UNITY_5_3 && !UNITY_5_4
                 DontDestroyOnLoad (gameObject);
+#endif
             }
 
             popUp = null;
+        }
+
+        /// <summary>
+        /// Debug the specified data and www.
+        /// warring is timeover
+        /// </summary>
+        /// <param name="data">Data.</param>
+        /// <param name="www">Www.</param>
+        protected void Log (HttpData data, WWW www)
+        {
+            time = Time.time - time;
+
+            if (!debug) {
+                return;
+            }
+
+            System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder ();
+            stringBuilder.AppendFormat ("[Request time] {0}\n[WWW.url] {1}\n", time, data.url);
+
+            if (data.headers != null) {
+                stringBuilder.Append ("[WWWForm.headers]\n");
+                foreach (KeyValuePair<string, string> pair in data.headers) {
+                    stringBuilder.AppendFormat ("{0} : {1}\n", pair.Key, pair.Value);
+                }
+                stringBuilder.Append ("\n");
+            }
+
+            if (data.headers != null) {
+                stringBuilder.Append ("[WWWForm.data]\n");
+                foreach (KeyValuePair<string, string> pair in data.datas) {
+                    stringBuilder.AppendFormat ("{0} : {1}\n", pair.Key, pair.Value);
+                }
+                stringBuilder.Append ("\n");
+            }
+
+            if (www == null) {
+                HDebug.LogWarning (stringBuilder.ToString ());
+            } else if (www.error != null) {
+                stringBuilder.AppendFormat ("[WWW.error]\n{0}\n", www.error);
+                HDebug.LogError (stringBuilder.ToString ());
+            } else {
+                HDebug.Log (stringBuilder.ToString ());
+            }
         }
 
         /// <summary>
@@ -134,7 +190,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnFail (HttpData data, WWW www)
         {
-//            HDebug.Log ("Request OnFail " + www.error);
+            Log (data, www);
             CallbackRequest (data, www);
         }
 
@@ -145,7 +201,7 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnDisposed (HttpData data, WWW www)
         {
-//            HDebug.Log ("Reuqest timeover");
+            Log (data, www);
             CallbackRequest (data, www);
         }
 
@@ -156,15 +212,8 @@ namespace Hellgate
         /// <param name="www">Www.</param>
         protected virtual void OnDone (HttpData data, WWW www)
         {
-//            HDebug.Log (data.post == true ? "post : " + www.url : "get : " + www.url);
-//            if (data.post) {
-//                string log = "";
-//                foreach (KeyValuePair<string, string> kVP in data.datas) {
-//                    log += kVP.Key + " : " + kVP.Value + " \n";
-//                }
-//                HDebug.Log (log);
-//            }
-//            HDebug.Log ("Requst good!!");
+
+            Log (data, www);
             CallbackRequest (data, www);
         }
 
@@ -175,6 +224,8 @@ namespace Hellgate
         /// <param name="post">If set to <c>true</c> post.</param>
         public void Request (HttpData data, bool post)
         {
+            time = Time.time;
+
             Action innerRequest = () => {
                 if (preReuqest != null) {
                     data = preReuqest (data);
@@ -192,9 +243,7 @@ namespace Hellgate
                 }
 
                 // Set timeout time.
-                if (data.timeout != 0) {
-                    http.Timeout = data.timeout;
-                }
+                http.Timeout = data.timeout;
 
                 http.OnFail = (WWW www) => {
                     OnFail (data, www);
@@ -213,13 +262,16 @@ namespace Hellgate
 
             if (data.popUp) {
                 if (SceneManager.Instance.DefaultLoadingJobSceneName != "") {
+                    if (SceneManager.Instance.IsLoadingJob) {
+                        HDebug.LogWarning ("Now loading scene active");
+                    }
+
                     SceneManager.Instance.PopUp (SceneManager.Instance.DefaultLoadingJobSceneName, null, delegate(SSceneController ctrl) {
                         popUp = ctrl;
                         innerRequest ();
                     });
                 } else {
                     HDebug.LogWarning ("The default loading scene is not set");
-                    innerRequest ();
                 }
             } else {
                 innerRequest ();

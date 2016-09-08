@@ -80,8 +80,10 @@ namespace Hellgate
                     } else {
                         SceneManager.Instance.ShowMainMenu ();
                     }
-                } else {
+                } else if (jobData.status == MainMenuStatus.Hide) {
                     SceneManager.Instance.HideMainMenu ();
+                } else {
+                    SceneManager.Instance.DestoryMainMenu ();
                 }
             }
         }

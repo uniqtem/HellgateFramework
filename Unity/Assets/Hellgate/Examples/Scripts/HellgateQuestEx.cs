@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
 using Hellgate;
 
 namespace HellgeteEx
@@ -32,7 +31,7 @@ namespace HellgeteEx
             jobData.finishedDelegate = delegate(List<object> obj, LoadingJobController job) {
                 TextAsset text = Util.GetListObject<TextAsset> (obj);
 
-                HellgateQuestDataEx data = Reflection.Convert<HellgateQuestDataEx> ((IDictionary)Json.Deserialize (text.text));
+                HellgateQuestDataEx data = JsonUtil.FromJson<HellgateQuestDataEx> (text.text);
 
                 assetBundles = new List<AssetBundleData> ();
                 assetBundles.Add (new AssetBundleData ("hellgatequest", data._User.Prefab));
@@ -46,7 +45,7 @@ namespace HellgeteEx
             };
 
             jobData.assetBundles = assetBundles;
-            jobData.status = MainMenuStatus.Hide;
+            jobData.status = MainMenuStatus.Destroy;
             jobData.assetBundleAllUnload = true;
             SceneManager.Instance.LoadingJob (jobData, false);
         }

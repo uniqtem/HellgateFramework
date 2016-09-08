@@ -243,6 +243,17 @@ namespace Hellgate
             this.key = key;
             this.value = value;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hellgate.ColumnAttribute"/> class.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="value">Value.</param>
+        public ColumnAttribute (string type, string value)
+        {
+            this.type = type;
+            this.value = value;
+        }
     }
 
     [AttributeUsage (AttributeTargets.Field)]

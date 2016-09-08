@@ -86,6 +86,28 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// INSERT batch.
+        /// </summary>
+        /// <param name="tableName">Table name.</param>
+        /// <param name="data">Data.</param>
+        public void INSERT_BATCH (string tableName, List<Dictionary<string, object>> data)
+        {
+            string[] column = null;
+            string[][] value = new string[data.Count][];
+
+            for (int i = 0; i < data.Count; i++) {
+                Partitioning part = new Partitioning (data [i]);
+                value [i] = part.values;
+
+                if (i == 0) {
+                    column = part.keys;
+                }
+            }
+
+            INSERT_BATCH (tableName, column, value);
+        }
+
+        /// <summary>
         /// INSERT the specified tableName, columnName and data.
         /// </summary>
         /// <param name="tableName">Table name.</param>
@@ -105,7 +127,6 @@ namespace Hellgate
         public void INSERT (string tableName, Dictionary<string, object> data)
         {
             Partitioning part = new Partitioning (data);
-
             INSERT (tableName, part.keys, part.values);
         }
 

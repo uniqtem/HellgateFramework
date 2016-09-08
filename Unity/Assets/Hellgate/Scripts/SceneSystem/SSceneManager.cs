@@ -234,7 +234,7 @@ namespace Hellgate
 
             DontDestroyOnLoad (instance.gameObject);
 
-#if !UNITY_5_3
+#if !UNITY_5_3 && !UNITY_5_4
             DontDestroyOnLoad (gCamera);
             DontDestroyOnLoad (scene);
             DontDestroyOnLoad (shield);

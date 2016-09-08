@@ -24,7 +24,12 @@ namespace Hellgate
                 Dictionary<string, object> temp = Reflection.Convert<T> (t);
                 return Json.Serialize (temp);
             } else {
+#if UNITY_5_3 || UNITY_5_4
                 return JsonUtility.ToJson (t);
+#else
+                Dictionary<string, object> temp = Reflection.Convert<T> (t);
+                return Json.Serialize (temp);
+#endif
             }
         }
 
@@ -62,6 +67,26 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Generate a JSON representation of the Dictionary<string, object> of an object.
+        /// </summary>
+        /// <returns>The json.</returns>
+        /// <param name="dic">Dic.</param>
+        public static string ToJson (Dictionary<string, object> dic)
+        {
+            return Json.Serialize (dic);
+        }
+
+        /// <summary>
+        /// Generate a JSON representation of the DataRow of an object.
+        /// </summary>
+        /// <returns>The json.</returns>
+        /// <param name="data">Data.</param>
+        public static string ToJson (DataRow data)
+        {
+            return Json.Serialize (data);
+        }
+
+        /// <summary>
         /// Generate a JSON representation of the IList of an object.
         /// </summary>
         /// <returns>The json.</returns>
@@ -69,6 +94,26 @@ namespace Hellgate
         public static string ToJson (IList iList)
         {
             return Json.Serialize (iList);
+        }
+
+        /// <summary>
+        /// Generate a JSON representation of the List<Dictionary<string, object>> of an object.
+        /// </summary>
+        /// <returns>The json.</returns>
+        /// <param name="list">List.</param>
+        public static string ToJson (List<Dictionary<string, object>> list)
+        {
+            return Json.Serialize (list);
+        }
+
+        /// <summary>
+        /// Generate a JSON representation of the List<DataRow> of an object.
+        /// </summary>
+        /// <returns>The json.</returns>
+        /// <param name="list">List.</param>
+        public static string ToJson (List<DataRow> list)
+        {
+            return Json.Serialize (list);
         }
 
         /// <summary>
@@ -82,7 +127,11 @@ namespace Hellgate
             if (typeof(T).GetAttributeValue<SerializableAttribute> () == null) {
                 return FromJson<T> (FromJson (json));
             } else {
+#if UNITY_5_3 || UNITY_5_4
                 return JsonUtility.FromJson<T> (json);
+#else
+                return FromJson<T> (FromJson (json));;
+#endif
             }
         }
 
@@ -168,7 +217,11 @@ namespace Hellgate
         /// <param name="obj">Object.</param>
         public static void FromJsonOverwrite (string json, object obj)
         {
+#if UNITY_5_3 || UNITY_5_4
             JsonUtility.FromJsonOverwrite (json, obj);
+#else
+            HDebug.LogWarning ("Developing");
+#endif
         }
     }
 }

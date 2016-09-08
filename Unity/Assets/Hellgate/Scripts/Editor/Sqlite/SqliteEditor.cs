@@ -47,7 +47,7 @@ namespace HellgateEditor
         {
             Sqlite sqlite = new Sqlite ();
             sqlite.AutoDDL (dbName, true);
-            Debug.Log ("Create DB : " + dbName);
+            Debug.Log ("StreamingAssets Create Sqlite DB : " + dbName);
         }
     }
 }

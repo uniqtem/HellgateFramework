@@ -7,7 +7,10 @@ using System.Collections;
 
 namespace HellgeteEx
 {
-    public class HellgateReflectionDataEx
+    // [System.Serializable] : public field
+    // none : private field
+//   [System.Serializable]
+    public class HellgateHttpDataEx
     {
         public class Data
         {

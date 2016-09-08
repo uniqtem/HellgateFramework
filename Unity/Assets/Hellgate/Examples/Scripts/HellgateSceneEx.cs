@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
 using Hellgate;
 
 namespace HellgeteEx
@@ -40,7 +39,7 @@ namespace HellgeteEx
             jobData.finishedDelegate = delegate (List<object> obj, LoadingJobController job) {
                 TextAsset text = Util.GetListObject<TextAsset> (obj);
 
-                HellgateSceneData data = Reflection.Convert<HellgateSceneData> ((IDictionary)Json.Deserialize (text.text));
+                HellgateSceneData data = JsonUtil.FromJson<HellgateSceneData> (text.text);
 
                 assetBundles = new List<AssetBundleData> ();
                 for (int i = 0; i < data._Sprite.Length; i++) {

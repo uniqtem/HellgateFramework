@@ -27,7 +27,29 @@ namespace Hellgate
 
         private static List<FieldInfo> GetFields (Type type, BindingFlags flag, List<FieldInfo> list = null)
         {
+            SerializableAttribute serializable = type.GetAttributeValue<SerializableAttribute> ();
+            if (serializable != null) {
+                flag = BindingFlags.NonPublic | BindingFlags.Public;
+            }
+
             FieldInfo[] fieldInfos = type.GetFields (BindingFlags.Instance | flag);
+            if (serializable != null) {
+                if (list == null) {
+                    list = new List<FieldInfo> ();
+                }
+
+                for (int i = 0; i < fieldInfos.Length; i++) {
+                    if (fieldInfos [i].IsPrivate) {
+                        if (fieldInfos [i].GetAttributeValue<SerializeField> () == null) {
+                            continue;
+                        }
+                    }
+
+                    list.Add (fieldInfos [i]);
+                }
+
+                return list;
+            }
 
             if (list == null) {
                 list = new List<FieldInfo> (fieldInfos);
@@ -74,9 +96,18 @@ namespace Hellgate
                 data = ConvertIgnoreData (field, data);
 
                 if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
-                    if (field.FieldType.IsArray || typeof(IList).IsAssignableFrom (field.FieldType)) {
+                    if (Util.IsArray (field.FieldType)) {
                         IList iList = (IList)data;
                         Type tType = field.FieldType.GetElementType ();
+                        if (tType == null) {
+                            Type[] types = field.FieldType.GetGenericArguments ();
+                            if (types.Length <= 0) {
+                                continue;
+                            }
+
+                            tType = types [0];
+                        }
+
                         if (Util.IsValueType (tType)) {
                             Array filledArray = Array.CreateInstance (tType, iList.Count);
                             for (int i = 0; i < iList.Count; i++) {
@@ -91,10 +122,23 @@ namespace Hellgate
                                 continue;
                             }
 
-                            Array filledArray = Array.CreateInstance (tType, someArray.Length);
-                            Array.Copy (someArray, filledArray, someArray.Length);
+                            if (field.FieldType.GetElementType () == null) { // list
+                                var listType = typeof(List<>);
+                                var constructedListType = listType.MakeGenericType (tType);
+                                var instance = Activator.CreateInstance (constructedListType);
 
-                            field.SetValue (obj, filledArray);
+                                iList = (IList)instance;
+                                for (int i = 0; i < someArray.Length; i++) {
+                                    iList.Add (System.Convert.ChangeType (someArray.GetValue (i), tType));
+                                }
+
+                                field.SetValue (obj, iList);
+                            } else { // array
+                                Array filledArray = Array.CreateInstance (tType, someArray.Length);
+                                Array.Copy (someArray, filledArray, someArray.Length);
+
+                                field.SetValue (obj, filledArray);
+                            }
                         }
 
                         continue;
@@ -160,15 +204,15 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static Dictionary<string, object> Convert<T> (T t = default (T), List<FieldInfo> fieldInfos = null, BindingFlags flag = BindingFlags.NonPublic)
         {
+            if (t == null) {
+                t = (T)Activator.CreateInstance (typeof(T), null);
+            }
+
             if (fieldInfos == null) {
-                if (t == null) {
-                    t = (T)Activator.CreateInstance (typeof(T), null);
-                }
-                    
                 fieldInfos = GetFields (t.GetType (), flag);
             }
 
-            Dictionary<string, object> data = new Dictionary<string, object> ();
+            Dictionary<string, object> dic = new Dictionary<string, object> ();
             foreach (FieldInfo field in fieldInfos) {
                 // attribute filter
                 if (field.GetAttributeValue<IgnoreAttribute> () != null) {
@@ -180,10 +224,33 @@ namespace Hellgate
                     continue;
                 }
 
-                data.Add (field.Name, field.GetValue (t));
+                object data = field.GetValue (t);
+                if (data == null) {
+                    continue;
+                }
+
+                if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
+                    if (Util.IsArray (field.FieldType)) {
+                        Type type = field.FieldType.GetElementType ();
+                        if (!Util.IsValueType (type)) {
+                            List<object> list = new List<object> ();
+                            IList iList = (IList)data;
+                            for (int i = 0; i < iList.Count; i++) {
+                                list.Add (iList [i]);
+                            }
+
+                            data = Convert<object> (list, flag);
+                        }
+                    } else {
+                        List<FieldInfo> fields = GetFields (field.FieldType, flag);
+                        data = Convert<object> (data, fields, flag);
+                    }
+                }
+
+                dic.Add (field.Name, data);
             }
 
-            return data;
+            return dic;
         }
 
         /// <summary>
@@ -194,7 +261,7 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static List<Dictionary<string, object>> Convert<T> (List<T> list, BindingFlags flag = BindingFlags.NonPublic)
         {
-            List<FieldInfo> fieldInfos = GetFields (list [0].GetType (), flag);
+            List<FieldInfo> fieldInfos = GetFields (typeof(T), flag);
 
             List<Dictionary<string, object>> data = new List<Dictionary<string, object>> ();
             for (int i = 0; i < list.Count; i++) {

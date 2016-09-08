@@ -5,7 +5,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
 using Hellgate;
 
 namespace HellgeteEx
@@ -41,8 +40,7 @@ namespace HellgeteEx
             data.https = https;
             data.finishedDelegate = delegate(List<object> obj, LoadingJobController job) {
                 WWW www = Util.GetListObject<WWW> (obj);
-
-                HellgateHttpData sprites = Reflection.Convert<HellgateHttpData> ((IDictionary)Json.Deserialize (www.text));
+                HellgateHttpData sprites = JsonUtil.FromJson<HellgateHttpData> (www.text);
 
                 List<AssetBundleData> assetbundles = new List<AssetBundleData> ();
                 for (int i = 0; i < sprites._Sprite.Length; i++) {
@@ -106,12 +104,12 @@ namespace HellgeteEx
 
         public void OnClickRequest ()
         {
-            HttpData http = new HttpData ("reflection", "json");
+            HttpData http = new HttpData ("test", "json");
             http.finishedDelegate = delegate (WWW www) {
                 if (www == null) { // time over
                 } else if (www.error != null) { // error
                 } else {
-                    HellgateReflectionDataEx data = Reflection.Convert<HellgateReflectionDataEx> ((IDictionary)Json.Deserialize (www.text));
+                    HellgateHttpDataEx data = JsonUtil.FromJson<HellgateHttpDataEx> (www.text);
                     url = data.Url;
 
                     button.SetActive (true);

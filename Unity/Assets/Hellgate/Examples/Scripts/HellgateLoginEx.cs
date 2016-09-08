@@ -6,14 +6,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Hellgate;
-using MiniJSON;
 
 namespace HellgeteEx
 {
     public class HellgateLoginEx : HellgateSceneControllerEx
     {
         // const
-        private const string BASE_URL = "https://dl.dropboxusercontent.com/u/95277951/hellgate/";
+        private const string BASE_URL = "http://www.uniqtem.net/hellgate/";
         [SerializeField]
         private GameObject status;
         [SerializeField]
@@ -82,7 +81,7 @@ namespace HellgeteEx
                 SetLabelTextValue (status, "Checking resource");
 //            sLabel.text = "Checking resource";
 
-                HellgateManifestDataEx manifest = Reflection.Convert<HellgateManifestDataEx> ((IDictionary)Json.Deserialize (www.text));
+                HellgateManifestDataEx manifest = JsonUtil.FromJson<HellgateManifestDataEx> (www.text);
 
                 // Set max chacing.
                 Caching.maximumAvailableDiskSpace = manifest.MaxChacing;

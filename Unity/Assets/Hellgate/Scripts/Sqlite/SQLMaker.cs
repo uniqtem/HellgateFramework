@@ -275,6 +275,10 @@ namespace Hellgate
             stringBuilder.AppendFormat ("CREATE TABLE '{0}' (", tableName);
 
             for (int i = 0; i < configs.Length; i++) {
+                if (configs [i] == null) {
+                    continue;
+                }
+
                 StringBuilder temp = new StringBuilder ();
                 temp.AppendFormat ("'{0}' ", configs [i].name);
 

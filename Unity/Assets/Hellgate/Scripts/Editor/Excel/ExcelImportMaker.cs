@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using NPOI.HSSF.UserModel;
 using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
-using MiniJSON;
 using Hellgate;
 
 namespace HellgateEditor
@@ -54,8 +53,6 @@ namespace HellgateEditor
         protected string outputJsonPath;
         protected TResultDelegate<Type> joinType;
         protected List<Type> listType;
-
-
         protected List<ExcelData> listExcel;
         protected int index;
 
@@ -107,7 +104,7 @@ namespace HellgateEditor
 
             IRow titleRow = sheet.GetRow (0);
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
-            for (int j = 1; j < sheet.LastRowNum; j++) {
+            for (int j = 1; j <= sheet.LastRowNum; j++) {
                 Dictionary<string, object> dic = new Dictionary<string, object> ();
                 for (int k = 0; k < titleRow.LastCellNum; k++) {
                     ICell titleCell = titleRow.GetCell (k);
@@ -140,7 +137,7 @@ namespace HellgateEditor
             ExcelData data = listExcel [index];
             DisplayProgressBar ("Create json " + data.sheetName, index, listExcel.Count);
 
-            EditorUtil.CreateJsonFile (data.sheetName, Json.Serialize (data.data), outputJsonPath, false);
+            EditorUtil.CreateJsonFile (data.sheetName, JsonUtil.ToJson (data.data), outputJsonPath, false);
 
             yield return null;
 
@@ -199,7 +196,7 @@ namespace HellgateEditor
                     foreach (Dictionary<string, object> dic in list) {
                         StringBuilder stringBuilder = Append (pks, dic);
                         string createFileName = string.Format ("{0}{1}", excel.CreateFileName, stringBuilder.ToString ());
-                        EditorUtil.CreateJsonFile (createFileName, Json.Serialize (dic), outputJsonPath, false);
+                        EditorUtil.CreateJsonFile (createFileName, JsonUtil.ToJson (dic), outputJsonPath, false);
                     }
                 }
 
@@ -221,11 +218,11 @@ namespace HellgateEditor
                         }
 
                         string createFileName = string.Format ("{0}{1}", excel.CreateFileName, s);
-                        EditorUtil.CreateJsonFile (createFileName, Json.Serialize (fkList), outputJsonPath, false);
+                        EditorUtil.CreateJsonFile (createFileName, JsonUtil.ToJson (fkList), outputJsonPath, false);
                     }
                 }
             } else {
-                EditorUtil.CreateJsonFile (excel.CreateFileName, Json.Serialize (list), outputJsonPath, false);
+                EditorUtil.CreateJsonFile (excel.CreateFileName, JsonUtil.ToJson (list), outputJsonPath, false);
             }
         }
 
@@ -428,9 +425,7 @@ namespace HellgateEditor
                     }
 
                     if (ignores != null) {
-                        for (int i = 0; i < ignores.Length; i++) {
-                            listExcel.Remove (listExcel.Find (x => x.sheetName == ignores [i]));
-                        }
+                        listExcel.RemoveAll (x => ignores.Contains (x.sheetName));
                     }
 
                     index = 0;

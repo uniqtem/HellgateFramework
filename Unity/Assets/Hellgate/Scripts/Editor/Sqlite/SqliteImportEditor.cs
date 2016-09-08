@@ -7,7 +7,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MiniJSON;
+using Hellgate;
 
 namespace HellgateEditor
 {
@@ -149,7 +149,7 @@ namespace HellgateEditor
                 return;
             }
 
-            string json = Json.Serialize (data.Rows);
+            string json = JsonUtil.ToJson (data.Rows);
             EditorUtil.CreateJsonFile (tableName, json, outputJsonPath);
         }
     }

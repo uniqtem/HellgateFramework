@@ -13,14 +13,14 @@ To use the Hellgate
 -----------------
  Document
 -----------------
-https://dl.dropboxusercontent.com/u/95277951/hellgate_ko.pdf
-https://dl.dropboxusercontent.com/u/95277951/hellgate_en.pdf
-https://dl.dropboxusercontent.com/u/95277951/hellgate_ja.pdf
+http://www.uniqtem.net/hellgate_ko.pdf
+http://www.uniqtem.net/hellgate_en.pdf
+http://www.uniqtem.net/hellgate_ja.pdf
 
 -----------------
  Reference
 -----------------
-https://dl.dropboxusercontent.com/u/95277951/hellgate/reference/index.html
+http://www.uniqtem.net/hellgate/reference/index.html
 
 -----------------
  Forum
@@ -61,7 +61,7 @@ NEW : WebView
 FIX : Sqlite ORM
 FIX : BuildVersionBinding
 FIX : AssetBundleInitialDownloader
-NEW : Excel -> Json (Attribute)
+NEW : Excel -> Json (Attribute) editor
 NEW : ExtensionMethods
 2.3.0
 FIX : Scene System
@@ -71,7 +71,7 @@ NEW : Support UGUI
 2.4.0
 NEW : Sound
 NEW : WebView Event (OnURLChanged)
-NEX : Excel -> Json (type join)
+NEX : Excel -> Json (type join) editor
 2.5.0
 NEW : BuildAssetBundleOptions
 NEW : Scene Event OnReset
@@ -83,7 +83,8 @@ NEX : Scene Event sceneOnDeactive
 NEX : HellgateEx
 FIX : NGUI PopUp Shield
 2.6.0
-NEW : HTTP Debug
-NEW : AssetBundle Debug
-NEW : MainMenuStatus.Destroy
-NEW : Excel -> Sqlite DB
+NEW : Debug HttpManager
+NEW : Debug AssetBundleManager
+NEW : LoadingJob MainMenuStatus.Destroy
+NEW : Excel -> Sqlite DB editor
+NEW : JsonUtil

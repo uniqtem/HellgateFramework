@@ -12,7 +12,7 @@ namespace HellgeteEx
     public class HellgateLoginEx : HellgateSceneControllerEx
     {
         // const
-        private const string BASE_URL = "http://www.uniqtem.net/hellgate/";
+        private const string BASE_URL = "http://www.uniqtem.net/hellgate";
         [SerializeField]
         private GameObject status;
         [SerializeField]

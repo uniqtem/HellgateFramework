@@ -119,6 +119,13 @@ namespace Hellgate
                 return;
             }
 
+            if (jobData.https [index] == null) {
+                index++;
+                Request ();
+
+                return;
+            }
+
             string key = jobData.https [index].url;
             if (jobData.https [index].post) {
                 foreach (KeyValuePair<string, string> kVP in jobData.https [index].datas) {
@@ -210,7 +217,7 @@ namespace Hellgate
             if (nextSceneName == "") {
                 if (jobData.finishedDelegate != null) {
                     jobData.finishedDelegate (datas, this);
-//                    jobData.finishedDelegate = null;
+                    //                    jobData.finishedDelegate = null;
 
                     return;
                 }

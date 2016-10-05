@@ -157,7 +157,7 @@ namespace Hellgate
                     try {
                         data = System.Convert.ChangeType (data, field.FieldType);
                     } catch (Exception e) {
-                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, type.Name, field.Name));
+                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, obj, field.Name));
                         continue;
                     }
                 }

@@ -106,7 +106,6 @@ namespace Hellgate
             if (bgm == null) {
                 bgm = gameObject.AddComponent<AudioSource> ();
             }
-            bgm.playOnAwake = false;
             bgm.loop = true;
 
             if (sound == null) {
@@ -133,7 +132,7 @@ namespace Hellgate
 
             SoundData sound = bgms [0];
             if (name != "") {
-                    sound = bgms.Find (x => x.name == name);
+                sound = bgms.Find (x => x.name == name);
             }
 
             if (sound == null) {

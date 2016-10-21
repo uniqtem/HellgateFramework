@@ -49,27 +49,26 @@ namespace Hellgate
                     }
 
                     if (value != null) {
-                        Invoke (asList, value, flag);
-                        continue;
-                    }
-
-                    object[] datas = Convert<object> (asList, flag, element);
-                    if (element == null) {
-                        element = type.GetGenericArguments () [0];
-                        IList iList = CreateIListInstance (element);
-
-                        for (int i = 0; i < datas.Length; i++) {
-                            iList.Add (System.Convert.ChangeType (datas [i], element));
+                        if (Util.IsValueType (element)) {
+                            data = CreateArrayInstance (asList, element);
+                        } else {
+                            Invoke (asList, value, flag);
+                            continue;
                         }
-
-                        data = iList;
                     } else {
-                        Array array = Array.CreateInstance (type, datas.Length);
-                        for (int i = 0; i < datas.Length; i++) {
-                            array.SetValue (System.Convert.ChangeType (datas [i], element), i);
-                        }
+                        object[] datas = Convert<object> (asList, flag, element);
+                        if (element == null) {
+                            element = type.GetGenericArguments () [0];
+                            IList iList = CreateIListInstance (element);
 
-                        data = array;
+                            for (int i = 0; i < datas.Length; i++) {
+                                iList.Add (System.Convert.ChangeType (datas [i], element));
+                            }
+
+                            data = iList;
+                        } else {
+                            data = CreateArrayInstance (new List<object> (datas), element);
+                        }
                     }
                 } else if ((asDic = data as IDictionary) != null) {
                     object value = GetFieldVale (obj, field, flag);
@@ -110,21 +109,48 @@ namespace Hellgate
         /// <param name="flag">BindingFlags.</param>
         public static void Invoke (IList iList, object obj, BindingFlags flag = BindingFlags.NonPublic)
         {
-            IEnumerable<object> enumerable = obj as IEnumerable<object>;
+            IEnumerable enumerable = obj as IEnumerable;
             if (enumerable != null) {
                 int index = 0;
-                foreach (var v in enumerable) {
+                IEnumerator enumerator = enumerable.GetEnumerator ();
+                while (enumerator.MoveNext ()) {
                     index++;
                 }
 
                 if (index == iList.Count) {
                     index = 0;
                     foreach (object o in enumerable) {
-                        Invoke ((IDictionary)iList [index], o, flag);
+                        IDictionary asDic = null;
+                        if ((asDic = o as IDictionary) != null) {
+                            Invoke (asDic, o, flag);
+                        }
+
                         index++;
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the static method invoke.
+        /// </summary>
+        /// <returns>The static method invoke.</returns>
+        /// <param name="typeName">Type name.</param>
+        /// <param name="methodName">Method name.</param>
+        /// <param name="types">Types.</param>
+        /// <param name="datas">Datas.</param>
+        public static object GetStaticMethodInvoke (string typeName, string methodName, Type[] types, object[] datas)
+        {
+            Type type = Type.GetType (typeName);
+            MethodInfo method = type.GetMethod (
+                                    methodName,
+                                    BindingFlags.Static | BindingFlags.Public,
+                                    Type.DefaultBinder,
+                                    types,
+                                    null
+                                );
+
+            return method.Invoke (null, datas);
         }
 
         /// <summary>

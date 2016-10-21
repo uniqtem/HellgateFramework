@@ -73,6 +73,16 @@ namespace Hellgate
             return (IList)instance;
         }
 
+        private static Array CreateArrayInstance (IList list, Type type)
+        {
+            Array array = Array.CreateInstance (type, list.Count);
+            for (int i = 0; i < list.Count; i++) {
+                array.SetValue (System.Convert.ChangeType (list [i], type), i);
+            }
+
+            return array;
+        }
+
         /// <summary>
         /// Convert the specified dic, fieldInfo, flag and type.
         /// </summary>
@@ -107,39 +117,34 @@ namespace Hellgate
                 if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
                     if (Util.IsArray (field.FieldType)) {
                         IList iList = (IList)data;
-                        Type tType = field.FieldType.GetElementType ();
-                        if (tType == null) {
+                        Type element = field.FieldType.GetElementType ();
+                        if (element == null) {
                             Type[] types = field.FieldType.GetGenericArguments ();
                             if (types.Length <= 0) {
                                 continue;
                             }
 
-                            tType = types [0];
+                            element = types [0];
                         }
 
-                        if (Util.IsValueType (tType)) {
-                            Array filledArray = Array.CreateInstance (tType, iList.Count);
-                            for (int i = 0; i < iList.Count; i++) {
-                                filledArray.SetValue (System.Convert.ChangeType (iList [i], tType), i);
-                            }
-
-                            field.SetValue (obj, filledArray);
+                        if (Util.IsValueType (element)) {
+                            field.SetValue (obj, CreateArrayInstance (iList, element));
                         } else {
-                            data = Convert<object> (iList, flag, tType);
+                            data = Convert<object> (iList, flag, element);
                             Array someArray = data as Array;
                             if (someArray == null) {
                                 continue;
                             }
 
                             if (field.FieldType.GetElementType () == null) { // list
-                                iList = CreateIListInstance (tType);
+                                iList = CreateIListInstance (element);
                                 for (int i = 0; i < someArray.Length; i++) {
-                                    iList.Add (System.Convert.ChangeType (someArray.GetValue (i), tType));
+                                    iList.Add (System.Convert.ChangeType (someArray.GetValue (i), element));
                                 }
 
                                 field.SetValue (obj, iList);
                             } else { // array
-                                Array filledArray = Array.CreateInstance (tType, someArray.Length);
+                                Array filledArray = Array.CreateInstance (element, someArray.Length);
                                 Array.Copy (someArray, filledArray, someArray.Length);
 
                                 field.SetValue (obj, filledArray);
@@ -213,6 +218,10 @@ namespace Hellgate
                 t = (T)Activator.CreateInstance (typeof(T), null);
             }
 
+            if (Util.IsValueType (t.GetType ())) {
+                return null;
+            }
+
             if (fieldInfos == null) {
                 fieldInfos = GetFields (t.GetType (), flag);
             }
@@ -278,7 +287,9 @@ namespace Hellgate
                 }
 
                 Dictionary<string, object> temp = Convert<T> (list [i], fieldInfos, flag);
-                data.Add (temp);
+                if (temp != null) {
+                    data.Add (temp);
+                }
             }
 
             return data;
@@ -326,28 +337,6 @@ namespace Hellgate
         public static Type[] GetExecutingAssembly ()
         {
             return Assembly.GetExecutingAssembly ().GetTypes ();
-        }
-
-        /// <summary>
-        /// Gets the method.
-        /// </summary>
-        /// <returns>The method.</returns>
-        /// <param name="typeName">Type name.</param>
-        /// <param name="methodName">Method name.</param>
-        /// <param name="first">First.</param>
-        /// <param name="second">Second.</param>
-        public static object GetStaticMethodInvoke (string typeName, string methodName, Type[] types, object[] datas)
-        {
-            Type type = Type.GetType (typeName);
-            MethodInfo method = type.GetMethod (
-                                    methodName,
-                                    BindingFlags.Static | BindingFlags.Public,
-                                    Type.DefaultBinder,
-                                    types,
-                                    null
-                                );
-
-            return method.Invoke (null, datas);
         }
 
         /// <summary>

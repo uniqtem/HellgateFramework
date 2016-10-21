@@ -235,7 +235,7 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Froms the json overwrite.[uncompleted]
+        /// Froms the json overwrite.
         /// </summary>
         /// <param name="json">Json.</param>
         /// <param name="obj">Object.</param>
@@ -260,7 +260,7 @@ namespace Hellgate
                 } else {
 #if UNITY_5_3 || UNITY_5_4
                     JsonUtility.FromJsonOverwrite (json, obj);
-#elif
+#else
                     Reflection.Invoke (FromJson (json), obj, System.Reflection.BindingFlags.Public);
 #endif
                 }

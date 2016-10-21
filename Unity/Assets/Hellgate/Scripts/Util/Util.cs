@@ -561,7 +561,6 @@ namespace Hellgate
             } else {
                 typeCode = PC;
             }
-
 #elif UNITY_ANDROID 
             if (Application.platform == RuntimePlatform.Android) {
                 typeCode = ANDROID;

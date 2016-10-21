@@ -85,7 +85,7 @@ namespace Hellgate
 
 #region Delegate
 
-        public delegate void ScreenStartChangeDelegate (string sceneName);
+        public delegate void SceneStartDelegate (string sceneName);
 
         public delegate void SceneActivedDelegate (string sceneName);
 
@@ -94,7 +94,15 @@ namespace Hellgate
         /// <summary>
         /// The screen start change event.
         /// </summary>
-        public ScreenStartChangeDelegate screenStartChange;
+        public SceneStartDelegate screenStartChange;
+        /// <summary>
+        /// The pop up start event.
+        /// </summary>
+        public SceneStartDelegate popUpStart;
+        /// <summary>
+        /// The menu start event.
+        /// </summary>
+        public SceneStartDelegate menuStart;
         /// <summary>
         /// The scene on active event.
         /// </summary>
@@ -397,10 +405,18 @@ namespace Hellgate
                     popups.Push (loadLevelData.sceneName);
 
                     ctrl.OnSet (loadLevelData.data);
+
+                    if (popUpStart != null) {
+                        popUpStart (loadLevelData.sceneName);
+                    }
                 break;
                 case SceneType.MENU:
                     ctrl.OnSet (loadLevelData.data);
                     menus.Add (loadLevelData.sceneName, root);
+
+                    if (menuStart != null) {
+                        menuStart (loadLevelData.sceneName);
+                    }
                 break;
                 }
 

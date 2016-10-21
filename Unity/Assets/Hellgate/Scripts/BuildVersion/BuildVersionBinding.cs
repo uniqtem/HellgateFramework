@@ -28,8 +28,8 @@ namespace Hellgate
             AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject> ("currentActivity").Call<AndroidJavaObject> ("getApplicationContext");
             AndroidJavaObject pManager = context.Call<AndroidJavaObject> ("getPackageManager");
             AndroidJavaObject pInfo = pManager.Call<AndroidJavaObject> ("getPackageInfo",
-                                                               context.Call<string> ("getPackageName"),
-                                                               pManager.GetStatic<int> ("GET_ACTIVITIES"));
+                                                                        context.Call<string> ("getPackageName"),
+                                                                        pManager.GetStatic<int> ("GET_ACTIVITIES"));
 
             AbundleVersion = pInfo.Get<string> ("versionName");
         }
@@ -42,19 +42,19 @@ namespace Hellgate
         private static extern string _GetCFBundleShortVersionString ();
 
         public static string IOSBundleVersion {
-            get {
-                if (IbundleVersion == null) {
-                    GetVersionInfo ();
-                }
-                return IbundleVersion;
-            }
+        get {
+        if (IbundleVersion == null) {
+        GetVersionInfo ();
+        }
+        return IbundleVersion;
+        }
         }
 
         private static string IbundleVersion;
 
         private static void GetVersionInfo ()
         {
-            IbundleVersion = _GetCFBundleShortVersionString ();
+        IbundleVersion = _GetCFBundleShortVersionString ();
         }
 #endif
 

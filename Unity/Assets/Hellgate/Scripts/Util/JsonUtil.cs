@@ -12,6 +12,11 @@ namespace Hellgate
 {
     public class JsonUtil
     {
+        private static bool CheckSerializableAttribute (Type type)
+        {
+            return type.GetAttributeValue<SerializableAttribute> () == null;
+        }
+
         /// <summary>
         /// Generate a JSON representation of the private fields of an object. but System.Serializable attribute is public fields.
         /// </summary>
@@ -20,17 +25,18 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static string ToJson<T> (T t)
         {
-            if (typeof(T).GetAttributeValue<SerializableAttribute> () == null) {
-                Dictionary<string, object> temp = Reflection.Convert<T> (t);
-                return Json.Serialize (temp);
+            Dictionary<string, object> temp = null;
+            if (CheckSerializableAttribute (typeof(T))) {
+                temp = Reflection.Convert<T> (t);
             } else {
 #if UNITY_5_3 || UNITY_5_4
                 return JsonUtility.ToJson (t);
 #else
-                Dictionary<string, object> temp = Reflection.Convert<T> (t);
-                return Json.Serialize (temp);
+                temp = Reflection.Convert<T> (t, null, System.Reflection.BindingFlags.Public);
 #endif
             }
+
+            return Json.Serialize (temp);
         }
 
         /// <summary>
@@ -52,7 +58,13 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static string ToJson<T> (List<T> list)
         {
-            List<Dictionary<string, object>> temp = Reflection.Convert<T> (list, System.Reflection.BindingFlags.NonPublic);
+            List<Dictionary<string, object>> temp = null;
+            if (CheckSerializableAttribute (typeof(T))) {
+                temp = Reflection.Convert<T> (list, System.Reflection.BindingFlags.NonPublic);
+            } else {
+                temp = Reflection.Convert<T> (list, System.Reflection.BindingFlags.Public);
+            }
+
             return Json.Serialize (temp);
         }
 
@@ -124,13 +136,13 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T FromJson<T> (string json)
         {
-            if (typeof(T).GetAttributeValue<SerializableAttribute> () == null) {
+            if (CheckSerializableAttribute (typeof(T))) {
                 return FromJson<T> (FromJson (json));
             } else {
 #if UNITY_5_3 || UNITY_5_4
                 return JsonUtility.FromJson<T> (json);
 #else
-                return FromJson<T> (FromJson (json));;
+                return FromJson<T> (FromJson (json));
 #endif
             }
         }
@@ -143,7 +155,11 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T FromJson<T> (IDictionary iDic)
         {
-            return Reflection.Convert<T> (iDic);
+            if (CheckSerializableAttribute (typeof(T))) {
+                return Reflection.Convert<T> (iDic);
+            } else {
+                return Reflection.Convert<T> (iDic, null, System.Reflection.BindingFlags.Public);
+            }
         }
 
         /// <summary>
@@ -164,7 +180,11 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T[] FromJsonArray<T> (string json)
         {
-            return Reflection.Convert<T> (FromJsonList (json));
+            if (CheckSerializableAttribute (typeof(T))) {
+                return Reflection.Convert<T> (FromJsonList (json));
+            } else {
+                return Reflection.Convert<T> (FromJsonList (json), System.Reflection.BindingFlags.Public);
+            }
         }
 
         /// <summary>
@@ -175,7 +195,11 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static T[] FromJsonArray<T> (IList iList)
         {
-            return Reflection.Convert<T> (iList);
+            if (CheckSerializableAttribute (typeof(T))) {
+                return Reflection.Convert<T> (iList);
+            } else {
+                return Reflection.Convert<T> (iList, System.Reflection.BindingFlags.Public);
+            }
         }
 
         /// <summary>
@@ -211,17 +235,36 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Froms the json overwrite.[uncompleted]
+        /// Froms the json overwrite.
         /// </summary>
         /// <param name="json">Json.</param>
         /// <param name="obj">Object.</param>
         public static void FromJsonOverwrite (string json, object obj)
         {
+            Type type = obj.GetType ();
+            if (Util.IsArray (type)) {
+                Type temp = type.GetElementType ();
+                if (temp == null) {
+                    temp = type.GetGenericArguments () [0];
+                }
+                type = temp;
+
+                if (CheckSerializableAttribute (type)) {
+                    Reflection.Invoke (FromJsonList (json), obj);
+                } else {
+                    Reflection.Invoke (FromJsonList (json), obj, System.Reflection.BindingFlags.Public);
+                }
+            } else {
+                if (CheckSerializableAttribute (type)) {
+                    Reflection.Invoke (FromJson (json), obj);
+                } else {
 #if UNITY_5_3 || UNITY_5_4
-            JsonUtility.FromJsonOverwrite (json, obj);
+                    JsonUtility.FromJsonOverwrite (json, obj);
 #else
-            HDebug.LogWarning ("Developing");
+                    Reflection.Invoke (FromJson (json), obj, System.Reflection.BindingFlags.Public);
 #endif
+                }
+            }
         }
     }
 }

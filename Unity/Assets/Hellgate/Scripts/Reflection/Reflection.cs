@@ -64,6 +64,25 @@ namespace Hellgate
             return list;
         }
 
+        private static IList CreateIListInstance (Type type)
+        {
+            var listType = typeof(List<>);
+            var constructedListType = listType.MakeGenericType (type);
+            var instance = Activator.CreateInstance (constructedListType);
+
+            return (IList)instance;
+        }
+
+        private static Array CreateArrayInstance (IList list, Type type)
+        {
+            Array array = Array.CreateInstance (type, list.Count);
+            for (int i = 0; i < list.Count; i++) {
+                array.SetValue (System.Convert.ChangeType (list [i], type), i);
+            }
+
+            return array;
+        }
+
         /// <summary>
         /// Convert the specified dic, fieldInfo, flag and type.
         /// </summary>
@@ -98,43 +117,34 @@ namespace Hellgate
                 if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
                     if (Util.IsArray (field.FieldType)) {
                         IList iList = (IList)data;
-                        Type tType = field.FieldType.GetElementType ();
-                        if (tType == null) {
+                        Type element = field.FieldType.GetElementType ();
+                        if (element == null) {
                             Type[] types = field.FieldType.GetGenericArguments ();
                             if (types.Length <= 0) {
                                 continue;
                             }
 
-                            tType = types [0];
+                            element = types [0];
                         }
 
-                        if (Util.IsValueType (tType)) {
-                            Array filledArray = Array.CreateInstance (tType, iList.Count);
-                            for (int i = 0; i < iList.Count; i++) {
-                                filledArray.SetValue (System.Convert.ChangeType (iList [i], tType), i);
-                            }
-
-                            field.SetValue (obj, filledArray);
+                        if (Util.IsValueType (element)) {
+                            field.SetValue (obj, CreateArrayInstance (iList, element));
                         } else {
-                            data = Convert<object> (iList, flag, tType);
+                            data = Convert<object> (iList, flag, element);
                             Array someArray = data as Array;
                             if (someArray == null) {
                                 continue;
                             }
 
                             if (field.FieldType.GetElementType () == null) { // list
-                                var listType = typeof(List<>);
-                                var constructedListType = listType.MakeGenericType (tType);
-                                var instance = Activator.CreateInstance (constructedListType);
-
-                                iList = (IList)instance;
+                                iList = CreateIListInstance (element);
                                 for (int i = 0; i < someArray.Length; i++) {
-                                    iList.Add (System.Convert.ChangeType (someArray.GetValue (i), tType));
+                                    iList.Add (System.Convert.ChangeType (someArray.GetValue (i), element));
                                 }
 
                                 field.SetValue (obj, iList);
                             } else { // array
-                                Array filledArray = Array.CreateInstance (tType, someArray.Length);
+                                Array filledArray = Array.CreateInstance (element, someArray.Length);
                                 Array.Copy (someArray, filledArray, someArray.Length);
 
                                 field.SetValue (obj, filledArray);
@@ -157,7 +167,7 @@ namespace Hellgate
                     try {
                         data = System.Convert.ChangeType (data, field.FieldType);
                     } catch (Exception e) {
-                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, type.Name, field.Name));
+                        HDebug.LogWarning (string.Format ("{0}\nclass : {1}, field : {2}", e.Message, obj, field.Name));
                         continue;
                     }
                 }
@@ -208,6 +218,10 @@ namespace Hellgate
                 t = (T)Activator.CreateInstance (typeof(T), null);
             }
 
+            if (Util.IsValueType (t.GetType ())) {
+                return null;
+            }
+
             if (fieldInfos == null) {
                 fieldInfos = GetFields (t.GetType (), flag);
             }
@@ -232,6 +246,10 @@ namespace Hellgate
                 if (field.FieldType.IsClass && field.FieldType != typeof(String)) {
                     if (Util.IsArray (field.FieldType)) {
                         Type type = field.FieldType.GetElementType ();
+                        if (type == null) {
+                            type = field.FieldType.GetGenericArguments () [0];
+                        }
+
                         if (!Util.IsValueType (type)) {
                             List<object> list = new List<object> ();
                             IList iList = (IList)data;
@@ -261,12 +279,17 @@ namespace Hellgate
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static List<Dictionary<string, object>> Convert<T> (List<T> list, BindingFlags flag = BindingFlags.NonPublic)
         {
-            List<FieldInfo> fieldInfos = GetFields (typeof(T), flag);
-
+            List<FieldInfo> fieldInfos = null;
             List<Dictionary<string, object>> data = new List<Dictionary<string, object>> ();
             for (int i = 0; i < list.Count; i++) {
+                if (i == 0) {
+                    fieldInfos = GetFields (list [i].GetType (), flag);
+                }
+
                 Dictionary<string, object> temp = Convert<T> (list [i], fieldInfos, flag);
-                data.Add (temp);
+                if (temp != null) {
+                    data.Add (temp);
+                }
             }
 
             return data;
@@ -317,25 +340,15 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Gets the method.
+        /// Gets the type of the property.
         /// </summary>
-        /// <returns>The method.</returns>
-        /// <param name="typeName">Type name.</param>
-        /// <param name="methodName">Method name.</param>
-        /// <param name="first">First.</param>
-        /// <param name="second">Second.</param>
-        public static object GetStaticMethodInvoke (string typeName, string methodName, Type[] types, object[] datas)
+        /// <returns>The property type.</returns>
+        /// <param name="obj">Object.</param>
+        /// <param name="propName">Property name.</param>
+        /// <param name="flag">Flag.</param>
+        public static Type GetPropType (object obj, string propName, BindingFlags flag = BindingFlags.Public)
         {
-            Type type = Type.GetType (typeName);
-            MethodInfo method = type.GetMethod (
-                                    methodName,
-                                    BindingFlags.Static | BindingFlags.Public,
-                                    Type.DefaultBinder,
-                                    types,
-                                    null
-                                );
-
-            return method.Invoke (null, datas);
+            return obj.GetType ().GetProperty (propName, BindingFlags.Instance | flag).PropertyType;
         }
 
         /// <summary>
@@ -344,26 +357,66 @@ namespace Hellgate
         /// <returns>The property value.</returns>
         /// <param name="obj">Object.</param>
         /// <param name="propName">Property name.</param>
-        public static object GetPropValue (object obj, string propName)
+        /// <param name="flag">Flag.</param>
+        public static object GetPropValue (object obj, string propName, BindingFlags flag = BindingFlags.Public)
         {
-            return obj.GetType ().GetProperty (propName).GetValue (obj, null);
+            return obj.GetType ().GetProperty (propName, BindingFlags.Instance | flag).GetValue (obj, null);
         }
 
         /// <summary>
-        /// Sets the property value.
+        /// Gets the type of the field.
         /// </summary>
+        /// <returns>The field type.</returns>
         /// <param name="obj">Object.</param>
-        /// <param name="propName">Property name.</param>
-        /// <param name="data">Data.</param>
-        public static void SetPropInvoke (object obj, string propName, object data)
+        /// <param name="fieldName">Field name.</param>
+        /// <param name="flag">Flag.</param>
+        public static Type GetFieldType (object obj, string fieldName, BindingFlags flag = BindingFlags.Public)
         {
-            obj.GetType ().InvokeMember (
-                propName, 
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty,
-                System.Type.DefaultBinder,
-                obj,
-                new object[] { data }
-            );
+            FieldInfo info = obj.GetType ().GetField (fieldName, BindingFlags.Instance | flag);
+            if (info == null) {
+                return null;
+            }
+
+            return info.FieldType;
+        }
+
+        /// <summary>
+        /// Gets the type of the private field.
+        /// </summary>
+        /// <returns>The private field type.</returns>
+        /// <param name="obj">Object.</param>
+        /// <param name="fieldName">Field name.</param>
+        public static Type GetPrivateFieldType (object obj, string fieldName)
+        {
+            return GetFieldType (obj, fieldName, BindingFlags.NonPublic);
+        }
+
+        /// <summary>
+        /// Gets the field vale.
+        /// </summary>
+        /// <returns>The field vale.</returns>
+        /// <param name="obj">Object.</param>
+        /// <param name="fieldName">Field name.</param>
+        /// <param name="flag">Flag.</param>
+        public static object GetFieldVale (object obj, string fieldName, BindingFlags flag = BindingFlags.Public)
+        {
+            FieldInfo info = obj.GetType ().GetField (fieldName, BindingFlags.Instance | flag);
+            if (info == null) {
+                return null;
+            }
+
+            return info.GetValue (obj);
+        }
+
+        /// <summary>
+        /// Gets the private field value.
+        /// </summary>
+        /// <returns>The private field value.</returns>
+        /// <param name="obj">Object.</param>
+        /// <param name="fieldName">Field name.</param>
+        public static object GetPrivateFieldValue (object obj, string fieldName)
+        {
+            return GetFieldVale (obj, fieldName, BindingFlags.NonPublic);
         }
     }
 }

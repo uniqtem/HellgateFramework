@@ -79,7 +79,7 @@ namespace Hellgate
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hellgate.AssetBundleInitalDownloader"/> class.
-        /// Examples url : https://dl.dropboxusercontent.com/u/95277951/hellgate/fd3caab6ae1a959fd769a2a3ed9344e5adc98402/pc/resource.json
+        /// Examples url : http://www.uniqtem.net/hellgate/resource/pc/resource.json
         /// </summary>
         /// <param name="baseUrl">Base URL.</param>
         /// <param name="name">Name.</param>

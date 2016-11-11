@@ -25,8 +25,9 @@ namespace Hellgate
         {
             List<FileInfo> founditems = d.GetFiles (searchFor).ToList ();
             DirectoryInfo[] dis = d.GetDirectories ();
-            foreach (DirectoryInfo di in dis)
+            foreach (DirectoryInfo di in dis) {
                 founditems.AddRange (DirSearch (di, searchFor));
+            }
 
             return (founditems);
         }
@@ -37,18 +38,25 @@ namespace Hellgate
             DirectoryInfo dir = new DirectoryInfo (path);
             List<FileInfo> lst = DirSearch (dir, fileName);
 
-            if (lst.Count >= 1)
+            if (lst.Count >= 1) {
                 return lst [0];
+            }
 
             return null;
         }
 
+        /// <summary>
+        /// Gets the path template file.
+        /// </summary>
+        /// <returns>The path template file.</returns>
+        /// <param name="fileName">File name.</param>
         public static string GetPathTemplateFile (string fileName)
         {
             FileInfo f = SearchTemplateFile (fileName);
 
-            if (f == null)
+            if (f == null) {
                 return null;
+            }
 
             string path = f.FullName;
             int index = path.IndexOf ("Assets");

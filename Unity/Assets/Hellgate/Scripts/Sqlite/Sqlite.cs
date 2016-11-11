@@ -4,6 +4,7 @@
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
 using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,46 @@ using Mono.Data.Sqlite;
 
 namespace Hellgate
 {
+    [Table ("sqlite_master")]
+    public class SqliteMastser
+    {
+        private string type = "";
+        private string name = "";
+        private string tbl_name = "";
+        private int rootpage = 0;
+        private string sql = "";
+
+        public string Type {
+            get {
+                return type;
+            }
+        }
+
+        public string Name {
+            get {
+                return name;
+            }
+        }
+
+        public string TblName {
+            get {
+                return tbl_name;
+            }
+        }
+
+        public int Rootpage {
+            get {
+                return rootpage;
+            }
+        }
+
+        public string Sql {
+            get {
+                return sql;
+            }
+        }
+    }
+
     /// <summary>
     /// Sqlite join type.
     /// </summary>
@@ -73,7 +114,7 @@ namespace Hellgate
             AutoDDL (db, false);
 #endif
 
-            if (!File.Exists (pathDB) || (File.GetLastWriteTimeUtc (resourcePath) > File.GetLastWriteTimeUtc (pathDB)) || resetDB) {
+            if (!File.Exists (pathDB) || resetDB) {
                 if (resourcePath.Contains ("://")) { // android
                     WWW www = new WWW (resourcePath);
                     while (!www.isDone) {
@@ -184,8 +225,8 @@ namespace Hellgate
             } catch {
                 try {
                     dbtrans.Rollback ();
-                } catch (Exception e2) {
-                    HDebug.LogError (e2.Message);
+                } catch (Exception e) {
+                    HDebug.LogError (e.Message);
                 }
             }
 #endif
@@ -283,6 +324,75 @@ namespace Hellgate
 
             if (!isConnectionOpen) {
                 Close ();
+            }
+        }
+
+        /// <summary>
+        /// Simples the migration.
+        /// </summary>
+        /// <param name="force">If set to <c>true</c> force.</param>
+        public void SimpleMigration (bool force = true)
+        {
+            // StreamingAssets folder
+            string path = Path.Combine (Application.streamingAssetsPath, Path.GetFileName (pathDB));
+            if (path.Contains ("://")) { // android
+                WWW www = new WWW (path);
+                while (!www.isDone) {
+                    ;
+                }
+
+                if (www.error == null) {
+                    path = string.Format ("{0}_copy{1}", Path.GetFileNameWithoutExtension (path), Path.GetExtension (path));
+                    path = Path.Combine (Application.persistentDataPath, path);
+                    File.WriteAllBytes (path, www.bytes);
+                } else {
+                    HDebug.LogWarning (www.error);
+                    return;
+                }
+            }
+
+            Query query = new Query (Path.GetFileName (path));
+            SqliteMastser[] resources = query.SELECT<SqliteMastser> ();
+            List<SqliteMastser> list = new List<SqliteMastser> (resources);
+
+            query = new Query (pathDB);
+            SqliteMastser[] masters = query.SELECT<SqliteMastser> ();
+
+            StringBuilder stringBuilder = new StringBuilder ();
+            for (int i = 0; i < masters.Length; i++) {
+                SqliteMastser master = list.Find (x => x.Name == masters [i].Name);
+                if (master != null) {
+                    list.Remove (master);
+                }
+
+                if (force) {
+                    if (master != null) {
+                        if (masters [i].Sql != master.Sql) {
+                            stringBuilder.Append (query.GenerateDropTableSQL (master.Name));
+                            stringBuilder.AppendLine ();
+                            stringBuilder.AppendFormat ("{0};", master.Sql);
+                            stringBuilder.AppendLine ();
+                        }
+                    } else {
+                        stringBuilder.Append (query.GenerateDeleteSQL (masters [i].Name));
+                        stringBuilder.AppendLine ();
+                    }
+                }
+            }
+
+            if (list.Count > 0) {
+                for (int i = 0; i < list.Count; i++) {
+                    stringBuilder.AppendFormat ("{0};", list [i].Sql);
+                    stringBuilder.AppendLine ();
+                }
+            }
+
+            if (stringBuilder.ToString () != "") {
+                query.ExecuteNonQuery (stringBuilder.ToString ());
+            }
+
+            if (path.Contains ("://")) { // android
+                File.Delete (path);
             }
         }
 

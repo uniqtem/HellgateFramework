@@ -322,10 +322,8 @@ namespace HellgeteEx
 
         public void OnClickDeleteORMAll ()
         {
-            query.Migration ();
+            query.DELETE <Board> ();
             ListView ();
-//            query.DELETE <Board> ();
-//            ListView ();
         }
     }
 }

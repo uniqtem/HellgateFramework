@@ -21,7 +21,8 @@
 sysinfo.txt
 *.DS_Store
 
-Build/
+Android Build/
+iOS Build/
 NGUI/
 AssetStoreTools/
 Doxygen/

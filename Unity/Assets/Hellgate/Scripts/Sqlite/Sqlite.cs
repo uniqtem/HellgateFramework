@@ -349,9 +349,11 @@ namespace Hellgate
                     HDebug.LogWarning (www.error);
                     return;
                 }
+
+                path = Path.GetFileName (path);
             }
 
-            Query query = new Query (Path.GetFileName (path));
+            Query query = new Query (path);
             SqliteMastser[] resources = query.SELECT<SqliteMastser> ();
             List<SqliteMastser> list = new List<SqliteMastser> (resources);
 

@@ -55,7 +55,7 @@ namespace Hellgate
 
                 // Save
                 EditorBuildSettings.scenes = newScenes;
-                EditorApplication.SaveAssets ();
+                AssetDatabase.SaveAssets ();
             }
         }
 

@@ -9,7 +9,7 @@ using Hellgate;
 
 namespace HellgeteEx
 {
-    public class HellgateIntroEx : SceneController
+    public class HellgateIntroEx : HellgateSceneControllerEx
     {
         public override void OnSet (object data)
         {

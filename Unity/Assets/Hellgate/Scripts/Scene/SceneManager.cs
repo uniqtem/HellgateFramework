@@ -224,6 +224,28 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Pops up.
+        /// </summary>
+        /// <param name="text">Text.</param>
+        /// <param name="finished">Finished.</param>
+        public virtual void PopUp (string text, PopUpController.FinishedDelegate finished)
+        {
+            PopUp (text, PopUpType.YesAndNo, finished);
+        }
+
+        /// <summary>
+        /// Pops up.
+        /// </summary>
+        /// <param name="text">Text.</param>
+        /// <param name="finished">Finished.</param>
+        public virtual void PopUp (string text, CallbackDelegate finished)
+        {
+            PopUp (text, PopUpType.Ok, delegate(PopUpYNType type) {
+                finished ();
+            });
+        }
+
+        /// <summary>
         /// Loadings the job.
         /// </summary>
         /// <param name="data">Data.</param>

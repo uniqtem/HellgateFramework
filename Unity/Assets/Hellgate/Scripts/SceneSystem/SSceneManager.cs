@@ -194,6 +194,10 @@ namespace Hellgate
         /// The NGUI camera.
         /// </summary>
         protected GameObject nGUICamera;
+        /// <summary>
+        /// The event system.
+        /// </summary>
+        protected GameObject eventSystem;
 
         /// <summary>
         /// Gets the UI type
@@ -212,6 +216,16 @@ namespace Hellgate
         public Camera NGUICamera {
             get {
                 return nGUICamera == null ? null : nGUICamera.GetComponent<Camera> ();
+            }
+        }
+
+        /// <summary>
+        /// Gets the event system.
+        /// </summary>
+        /// <value>The event system.</value>
+        public UnityEngine.EventSystems.EventSystem EventSystem {
+            get {
+                return eventSystem == null ? null : eventSystem.GetComponent<UnityEngine.EventSystems.EventSystem> ();
             }
         }
 
@@ -311,9 +325,7 @@ namespace Hellgate
                             popups.Push (loadLevelData.sceneName);
                         }
 
-                        OnActiveScreen (root);
-
-                        if (loadLevelData.type == SceneType.SCREEN || loadLevelData.type == SceneType.ADDSCREEN) {
+                        if (loadLevelData.type != SceneType.POPUP) {
                             ClearScene (loadLevelData.sceneName);
                         }
 
@@ -322,18 +334,25 @@ namespace Hellgate
                         }
                     }
 
+                    OnActiveScreen (root);
+
                     SSceneController ctrl = root.GetComponent<SSceneController> ();
                     ctrl.OnReset (loadLevelData.data);
                     return;
+                }
+
+                // ugui
+                if (uIType == UIType.UGUI) {
+                    if (loadLevelData.type != SceneType.POPUP) {
+                        ClearEventSystem (loadLevelData.sceneName);
+                    }
                 }
             break;
             case SceneType.MENU:
                 if (menus.ContainsKey (loadLevelData.sceneName)) {
                     GameObject root = menus [loadLevelData.sceneName];
-                    if (!root.activeSelf) {
-                        OnActiveScreen (root);
-                        return;
-                    }
+                    OnActiveScreen (root);
+                    return;
                 }
             break;
             }
@@ -373,6 +392,10 @@ namespace Hellgate
                             }
                         }
                     }
+                }
+
+                if (sRoot.EventSystem != null) {
+                    eventSystem = sRoot.EventSystem.gameObject;
                 }
 
                 SSceneController ctrl = root.GetComponent<SSceneController> ();
@@ -420,13 +443,38 @@ namespace Hellgate
                 break;
                 }
 
-                // ngui
-                if (nGUICamera != null) {
-                    MonoBehaviour uicam = nGUICamera.GetComponent<MonoBehaviour> ();
-                    uicam.enabled = false;
-                    uicam.enabled = true;
+                if (uIType == UIType.NGUI) { // ngui
+                    if (nGUICamera != null) {
+                        MonoBehaviour uicam = nGUICamera.GetComponent<MonoBehaviour> ();
+                        uicam.enabled = false;
+                        uicam.enabled = true;
+                    }
                 }
             }, isAddtive);
+        }
+
+        /// <summary>
+        /// Clears the event system.
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        protected virtual void ClearEventSystem (string sceneName)
+        {
+            GameObject root = null;
+            Action innerClear = () => {
+                SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
+                if (sRoot.EventSystem != null) {
+                    sRoot.EventSystem.gameObject.SetActive (false);
+                }
+            };
+
+            foreach (var pair in scenes) {
+                if (pair.Key == sceneName) {
+                    continue;
+                }
+
+                root = pair.Value;
+                innerClear ();
+            }
         }
 
         /// <summary>
@@ -462,7 +510,7 @@ namespace Hellgate
         {
             List<string> keys = new List<string> ();
             foreach (var pair in scenes) {
-                if (sceneName == pair.Key) {
+                if (pair.Key == sceneName) {
                     continue;
                 }
 
@@ -630,16 +678,40 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Sets the active.
+        /// </summary>
+        /// <param name="root">Root.</param>
+        /// <param name="flag">If set to <c>true</c> flag.</param>
+        protected virtual void SetActive (GameObject root, bool flag)
+        {
+            root.SetActive (flag);
+
+            if (flag) {
+                if (sceneOnActive != null) {
+                    sceneOnActive (root.name);
+                }
+            } else {
+                if (sceneOnDeactive != null) {
+                    sceneOnDeactive (root.name);
+                }
+            }
+
+            // ugui
+            if (uIType == UIType.UGUI) {
+                SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
+                if (sRoot.EventSystem != null) {
+                    sRoot.EventSystem.gameObject.SetActive (flag);
+                }
+            }
+        }
+
+        /// <summary>
         /// Raises the active screen event.
         /// </summary>
         /// <param name="root">Root.</param>
         protected virtual void OnActiveScreen (GameObject root)
         {
-            root.SetActive (true);
-
-            if (sceneOnActive != null) {
-                sceneOnActive (root.name);
-            }
+            SetActive (root, true);
         }
 
         /// <summary>
@@ -648,11 +720,7 @@ namespace Hellgate
         /// <param name="root">Root.</param>
         protected virtual void OnDeativeScreen (GameObject root)
         {
-            root.SetActive (false);
-
-            if (sceneOnDeactive != null) {
-                sceneOnDeactive (root.name);
-            }
+            SetActive (root, false);
         }
 
         /// <summary>

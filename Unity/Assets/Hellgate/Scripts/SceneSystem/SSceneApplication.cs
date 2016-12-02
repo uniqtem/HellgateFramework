@@ -99,7 +99,9 @@ namespace Hellgate
                 onLoadeds.Remove (root.name);
 
 #if UNITY_5_3 || UNITY_5_4
-                SceneManagement.SceneManager.UnloadScene (root.name);
+                if (root.name != SceneManagement.SceneManager.GetActiveScene ().name) {
+                    SceneManagement.SceneManager.UnloadScene (root.name);
+                }
 #endif
             }
         }

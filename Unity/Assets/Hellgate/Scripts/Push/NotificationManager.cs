@@ -15,7 +15,7 @@ namespace Hellgate
         /// <summary>
         /// The NOTIFICATION_MANAGER.
         /// </summary>
-        public const string NOTIFICATION_MANAGER = "NotificationManager";
+        public const string notificationManager = "NotificationManager";
 
 #endregion
 
@@ -34,7 +34,7 @@ namespace Hellgate
                     instance = gObj.AddComponent<NotificationManager> ();
                     instance.Awake ();
 
-                    gObj.name = NOTIFICATION_MANAGER;
+                    gObj.name = notificationManager;
                     DontDestroyOnLoad (gObj);
                 }
 

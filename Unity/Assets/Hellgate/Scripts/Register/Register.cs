@@ -14,7 +14,7 @@ namespace Hellgate
     /// </summary>
     public class Register
     {
-        public const string DEFAULT = "0";
+        public const string _default = "0";
 
         /// <summary>
         /// Sets the bool.
@@ -94,7 +94,7 @@ namespace Hellgate
         /// <returns>The string.</returns>
         /// <param name="key">Key.</param>
         /// <param name="defaultValue">Default value.</param>
-        public static string GetString (string key, string defaultValue = DEFAULT)
+        public static string GetString (string key, string defaultValue = _default)
         {
             string value = PlayerPrefs.GetString (Encrypt.SHA1Key (key), defaultValue);
             if (value != defaultValue) {

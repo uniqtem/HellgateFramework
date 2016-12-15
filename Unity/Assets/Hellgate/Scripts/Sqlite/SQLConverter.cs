@@ -153,13 +153,13 @@ namespace Hellgate
         {
             StringBuilder stringBuilder = new StringBuilder ();
             switch (type) {
-            case SqliteJoinType.CROSS:
+            case SqliteJoinType.Cross:
                 stringBuilder.Append ("CROSS ");
             break;
-            case SqliteJoinType.INNER:
+            case SqliteJoinType.Inner:
                 stringBuilder.Append ("INNER ");
             break;
-            case SqliteJoinType.OUTER:
+            case SqliteJoinType.Outer:
                 stringBuilder.Append ("LEFT OUTER ");
             break;
             default:

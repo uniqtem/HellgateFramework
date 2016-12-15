@@ -23,8 +23,8 @@ namespace Hellgate
 
     public class AssetBundleInitialData
     {
-        public const string MAJOR = "major";
-        public const string MINOR = "minor";
+        public const string major = "major";
+        public const string minor = "minor";
 
         public class Resource
         {

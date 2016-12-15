@@ -16,8 +16,8 @@ namespace Hellgate
 {
     public class Util
     {
-        public const string ANDROID = "android";
-        public const string IOS = "ios";
+        public const string Android = "android";
+        public const string iOS = "ios";
         public const string PC = "pc";
 
 #if UNITY_EDITOR
@@ -563,9 +563,9 @@ namespace Hellgate
             string typeCode = "";
 #if UNITY_EDITOR
             if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
-                typeCode = ANDROID;
+                typeCode = Android;
             } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
-                typeCode = IOS;
+                typeCode = iOS;
             } else {
                 typeCode = PC;
             }

@@ -61,16 +61,16 @@ namespace Hellgate
     /// </summary>
     public enum SqliteJoinType
     {
-        NONE = 1,
-        CROSS,
-        INNER,
+        None = 1,
+        Cross,
+        Inner,
         // SQLite only supports the LEFT OUTER JOIN.
-        OUTER
+        Outer
     }
 
     public class Sqlite
     {
-        public const string BASE_PATH = "URI=file:";
+        public const string basePath = "URI=file:";
 #if !UNITY_WEBPLAYER
         protected SqliteConnection dbconn;
         protected SqliteCommand dbcmd;
@@ -142,7 +142,7 @@ namespace Hellgate
         protected void Open (string conn)
         {
 #if !UNITY_WEBPLAYER
-            conn = BASE_PATH + conn;
+            conn = basePath + conn;
             dbconn = new SqliteConnection (conn);
             dbconn.Open (); //Open connection to the database.
             dbcmd = dbconn.CreateCommand ();

@@ -127,7 +127,13 @@ namespace Hellgate
             }
 
             string key = jobData.https [index].url;
+
+#if UNITY_5_4_OR_NEWER
+            if (jobData.https [index].method == UnityEngine.Networking.UnityWebRequest.kHttpVerbPOST) {
+#else
             if (jobData.https [index].post) {
+#endif
+
                 foreach (KeyValuePair<string, string> kVP in jobData.https [index].datas) {
                     key += kVP.Key + kVP.Value;
                 }
@@ -137,6 +143,24 @@ namespace Hellgate
                 index++;
                 Request ();
             } else {
+#if UNITY_5_4_OR_NEWER
+                jobData.https [index].finishedDelegate = delegate(UnityEngine.Networking.UnityWebRequest www) {
+                    if (www == null) {
+                        if (jobData.lEvent != null) {
+                            jobData.lEvent (LoadingJobStatus.HttpTimeover, this);
+                        }
+                    } else if (www.isError) {
+                        if (jobData.lEvent != null) {
+                            jobData.lEvent (LoadingJobStatus.HttpError, this);
+                        }
+                    } else {
+                        httpData.Add (key, www);
+
+                        index++;
+                        Request ();
+                    }
+                };
+#else
                 jobData.https [index].finishedDelegate = delegate (WWW www) {
                     if (www == null) {
                         if (jobData.lEvent != null) {
@@ -153,6 +177,7 @@ namespace Hellgate
                         Request ();
                     }
                 };
+#endif
 
                 jobData.https [index].popUp = false;
                 HttpManager.Instance.Request (jobData.https [index]);

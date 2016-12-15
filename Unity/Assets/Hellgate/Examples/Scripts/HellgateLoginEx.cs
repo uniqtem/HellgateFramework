@@ -43,7 +43,7 @@ namespace HellgeteEx
             HttpData hD = new HttpData (url);
             hD.popUp = false;
             hD.finishedDelegate = CallbackManifest;
-            HttpManager.Instance.GET (hD);
+            HttpManager.Instance.Get (hD);
 
             progress.SetActive (false);
             percent.SetActive (false);
@@ -69,25 +69,23 @@ namespace HellgeteEx
             base.Quit ("Exit ?");
         }
 
-        private void CallbackManifest (WWW www)
+#if UNITY_5_4_OR_NEWER
+        private void CallbackManifest (UnityEngine.Networking.UnityWebRequest www)
         {
             if (www == null) {
                 SetLabelTextValue (status, "Time over");
-//            sLabel.text = "Time over";
-            } else if (www.error != null) {
+            } else if (www.isError) {
                 SetLabelTextValue (status, "Server error");
-//            sLabel.text = "Server error";
             } else {
                 SetLabelTextValue (status, "Checking resource");
-//            sLabel.text = "Checking resource";
 
-                HellgateManifestDataEx manifest = JsonUtil.FromJson<HellgateManifestDataEx> (www.text);
+                HellgateManifestDataEx manifest = JsonUtil.FromJson<HellgateManifestDataEx> (www.downloadHandler.text);
 
                 // Set max chacing.
                 Caching.maximumAvailableDiskSpace = manifest.MaxChacing;
 
                 // Set base url.
-                HttpData.BASE_URL = manifest._Host.Game;
+                HttpData.baseUrl = manifest._Host.Game;
 
                 List<string> list = new List<string> ();
                 list.Add (manifest._Host.Resource);
@@ -100,6 +98,36 @@ namespace HellgeteEx
                 aDownloader.Download ();
             }
         }
+#else
+        private void CallbackManifest (WWW www)
+        {
+            if (www == null) {
+                SetLabelTextValue (status, "Time over");
+            } else if (www.error != null) {
+                SetLabelTextValue (status, "Server error");
+            } else {
+                SetLabelTextValue (status, "Checking resource");
+
+                HellgateManifestDataEx manifest = JsonUtil.FromJson<HellgateManifestDataEx> (www.text);
+
+                // Set max chacing.
+                Caching.maximumAvailableDiskSpace = manifest.MaxChacing;
+
+                // Set base url.
+                HttpData.baseUrl = manifest._Host.Game;
+
+                List<string> list = new List<string> ();
+                list.Add (manifest._Host.Resource);
+                list.Add (manifest._Resource.Name);
+
+                string url = Http.CreateURL (list, "json");
+
+                aDownloader = new AssetBundleInitialDownloader (url, manifest._Host.Resource);
+                aDownloader.aEvent = CallbackDownloader;
+                aDownloader.Download ();
+            }
+        }
+#endif
 
         private void CallbackDownloader (AssetBundleInitalStatus initStatus)
         {

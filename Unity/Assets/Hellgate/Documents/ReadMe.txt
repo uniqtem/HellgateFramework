@@ -92,5 +92,6 @@ NEW : JsonUtil
 FIX : JsonUtil.FromJsonOverwrite
 FIX : JsonUtil.ToJson Array a convert
 2.7.0
+NEW : Support UnityWebRequest(Http, AssetBundle)
 NEW : Sqlite Simple Migration
 FIX : EventSystem UGUI

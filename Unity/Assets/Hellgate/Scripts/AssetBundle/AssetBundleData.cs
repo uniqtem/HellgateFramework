@@ -16,11 +16,11 @@ namespace Hellgate
         /// <summary>
         /// The base url.
         /// </summary>
-        public static string BASE_URL = "";
+        public static string baseUrl = "";
         /// <summary>
         /// The extension.
         /// </summary>
-        public static string EXTENSION = "";
+        public static string extension = "";
 
 #endregion
 
@@ -52,6 +52,10 @@ namespace Hellgate
         /// The asset bundle.
         /// </summary>
         public AssetBundle assetBundle = null;
+        /// <summary>
+        /// The finished delegate.
+        /// </summary>
+        public AssetBundleClient.FinishedDelegate finishedDelegate = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hellgate.AssetBundleData"/> class.
@@ -122,24 +126,24 @@ namespace Hellgate
         {
             StringBuilder urlString = new StringBuilder ();
             StringBuilder assetBundleString = new StringBuilder ();
-            if (BASE_URL != "") {
-                if (!BASE_URL.EndsWith ("/")) {
-                    urlString.AppendFormat ("{0}/", BASE_URL);
+            if (baseUrl != "") {
+                if (!baseUrl.EndsWith ("/")) {
+                    urlString.AppendFormat ("{0}/", baseUrl);
                 } else {
-                    urlString.Append (BASE_URL);
+                    urlString.Append (baseUrl);
                 }
 
                 urlString.Append (assetBundeName);
             }
             assetBundleString.Append (assetBundeName);
 
-            if (EXTENSION != "") {
+            if (extension != "") {
                 if (urlString.Length > 0) {
-                    urlString.AppendFormat (".{0}", EXTENSION);
+                    urlString.AppendFormat (".{0}", extension);
                     this.url = urlString.ToString ();
                 }
 
-                assetBundleString.AppendFormat (".{0}", EXTENSION);
+                assetBundleString.AppendFormat (".{0}", extension);
                 this.assetBundleName = assetBundleString.ToString ();
             }
 

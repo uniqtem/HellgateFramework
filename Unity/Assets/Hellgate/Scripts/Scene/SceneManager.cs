@@ -58,7 +58,7 @@ namespace Hellgate
         /// The debug flag.
         /// </summary>
         [SerializeField]
-        private bool showDebug = true;
+        private bool showDebug = false;
 
 #endregion
 

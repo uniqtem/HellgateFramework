@@ -571,11 +571,11 @@ namespace Hellgate
             }
 #elif UNITY_ANDROID 
             if (Application.platform == RuntimePlatform.Android) {
-                typeCode = ANDROID;
+                typeCode = Android;
             }
 #elif UNITY_IOS
             if (Application.platform == RuntimePlatform.IPhonePlayer) {
-                typeCode = IOS;
+                typeCode = iOS;
             }
 #elif UNITY_STANDALONE
             typeCode = PC;

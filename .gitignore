@@ -21,10 +21,6 @@
 sysinfo.txt
 *.DS_Store
 
-Android Build/
-iOS Build/
-NGUI/
-AssetStoreTools/
-Doxygen/
+Build/
 NGUI/
 StreamingAssets/

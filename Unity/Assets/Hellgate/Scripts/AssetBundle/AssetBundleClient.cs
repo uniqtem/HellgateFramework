@@ -7,6 +7,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+#if UNITY_5_4_OR_NEWER
+using UnityEngine.Networking;
+#endif
+
 /// <summary>
 /// Framework namespace. using Hellgate;
 /// </summary>
@@ -92,20 +96,48 @@ namespace Hellgate
         {
             string keyName = url + version.ToString ();
             if (dictionaryAssetBundleRef.ContainsKey (keyName)) {
+                if (finished != null) {
+                    finished (null);
+                }
+
                 yield return null;
             } else {
                 while (!Caching.ready) {
                     yield return null;
                 }
 
+#if UNITY_5_4_OR_NEWER
+                uint v = Convert.ToUInt32 (version);
+                using (UnityWebRequest www = UnityWebRequest.GetAssetBundle (url, v, 0)) {
+                    yield return www.Send ();
+
+                    while (!www.isDone) {
+                        progress = www.downloadProgress;
+                        yield return null;
+                    }
+
+                    if (!www.isError) {
+                        AssetBundleRef assetBundleRef = new AssetBundleRef (url, version);
+                        assetBundleRef.assetBundle = DownloadHandlerAssetBundle.GetContent (www);
+                        dictionaryAssetBundleRef.Add (keyName, assetBundleRef);
+
+                        yield return null;
+                    }
+
+                    if (finished != null) {
+                        finished (www);
+                    }
+
+                    progress = 1f;
+                }
+#else
                 using (WWW www = WWW.LoadFromCacheOrDownload (url, version)) {
                     while (!www.isDone) {
                         progress = www.progress;
                         yield return null;
                     }
-                    if (www.error != null) {
-//                        HDebug.LogError (www.error);
-                    } else {
+
+                    if (www.error == null) {
                         AssetBundleRef assetBundleRef = new AssetBundleRef (url, version);
                         assetBundleRef.assetBundle = www.assetBundle;
                         dictionaryAssetBundleRef.Add (keyName, assetBundleRef);
@@ -120,6 +152,7 @@ namespace Hellgate
                     progress = 1f;
                     www.Dispose ();
                 }
+#endif
             }
         }
 

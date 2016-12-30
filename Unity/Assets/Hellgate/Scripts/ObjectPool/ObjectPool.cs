@@ -12,7 +12,7 @@ namespace Hellgate
     {
 #region Const
 
-        public const int CREATE_COUNT = 7;
+        public const int createCount = 7;
 
 #endregion
 
@@ -26,7 +26,7 @@ namespace Hellgate
         /// <param name="prefab">Prefab.</param>
         /// <param name="parent">Parent.</param>
         /// <param name="count">Count.</param>
-        public ObjectPool (GameObject prefab, GameObject parent = null, int count = CREATE_COUNT)
+        public ObjectPool (GameObject prefab, GameObject parent = null, int count = createCount)
         {
             this.prefab = prefab;
             this.parent = parent;

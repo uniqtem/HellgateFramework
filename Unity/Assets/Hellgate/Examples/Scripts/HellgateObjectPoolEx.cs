@@ -86,7 +86,7 @@ namespace HellgeteEx
         void Update ()
         {
             if (Input.GetMouseButtonDown (0)) {
-                if (SceneManager.Instance._UIType == UIType.NGUI) {
+                if (HellgateSceneManagerEx.Instance._UIType == UIType.NGUI) {
                     if (!CameraUtil.GetClickNGUI ()) {
                         Create ();
                     }

@@ -90,4 +90,8 @@ NEW : Excel -> Sqlite DB editor
 NEW : JsonUtil
 2.6.1
 FIX : JsonUtil.FromJsonOverwrite
-FIX : JsonUtil.ToJson Array a convert.
+FIX : JsonUtil.ToJson Array a convert
+2.7.0
+NEW : Support UnityWebRequest(Http, AssetBundle)
+NEW : Sqlite Simple Migration
+FIX : EventSystem UGUI

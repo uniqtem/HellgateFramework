@@ -12,7 +12,7 @@ namespace Hellgate
     {
 #region Const
 
-        protected const string WEBVIEW_MANAGER = "WebViewManager";
+        protected const string webviewManager = "WebViewManager";
 
 #endregion
 
@@ -31,7 +31,7 @@ namespace Hellgate
                     instance = gObj.AddComponent<WebViewManager> ();
                     instance.Awake ();
 
-                    gObj.name = WEBVIEW_MANAGER;
+                    gObj.name = webviewManager;
                     DontDestroyOnLoad (gObj);
                 }
 

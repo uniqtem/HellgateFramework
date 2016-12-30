@@ -18,7 +18,7 @@ namespace HellgeteEx
         private int idx = 0;
         private string name = "";
         private string description = "";
-        [Join (SqliteJoinType.OUTER)]
+        [Join (SqliteJoinType.Outer)]
         private Comment comment = null;
 
         public int Idx {

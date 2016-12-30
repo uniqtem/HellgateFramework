@@ -6,6 +6,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+#if UNITY_5_4_OR_NEWER
+using UnityEngine.Networking;
+#endif
+
 namespace Hellgate
 {
     public class AssetBundleInitialDownloader
@@ -14,7 +18,11 @@ namespace Hellgate
 
         public delegate void EventDelegate (AssetBundleInitalStatus status);
 
+#if UNITY_5_4_OR_NEWER
+        public delegate void ResponseDelegate (UnityWebRequest www);
+#else
         public delegate void ResponseDelegate (WWW www);
+#endif
 
 #endregion
 
@@ -79,48 +87,59 @@ namespace Hellgate
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hellgate.AssetBundleInitalDownloader"/> class.
-        /// Examples url : https://dl.dropboxusercontent.com/u/95277951/hellgate/fd3caab6ae1a959fd769a2a3ed9344e5adc98402/pc/resource.json
+        /// Examples url : http://www.uniqtem.net/hellgate/resource/pc/resource.json
         /// </summary>
         /// <param name="baseUrl">Base URL.</param>
         /// <param name="name">Name.</param>
         /// <param name="assetExtension">Asset extension.</param>
         public AssetBundleInitialDownloader (string url, string baseUrl = "", string assetExtension = "unity3d")
         {
-            AssetBundleData.BASE_URL = baseUrl;
-            AssetBundleData.EXTENSION = assetExtension;
+            AssetBundleData.baseUrl = baseUrl;
+            AssetBundleData.extension = assetExtension;
 
             assetBundleManager = AssetBundleManager.Instance;
             httpManager = HttpManager.Instance;
 
             httpData = new HttpData (url);
             httpData.popUp = false;
-            httpData.finishedDelegate = Callback;
+
+#if UNITY_5_4_OR_NEWER
+            httpData.finishedDelegate = delegate(UnityWebRequest www) {
+#else
+            httpData.finishedDelegate = delegate(WWW www) {
+#endif
+                if (www == null) {
+                    if (aEvent != null) {
+                        aEvent (AssetBundleInitalStatus.HttpTimeover);
+                    }
+                    return;
+                } else if (www.error != null) {
+                    if (aEvent != null) {
+                        aEvent (AssetBundleInitalStatus.HttpError);
+                    }
+                    return;
+                }
+
+                if (response != null) {
+                    response (www);
+                }
+
+#if UNITY_5_4_OR_NEWER
+                DownloadAssetBundle (www.downloadHandler.text);
+#else
+                DownloadAssetBundle (www.text);
+#endif
+            };
         }
 
         /// <summary>
-        /// Http Callback the specified www.
+        /// Downloads the asset bundle.
         /// </summary>
-        /// <param name="www">Www.</param>
-        protected void Callback (WWW www)
+        /// <param name="json">Json.</param>
+        protected void DownloadAssetBundle (string json)
         {
-            if (www == null) {
-                if (aEvent != null) {
-                    aEvent (AssetBundleInitalStatus.HttpTimeover);
-                }
-                return;
-            } else if (www.error != null) {
-                if (aEvent != null) {
-                    aEvent (AssetBundleInitalStatus.HttpError);
-                }
-                return;
-            }
-
-            if (response != null) {
-                response (www);
-            }
-
-            assetBundleData = JsonUtil.FromJson<AssetBundleInitialData> (www.text);
-            if (assetBundleData._Resource.Major != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR)) {
+            assetBundleData = JsonUtil.FromJson<AssetBundleInitialData> (json);
+            if (assetBundleData._Resource.Major != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.major)) {
 
 #if UNITY_EDITOR
                 HDebug.Log ("Major : " + assetBundleData._Resource.Major);
@@ -130,7 +149,7 @@ namespace Hellgate
 
                 // Delete all AssetBundle.
                 assetBundleManager.CleanCache ();
-            } else if (assetBundleData._Resource.Minor != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MINOR)) {
+            } else if (assetBundleData._Resource.Minor != Register.GetInt (assetBundleData._Resource.Name + AssetBundleInitialData.minor)) {
 
 #if UNITY_EDITOR
                 HDebug.Log ("Minor : " + assetBundleData._Resource.Minor);
@@ -158,8 +177,8 @@ namespace Hellgate
                 DownloadAssetBundle ();
             } else {
                 HDebug.LogWarning ("None of this has changed assetbundle version.");
-                Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR, assetBundleData._Resource.Major);
-                Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MINOR, assetBundleData._Resource.Minor);
+                Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.major, assetBundleData._Resource.Major);
+                Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.minor, assetBundleData._Resource.Minor);
 
                 if (aEvent != null) {
                     aEvent (AssetBundleInitalStatus.Over);
@@ -183,8 +202,8 @@ namespace Hellgate
                 if (index < downloads.Count) {
                     DownloadAssetBundle ();
                 } else {
-                    Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MAJOR, assetBundleData._Resource.Major);
-                    Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.MINOR, assetBundleData._Resource.Minor);
+                    Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.major, assetBundleData._Resource.Major);
+                    Register.SetInt (assetBundleData._Resource.Name + AssetBundleInitialData.minor, assetBundleData._Resource.Minor);
 
                     if (aEvent != null) {
                         aEvent (AssetBundleInitalStatus.DownloadOver);
@@ -198,7 +217,7 @@ namespace Hellgate
         /// </summary>
         public void Download ()
         {
-            httpManager.GET (httpData);
+            httpManager.Get (httpData);
         }
     }
 }

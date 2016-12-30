@@ -17,7 +17,7 @@ namespace Hellgate
     {
 #region Const
 
-        protected const string ASSET_BUNDLE_MANAGER = "AssetBundleManager";
+        protected const string assetBundleManager = "AssetBundleManager";
 
 #endregion
 
@@ -34,9 +34,9 @@ namespace Hellgate
                 if (instance == null) {
                     GameObject gObj = new GameObject ();
                     instance = gObj.AddComponent<AssetBundleManager> ();
-                    gObj.name = ASSET_BUNDLE_MANAGER;
+                    gObj.name = assetBundleManager;
 
-#if !UNITY_5_3 && !UNITY_5_4
+#if !UNITY_5_3_OR_NEWER
                     DontDestroyOnLoad (gObj);
 #endif
                 }
@@ -73,7 +73,7 @@ namespace Hellgate
             if (instance == null) {
                 instance = this;
 
-#if !UNITY_5_3 && !UNITY_5_4
+#if !UNITY_5_3_OR_NEWER
                 DontDestroyOnLoad (gameObject);
 #endif
             }
@@ -86,8 +86,12 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected void Log (AssetBundleData data, WWW www)
+        protected void LogDownload (AssetBundleData data, object obj)
         {
+            if (obj == null) {
+                return;
+            }
+
             time = Time.time - time;
 
             if (!debug) {
@@ -95,8 +99,14 @@ namespace Hellgate
             }
 
             System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder ();
-            stringBuilder.AppendFormat ("[Download time] {0}\n[WWW.LoadFromCacheOrDownload] {1}\n[Version] {2}\n", time, data.url, data.version);
+            stringBuilder.AppendFormat ("[Download time] {0}\n[URL] {1}\n[Version] {2}\n", time, data.url, data.version);
 
+#if UNITY_5_4_OR_NEWER
+            UnityEngine.Networking.UnityWebRequest www = obj as UnityEngine.Networking.UnityWebRequest;
+#else
+            WWW www = obj as WWW;
+#endif
+            
             if (www.error != null) {
                 stringBuilder.AppendFormat ("[WWW.error]\n{0}\n", www.error);
                 HDebug.LogError (stringBuilder.ToString ());
@@ -111,7 +121,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="obj">Object.</param>
-        protected void Log (AssetBundleData data, object obj)
+        protected void LogLoadAsset (AssetBundleData data, object obj)
         {
             if (!debug) {
                 return;
@@ -146,7 +156,7 @@ namespace Hellgate
                 obj = Util.TextureConvertSprite (obj);
             }
 
-            Log (data, obj);
+            LogLoadAsset (data, obj);
             finished (obj);
         }
 
@@ -162,7 +172,7 @@ namespace Hellgate
                 obj = Util.TextureConvertSprite (obj);
             }
 
-            Log (data, obj);
+            LogLoadAsset (data, obj);
             finished (obj);
         }
 
@@ -188,25 +198,12 @@ namespace Hellgate
                     }
                 };
 
-                if (data.assetBundle == null) {
+                DownloadAssetBundle (data, delegate(object obj) {
                     data.assetBundle = assetBundleClient.GetAssetBundle (data.url, data.version);
-                    if (data.assetBundle == null) {
-                        DownloadAssetBundle (data, delegate(object obj) {
-                            WWW www = obj as WWW;
-                            if (www.error != null) {
-                                return;
-                            } else {
-                                data.assetBundle = assetBundleClient.GetAssetBundle (data.url, data.version);
-                            }
-
-                            InnerLoadAsset ();
-                        });
-                    } else {
+                    if (data.assetBundle != null) {
                         InnerLoadAsset ();
                     }
-                } else {
-                    InnerLoadAsset ();
-                }
+                });
             };
 
 //          HDebug.Log (data.assetBundleName + " / " + data.objName);
@@ -241,7 +238,7 @@ namespace Hellgate
                     temp = null;
                 }
 
-                Log (data, temp);
+                LogLoadAsset (data, temp);
                 finished (temp);
             } else {
                 InnerLoadAssetBundle ();
@@ -303,12 +300,16 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="finished">Finished.</param>
-        public void DownloadAssetBundle (AssetBundleData data, AssetBundleClient.FinishedDelegate finished)
+        public void DownloadAssetBundle (AssetBundleData data, AssetBundleClient.FinishedDelegate finished = null)
         {
             time = Time.time;
 
+            if (finished == null) {
+                finished = data.finishedDelegate;
+            }
+
             StartCoroutine (assetBundleClient.DownloadAssetBundle (data.url, data.version, delegate(object obj) {
-                Log (data, obj as WWW);
+                LogDownload (data, obj);
 
                 if (finished != null) {
                     finished (obj);

@@ -7,13 +7,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+#if UNITY_5_4_OR_NEWER
+using UnityEngine.Networking;
+#endif
+
 namespace Hellgate
 {
     public class HttpManager : MonoBehaviour
     {
 #region Const
 
-        protected const string HTTP_MANAGER = "HttpManager";
+        protected const string httpManager = "HttpManager";
 
 #endregion
 
@@ -30,9 +34,9 @@ namespace Hellgate
                 if (instance == null) {
                     GameObject gObj = new GameObject ();
                     instance = gObj.AddComponent<HttpManager> ();
-                    gObj.name = HTTP_MANAGER;
+                    gObj.name = httpManager;
 
-#if !UNITY_5_3 && !UNITY_5_4
+#if !UNITY_5_3_OR_NEWER
                     DontDestroyOnLoad (gObj);
 #endif
                 }
@@ -73,6 +77,13 @@ namespace Hellgate
 
 #endregion
 
+#if UNITY_5_4_OR_NEWER
+        protected UnityWebRequest www;
+#else
+        protected WWW www;
+#endif
+
+        protected HttpData data;
         protected SSceneController popUp;
         protected float time;
 
@@ -103,7 +114,7 @@ namespace Hellgate
             if (instance == null) {
                 instance = this;
 
-#if !UNITY_5_3 && !UNITY_5_4
+#if !UNITY_5_3_OR_NEWER
                 DontDestroyOnLoad (gameObject);
 #endif
             }
@@ -117,7 +128,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected void Log (HttpData data, WWW www)
+        protected void Log ()
         {
             time = Time.time - time;
 
@@ -126,7 +137,7 @@ namespace Hellgate
             }
 
             System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder ();
-            stringBuilder.AppendFormat ("[Request time] {0}\n[WWW.url] {1}\n", time, data.url);
+            stringBuilder.AppendFormat ("[Request time] {0}\n[URL] {1}\n", time, data.url);
 
             if (data.headers != null) {
                 stringBuilder.Append ("[WWWForm.headers]\n");
@@ -159,8 +170,10 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected virtual void CallbackRequest (HttpData data, WWW www)
+        protected virtual void CallbackRequest ()
         {
+            Log ();
+
             Action innerCallback = () => {
                 popUp = null;
                 if (response != null) {
@@ -188,10 +201,9 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected virtual void OnFail (HttpData data, WWW www)
+        protected virtual void OnFail ()
         {
-            Log (data, www);
-            CallbackRequest (data, www);
+            CallbackRequest ();
         }
 
         /// <summary>
@@ -199,10 +211,9 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected virtual void OnDisposed (HttpData data, WWW www)
+        protected virtual void OnDisposed ()
         {
-            Log (data, www);
-            CallbackRequest (data, www);
+            CallbackRequest ();
         }
 
         /// <summary>
@@ -210,11 +221,9 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">Data.</param>
         /// <param name="www">Www.</param>
-        protected virtual void OnDone (HttpData data, WWW www)
+        protected virtual void OnDone ()
         {
-
-            Log (data, www);
-            CallbackRequest (data, www);
+            CallbackRequest ();
         }
 
         /// <summary>
@@ -222,7 +231,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="data">HttpData.</param>
         /// <param name="post">If set to <c>true</c> post.</param>
-        public void Request (HttpData data, bool post)
+        public void Request (HttpData data, Http.FinishedDelegate finish = null)
         {
             time = Time.time;
 
@@ -231,34 +240,68 @@ namespace Hellgate
                     data = preReuqest (data);
                 }
 
+                this.data = data;
                 Http http;
-                if (post) { // post reuqest
+
+#if UNITY_5_4_OR_NEWER
+                if (data.method == UnityWebRequest.kHttpVerbPOST) {
+#else
+                if (data.post) {
+#endif
+
                     http = new Http (this, data.url);
-                    http.Headers = data.headers;
-                    foreach (KeyValuePair<string, string> kVP in data.datas) {
-                        http.AddData (kVP.Key, kVP.Value);
-                    }
-                } else { // get request
+                    http.AddRangeData (data.datas);
+                } else {
                     http = new Http (this, data.url, data.datas);
                 }
 
-                // Set timeout time.
-                http.Timeout = data.timeout;
+#if UNITY_5_4_OR_NEWER
+                http.method = data.method;
+                http.audioType = data.audioType;
 
+                http.OnFail = (UnityWebRequest www) => {
+                    this.www = www;
+                    OnFail ();
+                };
+
+                http.OnDisposed = (UnityWebRequest www) => {
+                    this.www = www;
+                    OnDisposed ();
+                };
+
+                http.OnDone = (UnityWebRequest www) => {
+                    this.www = www;
+                    OnDone ();
+                };
+#else
                 http.OnFail = (WWW www) => {
-                    OnFail (data, www);
+                    this.www = www;
+                    OnFail ();
                 };
 
                 http.OnDisposed = (WWW www) => {
-                    OnDisposed (data, www);
+                    this.www = www;
+                    OnDisposed ();
                 };
 
                 http.OnDone = (WWW www) => {
-                    OnDone (data, www);
+                    this.www = www;
+                    OnDone ();
                 };
+#endif
+
+                // set headers
+                http.Headers = data.headers;
+
+                // set timeout time
+                http.Timeout = data.timeout;
 
                 http.Request ();
             };
+
+            if (finish != null) {
+                data.finishedDelegate = finish;
+            }
 
             if (data.popUp) {
                 if (SceneManager.Instance.DefaultLoadingJobSceneName != "") {
@@ -279,31 +322,49 @@ namespace Hellgate
         }
 
         /// <summary>
-        /// Request the specified data.
-        /// </summary>
-        /// <param name="data">HttpData.</param>
-        public void Request (HttpData data)
-        {
-            Request (data, data.post);
-        }
-
-        /// <summary>
         /// GET request the specified data.
         /// </summary>
         /// <param name="data">HttpData.</param>
-        public void GET (HttpData data)
+        public void Get (HttpData data, Http.FinishedDelegate finish = null)
         {
-            Request (data);
+#if UNITY_5_4_OR_NEWER
+            data.method = UnityWebRequest.kHttpVerbGET;
+#else
+            data.post = false;
+#endif
+
+            Request (data, finish);
         }
 
         /// <summary>
         /// POST request the specified data.
         /// </summary>
         /// <param name="data">HttpData.</param>
-        public void POST (HttpData data)
+        public void Post (HttpData data, Http.FinishedDelegate finish = null)
         {
+#if UNITY_5_4_OR_NEWER
+            data.method = UnityWebRequest.kHttpVerbPOST;
+#else
             data.post = true;
-            Request (data);
+#endif
+
+            Request (data, finish);
         }
+
+#if UNITY_5_4_OR_NEWER
+        public void GetTexture (HttpData data, Http.FinishedDelegate finish = null)
+        {
+            data.method = Http.kHttpVerbTexture;
+            Request (data, finish);
+        }
+
+        public void GetAudioClip (HttpData data, AudioType audioType, Http.FinishedDelegate finish = null)
+        {
+            data.method = Http.kHttpVerbAudioClip;
+            data.audioType = audioType;
+
+            Request (data, finish);
+        }
+#endif
     }
 }

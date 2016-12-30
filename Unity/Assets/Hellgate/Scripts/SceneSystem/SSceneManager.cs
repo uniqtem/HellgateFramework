@@ -41,10 +41,10 @@ namespace Hellgate
 
         protected enum SceneType
         {
-            SCREEN,
-            ADDSCREEN,
-            POPUP,
-            MENU
+            Screen,
+            AddScreen,
+            Popup,
+            Menu
         }
 
 #endregion
@@ -57,7 +57,7 @@ namespace Hellgate
             public object data;
             public SceneCallbackDelegate active;
             public SceneCallbackDelegate deactive;
-            public SceneType type = SceneType.SCREEN;
+            public SceneType type = SceneType.Screen;
 
             public LoadLevelData (string sceneName, object data, SceneCallbackDelegate active, SceneCallbackDelegate deactive)
             {
@@ -75,11 +75,11 @@ namespace Hellgate
         /// <summary>
         /// Used for the calculation position.
         /// </summary>
-        protected const int DISTANCE = 10;
+        protected const int distance = 10;
         /// <summary>
         /// Used for the calculation popUp depth.
         /// </summary>
-        protected const int POPUP_DEPTH = 1001;
+        protected const int popupDepth = 1001;
 
 #endregion
 
@@ -194,6 +194,10 @@ namespace Hellgate
         /// The NGUI camera.
         /// </summary>
         protected GameObject nGUICamera;
+        /// <summary>
+        /// The event system.
+        /// </summary>
+        protected GameObject eventSystem;
 
         /// <summary>
         /// Gets the UI type
@@ -212,6 +216,16 @@ namespace Hellgate
         public Camera NGUICamera {
             get {
                 return nGUICamera == null ? null : nGUICamera.GetComponent<Camera> ();
+            }
+        }
+
+        /// <summary>
+        /// Gets the event system.
+        /// </summary>
+        /// <value>The event system.</value>
+        public UnityEngine.EventSystems.EventSystem EventSystem {
+            get {
+                return eventSystem == null ? null : eventSystem.GetComponent<UnityEngine.EventSystems.EventSystem> ();
             }
         }
 
@@ -242,7 +256,7 @@ namespace Hellgate
 
             DontDestroyOnLoad (instance.gameObject);
 
-#if !UNITY_5_3 && !UNITY_5_4
+#if !UNITY_5_3_OR_NEWER
             DontDestroyOnLoad (gCamera);
             DontDestroyOnLoad (scene);
             DontDestroyOnLoad (shield);
@@ -300,46 +314,51 @@ namespace Hellgate
         protected virtual void LoadLevel (LoadLevelData loadLevelData)
         {
             switch (loadLevelData.type) {
-            case SceneType.POPUP:
-            case SceneType.SCREEN:
-            case SceneType.ADDSCREEN:
+            case SceneType.Popup:
+            case SceneType.Screen:
+            case SceneType.AddScreen:
                 if (scenes.ContainsKey (loadLevelData.sceneName)) {
                     GameObject root = scenes [loadLevelData.sceneName];
                     if (!root.activeSelf) {
-                        if (loadLevelData.type == SceneType.POPUP) {
+                        if (loadLevelData.type == SceneType.Popup) {
                             DistancePopUp (root);
                             popups.Push (loadLevelData.sceneName);
                         }
 
-                        OnActiveScreen (root);
-
-                        if (loadLevelData.type == SceneType.SCREEN || loadLevelData.type == SceneType.ADDSCREEN) {
+                        if (loadLevelData.type != SceneType.Popup) {
                             ClearScene (loadLevelData.sceneName);
                         }
 
-                        if (loadLevelData.type == SceneType.ADDSCREEN) {
+                        if (loadLevelData.type == SceneType.AddScreen) {
                             screens.Push (loadLevelData.sceneName);
                         }
                     }
+
+                    OnActiveScreen (root);
 
                     SSceneController ctrl = root.GetComponent<SSceneController> ();
                     ctrl.OnReset (loadLevelData.data);
                     return;
                 }
+
+                // ugui
+                if (uIType == UIType.UGUI) {
+                    if (loadLevelData.type != SceneType.Popup) {
+                        ClearEventSystem (loadLevelData.sceneName);
+                    }
+                }
             break;
-            case SceneType.MENU:
+            case SceneType.Menu:
                 if (menus.ContainsKey (loadLevelData.sceneName)) {
                     GameObject root = menus [loadLevelData.sceneName];
-                    if (!root.activeSelf) {
-                        OnActiveScreen (root);
-                        return;
-                    }
+                    OnActiveScreen (root);
+                    return;
                 }
             break;
             }
 
             bool isAddtive = false;
-            if (loadLevelData.type == SceneType.MENU || loadLevelData.type == SceneType.POPUP) {
+            if (loadLevelData.type == SceneType.Menu || loadLevelData.type == SceneType.Popup) {
                 isAddtive = true;
             }
 
@@ -368,11 +387,15 @@ namespace Hellgate
                                 cam.gameObject.SetActive (false);
                             }
                         } else {
-                            if (loadLevelData.type != SceneType.POPUP && cam.GetComponent ("UICamera") != null) {
+                            if (loadLevelData.type != SceneType.Popup && cam.GetComponent ("UICamera") != null) {
                                 cam.gameObject.SetActive (false);
                             }
                         }
                     }
+                }
+
+                if (sRoot.EventSystem != null) {
+                    eventSystem = sRoot.EventSystem.gameObject;
                 }
 
                 SSceneController ctrl = root.GetComponent<SSceneController> ();
@@ -385,8 +408,8 @@ namespace Hellgate
                 ctrl.deactive = loadLevelData.deactive;
 
                 switch (loadLevelData.type) {
-                case SceneType.SCREEN:
-                case SceneType.ADDSCREEN:
+                case SceneType.Screen:
+                case SceneType.AddScreen:
                     ctrl.OnSet (loadLevelData.data);
                     scenes.Add (loadLevelData.sceneName, root);
                     ClearScene (loadLevelData.sceneName);
@@ -395,11 +418,11 @@ namespace Hellgate
                         screenStartChange (loadLevelData.sceneName);
                     }
 
-                    if (loadLevelData.type == SceneType.ADDSCREEN) {
+                    if (loadLevelData.type == SceneType.AddScreen) {
                         screens.Push (loadLevelData.sceneName);
                     }
                 break;
-                case SceneType.POPUP:
+                case SceneType.Popup:
                     scenes.Add (loadLevelData.sceneName, root);
                     DistancePopUp (root);
                     popups.Push (loadLevelData.sceneName);
@@ -410,7 +433,7 @@ namespace Hellgate
                         popUpStart (loadLevelData.sceneName);
                     }
                 break;
-                case SceneType.MENU:
+                case SceneType.Menu:
                     ctrl.OnSet (loadLevelData.data);
                     menus.Add (loadLevelData.sceneName, root);
 
@@ -420,13 +443,38 @@ namespace Hellgate
                 break;
                 }
 
-                // ngui
-                if (nGUICamera != null) {
-                    MonoBehaviour uicam = nGUICamera.GetComponent<MonoBehaviour> ();
-                    uicam.enabled = false;
-                    uicam.enabled = true;
+                if (uIType == UIType.NGUI) { // ngui
+                    if (nGUICamera != null) {
+                        MonoBehaviour uicam = nGUICamera.GetComponent<MonoBehaviour> ();
+                        uicam.enabled = false;
+                        uicam.enabled = true;
+                    }
                 }
             }, isAddtive);
+        }
+
+        /// <summary>
+        /// Clears the event system.
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        protected virtual void ClearEventSystem (string sceneName)
+        {
+            GameObject root = null;
+            Action innerClear = () => {
+                SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
+                if (sRoot.EventSystem != null) {
+                    sRoot.EventSystem.gameObject.SetActive (false);
+                }
+            };
+
+            foreach (var pair in scenes) {
+                if (pair.Key == sceneName) {
+                    continue;
+                }
+
+                root = pair.Value;
+                innerClear ();
+            }
         }
 
         /// <summary>
@@ -462,7 +510,7 @@ namespace Hellgate
         {
             List<string> keys = new List<string> ();
             foreach (var pair in scenes) {
-                if (sceneName == pair.Key) {
+                if (pair.Key == sceneName) {
                     continue;
                 }
 
@@ -567,7 +615,7 @@ namespace Hellgate
         /// <param name="root">Root.</param>
         protected virtual void DistancePopUp (GameObject root)
         {
-            int depth = POPUP_DEPTH;
+            int depth = popupDepth;
             if (popups.Count > 0) {
                 SSceneRoot lRoot = scenes [popups.Peek ()].GetComponent<SSceneRoot> ();
                 if (uIType == UIType.NGUI) { // ngui
@@ -611,10 +659,10 @@ namespace Hellgate
             shields.Add (gShield);
 
             if (uIType == UIType.NGUI) { // ngui
-                int x = (popups.Count + 1) * DISTANCE;
+                int x = (popups.Count + 1) * distance;
                 root.transform.localPosition = new Vector3 (x, 0, 0);
 
-                gShield.transform.localPosition = new Vector3 (x, -DISTANCE, 0);
+                gShield.transform.localPosition = new Vector3 (x, -distance, 0);
                 Camera sCam = gShield.GetComponentInChildren<Camera> ();
                 sCam.depth = depth;
 
@@ -630,16 +678,40 @@ namespace Hellgate
         }
 
         /// <summary>
+        /// Sets the active.
+        /// </summary>
+        /// <param name="root">Root.</param>
+        /// <param name="flag">If set to <c>true</c> flag.</param>
+        protected virtual void SetActive (GameObject root, bool flag)
+        {
+            root.SetActive (flag);
+
+            if (flag) {
+                if (sceneOnActive != null) {
+                    sceneOnActive (root.name);
+                }
+            } else {
+                if (sceneOnDeactive != null) {
+                    sceneOnDeactive (root.name);
+                }
+            }
+
+            // ugui
+            if (uIType == UIType.UGUI) {
+                SSceneRoot sRoot = root.GetComponent<SSceneRoot> ();
+                if (sRoot.EventSystem != null) {
+                    sRoot.EventSystem.gameObject.SetActive (flag);
+                }
+            }
+        }
+
+        /// <summary>
         /// Raises the active screen event.
         /// </summary>
         /// <param name="root">Root.</param>
         protected virtual void OnActiveScreen (GameObject root)
         {
-            root.SetActive (true);
-
-            if (sceneOnActive != null) {
-                sceneOnActive (root.name);
-            }
+            SetActive (root, true);
         }
 
         /// <summary>
@@ -648,11 +720,7 @@ namespace Hellgate
         /// <param name="root">Root.</param>
         protected virtual void OnDeativeScreen (GameObject root)
         {
-            root.SetActive (false);
-
-            if (sceneOnDeactive != null) {
-                sceneOnDeactive (root.name);
-            }
+            SetActive (root, false);
         }
 
         /// <summary>
@@ -681,7 +749,7 @@ namespace Hellgate
         {
             ClearPopUp (delegate() {
                 LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-                loadLevel.type = SceneType.ADDSCREEN;
+                loadLevel.type = SceneType.AddScreen;
                 LoadLevel (loadLevel);
             });
         }
@@ -696,7 +764,7 @@ namespace Hellgate
         public virtual void PopUp (string sceneName, object data = null, SceneCallbackDelegate active = null, SceneCallbackDelegate deactive = null)
         {
             LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            loadLevel.type = SceneType.POPUP;
+            loadLevel.type = SceneType.Popup;
             LoadLevel (loadLevel);
         }
 
@@ -720,7 +788,7 @@ namespace Hellgate
             }
 
             LoadLevelData loadLevel = new LoadLevelData (sceneName, data, active, deactive);
-            loadLevel.type = SceneType.MENU;
+            loadLevel.type = SceneType.Menu;
             LoadLevel (loadLevel);
         }
 

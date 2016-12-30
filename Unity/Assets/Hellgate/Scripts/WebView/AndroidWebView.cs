@@ -15,7 +15,7 @@ namespace Hellgate
         /// <summary>
         /// Android class name.
         /// </summary>
-        protected const string CLASS_NAME = "com.hellgate.UnityWebViewActivity";
+        protected const string className = "com.hellgate.UnityWebViewActivity";
 
         /// <summary>
         /// The AndroidJavaObject.
@@ -28,7 +28,7 @@ namespace Hellgate
         protected virtual void Awake ()
         {
             if (Application.platform == RuntimePlatform.Android) {
-                android = new AndroidJavaObject (CLASS_NAME);
+                android = new AndroidJavaObject (className);
                 android.Call ("init");
             }
         }

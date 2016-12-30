@@ -16,8 +16,8 @@ namespace Hellgate
 {
     public class Util
     {
-        public const string ANDROID = "android";
-        public const string IOS = "ios";
+        public const string Android = "android";
+        public const string iOS = "ios";
         public const string PC = "pc";
 
 #if UNITY_EDITOR
@@ -25,8 +25,9 @@ namespace Hellgate
         {
             List<FileInfo> founditems = d.GetFiles (searchFor).ToList ();
             DirectoryInfo[] dis = d.GetDirectories ();
-            foreach (DirectoryInfo di in dis)
+            foreach (DirectoryInfo di in dis) {
                 founditems.AddRange (DirSearch (di, searchFor));
+            }
 
             return (founditems);
         }
@@ -37,18 +38,25 @@ namespace Hellgate
             DirectoryInfo dir = new DirectoryInfo (path);
             List<FileInfo> lst = DirSearch (dir, fileName);
 
-            if (lst.Count >= 1)
+            if (lst.Count >= 1) {
                 return lst [0];
+            }
 
             return null;
         }
 
+        /// <summary>
+        /// Gets the path template file.
+        /// </summary>
+        /// <returns>The path template file.</returns>
+        /// <param name="fileName">File name.</param>
         public static string GetPathTemplateFile (string fileName)
         {
             FileInfo f = SearchTemplateFile (fileName);
 
-            if (f == null)
+            if (f == null) {
                 return null;
+            }
 
             string path = f.FullName;
             int index = path.IndexOf ("Assets");
@@ -555,19 +563,19 @@ namespace Hellgate
             string typeCode = "";
 #if UNITY_EDITOR
             if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android) {
-                typeCode = ANDROID;
+                typeCode = Android;
             } else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.iOS) {
-                typeCode = IOS;
+                typeCode = iOS;
             } else {
                 typeCode = PC;
             }
 #elif UNITY_ANDROID 
             if (Application.platform == RuntimePlatform.Android) {
-                typeCode = ANDROID;
+                typeCode = Android;
             }
 #elif UNITY_IOS
             if (Application.platform == RuntimePlatform.IPhonePlayer) {
-                typeCode = IOS;
+                typeCode = iOS;
             }
 #elif UNITY_STANDALONE
             typeCode = PC;

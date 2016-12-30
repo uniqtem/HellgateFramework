@@ -22,7 +22,7 @@ namespace Hellgate
         /// <summary>
         /// Set base url.
         /// </summary>
-        public static string BASE_URL = "";
+        public static string baseUrl = "";
         /// <summary>
         /// Set default headers.
         /// </summary>
@@ -34,7 +34,7 @@ namespace Hellgate
         /// <summary>
         /// The default timeout.
         /// </summary>
-        public static float defaultTimeout = Http.DEFAULT_TIMEOUT;
+        public static float defaultTimeout = Http.timeout;
 
 #endregion
 
@@ -63,22 +63,34 @@ namespace Hellgate
         /// </summary>
         public int retry = DEFAULT_RETRY;
         /// <summary>
-        /// The post.
-        /// </summary>
-        public bool post = false;
-        /// <summary>
         /// The pop up.
         /// </summary>
         public bool popUp = true;
+
+#if UNITY_5_4_OR_NEWER
+        /// <summary>
+        /// Defines the HTTP verb used by this UnityWebRequest, such as GET or POST.
+        /// </summary>
+        public string method = UnityEngine.Networking.UnityWebRequest.kHttpVerbGET;
+        /// <summary>
+        /// Create a UnityWebRequest intended to download an audio clip type.
+        /// </summary>
+        public AudioType audioType;
+#else
+        /// <summary>
+        /// The post.
+        /// </summary>
+        public bool post = false;
+#endif
 
         private void Init (string url)
         {
             StringBuilder stringBuilder = new StringBuilder ();
             if (!url.Contains ("http")) {
-                if (!BASE_URL.EndsWith ("/")) {
-                    stringBuilder.AppendFormat ("{0}/", BASE_URL);
+                if (!baseUrl.EndsWith ("/")) {
+                    stringBuilder.AppendFormat ("{0}/", baseUrl);
                 } else {
-                    stringBuilder.Append (BASE_URL);
+                    stringBuilder.Append (baseUrl);
                 }
             }
             stringBuilder.Append (url);

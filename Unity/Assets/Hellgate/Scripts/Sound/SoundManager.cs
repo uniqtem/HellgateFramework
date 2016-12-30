@@ -16,7 +16,7 @@ namespace Hellgate
     {
 #region Const
 
-        protected const string SOUND_MANAGER = "SoundManager";
+        protected const string soundManager = "SoundManager";
 
 #endregion
 
@@ -34,7 +34,7 @@ namespace Hellgate
                     SoundManager manager = GameObject.FindObjectOfType<SoundManager> ();
                     if (manager == null) {
                         GameObject gObj = new GameObject ();
-                        gObj.name = SOUND_MANAGER;
+                        gObj.name = soundManager;
                         instance = gObj.AddComponent<SoundManager> ();
                     } else {
                         instance = manager;
@@ -158,7 +158,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="createCount">Create count.</param>
-        public void PlaySound (string name, int createCount = ObjectPool.CREATE_COUNT)
+        public void PlaySound (string name, int createCount = ObjectPool.createCount)
         {
             if (sounds == null) {
                 HDebug.LogWarning ("Please add a " + name + " sound");

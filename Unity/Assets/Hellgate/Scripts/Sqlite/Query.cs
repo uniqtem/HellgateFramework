@@ -73,6 +73,11 @@ namespace Hellgate
             sqlite = new Sqlite (dbName, true);
         }
 
+        public void Migration ()
+        {
+            sqlite.SimpleMigration ();
+        }
+
         /// <summary>
         /// INSERT batch.
         /// </summary>

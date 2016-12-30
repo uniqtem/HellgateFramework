@@ -73,7 +73,7 @@ namespace Hellgate
             notif.alertBody = text;
 
             if (id == "") {
-                id = SCHEDULE_LOCAL_NOTIFICATION;
+                id = scheduleLocalNotification;
             }
 
             Dictionary<string, string> userInfo = new Dictionary<string, string> (1);
@@ -88,7 +88,7 @@ namespace Hellgate
             LocalNotification[] notifis = NotificationServices.scheduledLocalNotifications;
             if (notifis.Length > 0) {
                 if (id == "") {
-                    id = SCHEDULE_LOCAL_NOTIFICATION;
+                    id = scheduleLocalNotification;
                 }
 
                 for (int i = 0; i < notifis.Length; i++) {

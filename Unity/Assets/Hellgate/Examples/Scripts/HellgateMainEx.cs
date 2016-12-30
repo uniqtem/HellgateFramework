@@ -43,6 +43,13 @@ namespace HellgeteEx
             SceneManager.Instance.LoadingJob (jobData);
         }
 
+        public override void Awake ()
+        {
+            base.Awake ();
+
+            this.isCache = true;
+        }
+
         public override void OnSet (object data)
         {
             base.OnSet (data);

@@ -3,6 +3,7 @@
 // Copyright © Uniqtem Co., Ltd.
 //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 using Hellgate;
 
@@ -31,8 +32,14 @@ namespace HellgeteEx
         void Update ()
         {
             if (Input.GetMouseButtonDown (0)) {
-                if (!CameraUtil.GetClickNGUI ()) {
-                    inputFlag = true;
+                if (HellgateSceneManagerEx.Instance._UIType == UIType.NGUI) {
+                    if (!CameraUtil.GetClickNGUI ()) {
+                        inputFlag = true;
+                    }
+                } else {
+                    if (!EventSystem.current.IsPointerOverGameObject ()) {
+                        inputFlag = true;
+                    }
                 }
             }
 

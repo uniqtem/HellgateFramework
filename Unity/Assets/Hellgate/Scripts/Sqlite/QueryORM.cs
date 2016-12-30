@@ -129,7 +129,7 @@ namespace Hellgate
         /// Sets the type of the join.
         /// </summary>
         /// <param name="joinType">Join type.</param>
-        public void SetJoinType (SqliteJoinType joinType = SqliteJoinType.NONE)
+        public void SetJoinType (SqliteJoinType joinType = SqliteJoinType.None)
         {
             this.joinType = joinType;
         }

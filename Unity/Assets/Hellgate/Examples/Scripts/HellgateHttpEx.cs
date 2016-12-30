@@ -39,8 +39,13 @@ namespace HellgeteEx
             LoadingJobData data = new LoadingJobData ();
             data.https = https;
             data.finishedDelegate = delegate(List<object> obj, LoadingJobController job) {
+#if UNITY_5_4_OR_NEWER
+                UnityEngine.Networking.UnityWebRequest www = Util.GetListObject<UnityEngine.Networking.UnityWebRequest> (obj);
+                HellgateHttpData sprites = JsonUtil.FromJson<HellgateHttpData> (www.downloadHandler.text);
+#else
                 WWW www = Util.GetListObject<WWW> (obj);
                 HellgateHttpData sprites = JsonUtil.FromJson<HellgateHttpData> (www.text);
+#endif
 
                 List<AssetBundleData> assetbundles = new List<AssetBundleData> ();
                 for (int i = 0; i < sprites._Sprite.Length; i++) {
@@ -105,6 +110,19 @@ namespace HellgeteEx
         public void OnClickRequest ()
         {
             HttpData http = new HttpData ("test", "json");
+
+#if UNITY_5_4_OR_NEWER
+            http.finishedDelegate = delegate(UnityEngine.Networking.UnityWebRequest www) {
+                if (www == null) { // time over
+                } else if (www.isError) { // error
+                } else {
+                    HellgateHttpDataEx data = JsonUtil.FromJson<HellgateHttpDataEx> (www.downloadHandler.text);
+                    url = data.Url;
+
+                    button.SetActive (true);
+                }
+            };
+#else
             http.finishedDelegate = delegate (WWW www) {
                 if (www == null) { // time over
                 } else if (www.error != null) { // error
@@ -115,7 +133,9 @@ namespace HellgeteEx
                     button.SetActive (true);
                 }
             };
-            HttpManager.Instance.GET (http);
+#endif
+
+            HttpManager.Instance.Get (http);
         }
 
         public void OnClickOpenURL ()

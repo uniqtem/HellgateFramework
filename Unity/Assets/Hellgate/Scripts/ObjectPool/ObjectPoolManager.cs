@@ -12,7 +12,7 @@ namespace Hellgate
     {
 #region Const
 
-        protected const string OBJECT_POOL_MANAGER = "ObjectPoolManager";
+        protected const string objectPoolManager = "ObjectPoolManager";
 
 #endregion
 
@@ -25,7 +25,7 @@ namespace Hellgate
                 if (instance == null) {
                     GameObject gObj = new GameObject ();
                     instance = gObj.AddComponent<ObjectPoolManager> ();
-                    gObj.name = OBJECT_POOL_MANAGER;
+                    gObj.name = objectPoolManager;
                 }
 
                 return instance;
@@ -55,7 +55,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="gObj">GameObject.</param>
         /// <param name="count">Count.</param>
-        public static void Init (GameObject gObj, int count = ObjectPool.CREATE_COUNT)
+        public static void Init (GameObject gObj, int count = ObjectPool.createCount)
         {
             if (!Instance.objectPool.ContainsKey (gObj)) {
                 Instance.objectPool.Add (gObj, new ObjectPool (gObj, instance.gameObject, count));
@@ -69,7 +69,7 @@ namespace Hellgate
         /// <param name="position">Position.</param>
         /// <param name="rotation">Rotation.</param>
         /// <param name="count">Count.</param>
-        public static GameObject Spawn (GameObject gObj, Vector3 position, Quaternion rotation, int count = ObjectPool.CREATE_COUNT)
+        public static GameObject Spawn (GameObject gObj, Vector3 position, Quaternion rotation, int count = ObjectPool.createCount)
         {
             GameObject obj = Spawn (gObj, count);
             obj.transform.position = position;
@@ -83,7 +83,7 @@ namespace Hellgate
         /// </summary>
         /// <param name="gObj">GameObject.</param>
         /// <param name="count">Count.</param>
-        public static GameObject Spawn (GameObject gObj, int count = ObjectPool.CREATE_COUNT)
+        public static GameObject Spawn (GameObject gObj, int count = ObjectPool.createCount)
         {
             Init (gObj, count);
             return Instance.objectPool [gObj].GetObject ();

@@ -11,46 +11,6 @@ using Hellgate;
 
 namespace HellgateEditor
 {
-    [Hellgate.Table ("sqlite_master")]
-    public class SqliteMastser
-    {
-        private string type = "";
-        private string name = "";
-        private string tbl_name = "";
-        private int rootpage = 0;
-        private string sql = "";
-
-        public string Type {
-            get {
-                return type;
-            }
-        }
-
-        public string Name {
-            get {
-                return name;
-            }
-        }
-
-        public string TblName {
-            get {
-                return tbl_name;
-            }
-        }
-
-        public int Rootpage {
-            get {
-                return rootpage;
-            }
-        }
-
-        public string Sql {
-            get {
-                return sql;
-            }
-        }
-    }
-
     public class SqliteImportEditor : EditorWindow
     {
         private const string HELLGATE_DB_PATH = "HellgateDBPath";

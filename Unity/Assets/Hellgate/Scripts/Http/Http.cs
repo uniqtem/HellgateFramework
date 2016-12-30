@@ -8,19 +8,38 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
+#if UNITY_5_4_OR_NEWER
+using UnityEngine.Networking;
+#endif
+
 namespace Hellgate
 {
     public class Http
     {
 #region Const
 
-        public const float DEFAULT_TIMEOUT = 7f;
+        /// <summary>
+        /// The timeout.
+        /// </summary>
+        public const float timeout = 7f;
+        /// <summary>
+        /// Create a UnityWebRequest intended to download an audio clip via HTTP GET and create an AudioClip based on the retrieved data.
+        /// </summary>
+        public const string kHttpVerbAudioClip = "GET_AUDIO_CLIP";
+        /// <summary>
+        /// Create a UnityWebRequest intended to download an image via HTTP GET and create a Texture based on the retrieved data.
+        /// </summary>
+        public const string kHttpVerbTexture = "GET_TEXTURE";
 
 #endregion
 
 #region Delegate
 
+#if UNITY_5_4_OR_NEWER
+        public delegate void FinishedDelegate (UnityWebRequest www);
+#else
         public delegate void FinishedDelegate (WWW www);
+#endif
 
 #endregion
 
@@ -28,8 +47,22 @@ namespace Hellgate
         private FinishedDelegate mOnFail;
         private FinishedDelegate mOnDisposed;
         private MonoBehaviour mono;
-        private WWW wWW;
-        private WWWForm wWWFrom;
+
+#if UNITY_5_4_OR_NEWER
+        private UnityWebRequest www;
+        /// <summary>
+        /// Defines the HTTP verb used by this UnityWebRequest, such as GET or POST.
+        /// </summary>
+        public string method = UnityWebRequest.kHttpVerbGET;
+        /// <summary>
+        /// Create a UnityWebRequest intended to download an audio clip type.
+        /// </summary>
+        public AudioType audioType;
+#else
+        private WWW www;
+#endif
+
+        private WWWForm wwwFrom;
         private Dictionary<string, string> mHeaders;
         private string url;
         private float timeOut;
@@ -38,17 +71,39 @@ namespace Hellgate
         private IEnumerator RequestCoroutine ()
         {
             url = ResetCache (url);
-            if (wWWFrom.data.Length > 0) {
-                foreach (var entry in wWWFrom.headers) {
+
+#if UNITY_5_4_OR_NEWER
+            switch (method) {
+            case UnityWebRequest.kHttpVerbGET:
+                www = UnityWebRequest.Get (url);
+            break;
+            case UnityWebRequest.kHttpVerbPOST:
+                www = UnityWebRequest.Post (url, wwwFrom);
+            break;
+            case kHttpVerbTexture:
+                www = UnityWebRequest.GetTexture (url);
+            break;
+            case kHttpVerbAudioClip:
+                www = UnityWebRequest.GetAudioClip (url, audioType);
+            break;
+            default:
+                www = new UnityWebRequest (url);
+                www.method = method;
+            break;
+            }
+
+            yield return www.Send ();
+#else
+            if (wwwFrom.data.Length > 0) { // POST request
+                foreach (var entry in wwwFrom.headers) {
                     mHeaders [System.Convert.ToString (entry.Key)] = System.Convert.ToString (entry.Value);
                 }
 
-                // POST request
-                wWW = new WWW (url, wWWFrom.data, mHeaders);
-            } else {
-                // GET request
-                wWW = new WWW (url, null, mHeaders);
+                www = new WWW (url, wwwFrom.data, mHeaders);
+            } else { // GET request
+                www = new WWW (url, null, mHeaders);
             }
+#endif
 
             yield return mono.StartCoroutine (CheckTimeout ());
 
@@ -56,13 +111,13 @@ namespace Hellgate
                 if (mOnDisposed != null) {
                     mOnDisposed (null);
                 }
-            } else if (System.String.IsNullOrEmpty (wWW.error)) {
+            } else if (System.String.IsNullOrEmpty (www.error)) {
                 if (mOnDone != null) {
-                    mOnDone (wWW);
+                    mOnDone (www);
                 }
             } else {
                 if (mOnFail != null) {
-                    mOnFail (wWW);
+                    mOnFail (www);
                 }
             }
         }
@@ -71,7 +126,7 @@ namespace Hellgate
         {
             float startTime = Time.time;
 
-            while (!mDisposed && !wWW.isDone) {
+            while (!mDisposed && !www.isDone) {
                 if (timeOut > 0 && (Time.time - startTime) >= timeOut) {
                     Dispose ();
                     break;
@@ -149,8 +204,8 @@ namespace Hellgate
             mono = mB;
             url = u;
             mHeaders = new Dictionary<string, string> ();
-            wWWFrom = new WWWForm ();
-            timeOut = DEFAULT_TIMEOUT;
+            wwwFrom = new WWWForm ();
+            timeOut = timeout;
             mDisposed = false;
         }
 
@@ -165,8 +220,8 @@ namespace Hellgate
             mono = mB;
             url = u + param;
             mHeaders = new Dictionary<string, string> ();
-            wWWFrom = new WWWForm ();
-            timeOut = DEFAULT_TIMEOUT;
+            wwwFrom = new WWWForm ();
+            timeOut = timeout;
             mDisposed = false;
         }
 
@@ -181,7 +236,7 @@ namespace Hellgate
             mono = mB;
             url = u;
             mHeaders = new Dictionary<string, string> ();
-            wWWFrom = new WWWForm ();
+            wwwFrom = new WWWForm ();
             timeOut = time;
             mDisposed = false;
         }
@@ -212,8 +267,8 @@ namespace Hellgate
             }
 
             mHeaders = new Dictionary<string, string> ();
-            wWWFrom = new WWWForm ();
-            timeOut = DEFAULT_TIMEOUT;
+            wwwFrom = new WWWForm ();
+            timeOut = timeout;
             mDisposed = false;
         }
 
@@ -234,7 +289,18 @@ namespace Hellgate
         /// <param name="value">Value.</param>
         public void AddData (string fieldName, string value)
         {
-            wWWFrom.AddField (fieldName, value);
+            wwwFrom.AddField (fieldName, value);
+        }
+
+        /// <summary>
+        /// Adds the range data.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public void AddRangeData (Dictionary<string, string> data)
+        {
+            foreach (KeyValuePair<string, string> pair in data) {
+                AddData (pair.Key, pair.Value);
+            }
         }
 
         /// <summary>
@@ -244,7 +310,7 @@ namespace Hellgate
         /// <param name="contents">Contents.</param>
         public void AddBinaryData (string fieldName, byte[] contents)
         {
-            wWWFrom.AddBinaryData (fieldName, contents);
+            wwwFrom.AddBinaryData (fieldName, contents);
         }
 
         /// <summary>
@@ -255,7 +321,7 @@ namespace Hellgate
         /// <param name="fileName">File name.</param>
         public void AddBinaryData (string fieldName, byte[] contents, string fileName)
         {
-            wWWFrom.AddBinaryData (fieldName, contents, fileName);
+            wwwFrom.AddBinaryData (fieldName, contents, fileName);
         }
 
         /// <summary>
@@ -267,7 +333,7 @@ namespace Hellgate
         /// <param name="mimeType">MIME type.</param>
         public void AddBinaryData (string fieldName, byte[] contents, string fileName, string mimeType)
         {
-            wWWFrom.AddBinaryData (fieldName, contents, fileName, mimeType);
+            wwwFrom.AddBinaryData (fieldName, contents, fileName, mimeType);
         }
 
         /// <summary>
@@ -287,8 +353,8 @@ namespace Hellgate
         /// <see cref="Hellgate.Http"/> was occupying.</remarks>
         public void Dispose ()
         {
-            if (wWW != null && !mDisposed) {
-                wWW.Dispose ();
+            if (www != null && !mDisposed) {
+                www.Dispose ();
                 mDisposed = true;
             }
         }
@@ -302,11 +368,15 @@ namespace Hellgate
         /// <param name="action">Action.</param>
         public IEnumerator CheckConnection (string url, Action<bool> action)
         {
-            WWW wWW = new WWW (url);
+#if UNITY_5_4_OR_NEWER
+            UnityWebRequest www = new UnityWebRequest (url);
+            yield return www.Send ();
+#else
+            WWW www = new WWW (url);
+            yield return www;
+#endif
 
-            yield return wWW;
-
-            if (wWW.error != null) {
+            if (www.error != null) {
                 action (false);
             } else {
                 action (true);

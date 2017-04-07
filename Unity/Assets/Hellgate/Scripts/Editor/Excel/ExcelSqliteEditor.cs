@@ -68,12 +68,6 @@ namespace HellgateEditor
             }
         }
 
-        [MenuItem ("Window/Hellgate/Sqlite DB Converter for Excel", false, 12)]
-        public static void ShowWindow ()
-        {
-            EditorWindow.GetWindow (typeof(ExcelSqliteEditor));
-        }
-
         public static void Create ()
         {
             string[] ignores = ignoreSheetName.Split (new string[] { ",", "|" }, System.StringSplitOptions.None);

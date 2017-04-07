@@ -71,12 +71,6 @@ namespace HellgateEditor
             }
         }
 
-        [MenuItem ("Window/Hellgate/Build AssetBundles", false, 10)]
-        public static void ShowWindow ()
-        {
-            EditorWindow.GetWindow (typeof(AssetBundleEditor));
-        }
-
         /// <summary>
         /// Create this assetbundle.
         /// </summary>

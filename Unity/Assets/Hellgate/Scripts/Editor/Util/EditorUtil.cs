@@ -72,5 +72,26 @@ namespace HellgateEditor
             EditorCoroutine editor = new EditorCoroutine (coroutine);
             editor.Start ();
         }
+
+        public static void AddLogMessageReceived ()
+        {
+            Application.logMessageReceived += HandleLogMessageReceived;
+        }
+
+        public static void ClearLogMessageReceived ()
+        {
+            Application.logMessageReceived -= HandleLogMessageReceived;
+        }
+
+        protected static void HandleLogMessageReceived (string condition, string stackTrace, LogType type)
+        {
+            switch (type) {
+            case LogType.Assert:
+            case LogType.Exception:
+            case LogType.Error:
+                EditorUtility.ClearProgressBar ();
+            break;
+            }
+        }
     }
 }

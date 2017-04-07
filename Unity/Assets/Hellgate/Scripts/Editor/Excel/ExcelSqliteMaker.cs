@@ -56,6 +56,8 @@ namespace HellgateEditor
                     }
                     Debug.Log ("saved name : " + path);
 
+                    EditorUtil.ClearLogMessageReceived ();
+
                     EditorUtility.ClearProgressBar ();
                     AssetDatabase.Refresh ();
                 }
@@ -134,6 +136,8 @@ namespace HellgateEditor
         /// <param name="ignores">Ignores.</param>
         public void Create (bool splitFlag, string[] ignores = null)
         {
+            EditorUtil.AddLogMessageReceived ();
+
             this.splitFlag = splitFlag;
 
             maker = new ExcelImportMaker (excelFilePath);

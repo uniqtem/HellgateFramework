@@ -93,6 +93,8 @@ namespace HellgateEditor
 
         protected void ClearProgressBar ()
         {
+            EditorUtil.ClearLogMessageReceived ();
+
             EditorUtility.ClearProgressBar ();
             AssetDatabase.Refresh ();
         }
@@ -102,7 +104,21 @@ namespace HellgateEditor
             ISheet sheet = book.GetSheetAt (index);
             DisplayProgressBar ("Load sheet " + sheet.SheetName, index, book.NumberOfSheets);
 
+            Action InnserCreateExcelData = () => {
+                if (index < book.NumberOfSheets - 1) {
+                    index++;
+                    EditorUtil.StartCoroutine (CreateExcelData (finish));
+                } else {
+                    finish ();
+                }
+            };
+
             IRow titleRow = sheet.GetRow (0);
+            if (titleRow == null) {
+                InnserCreateExcelData ();
+                yield break;
+            }
+
             List<Dictionary<string, object>> list = new List<Dictionary<string, object>> ();
             for (int j = 1; j <= sheet.LastRowNum; j++) {
                 Dictionary<string, object> dic = new Dictionary<string, object> ();
@@ -124,12 +140,7 @@ namespace HellgateEditor
 
             yield return null;
 
-            if (index < book.NumberOfSheets - 1) {
-                index++;
-                EditorUtil.StartCoroutine (CreateExcelData (finish));
-            } else {
-                finish ();
-            }
+            InnserCreateExcelData ();
         }
 
         protected IEnumerator CreateNormalJson ()
@@ -357,13 +368,18 @@ namespace HellgateEditor
                 }
             };
 
-            if (value.CellType == CellType.String) {
+            CellType cellType = value.CellType;
+            if (value.CellType == CellType.Formula) {
+                cellType = value.CachedFormulaResultType;
+            }
+
+            if (cellType == CellType.String) {
                 temp = value.StringCellValue;
                 innerAddData ();
-            } else if (value.CellType == CellType.Numeric) {
+            } else if (cellType == CellType.Numeric) {
                 temp = value.NumericCellValue.ToString ();
                 innerAddData ();
-            } else if (value.CellType == CellType.Boolean) {
+            } else if (cellType == CellType.Boolean) {
                 type = typeof(bool);
                 dic.Add (title.StringCellValue, value.BooleanCellValue);
             }
@@ -381,12 +397,7 @@ namespace HellgateEditor
                 if (excelFilePath.EndsWith ("xls")) {
                     book = new HSSFWorkbook (stream);
                 } else if (excelFilePath.EndsWith ("xlsx")) {
-                    if (Application.platform == RuntimePlatform.OSXEditor) {
-                        Debug.LogWarning ("xlsx is not supported on OSX.");
-                        return null;
-                    } else {
-                        book = new XSSFWorkbook (stream);
-                    }
+                    book = new XSSFWorkbook (stream);
                 } else {
                     return null;
                 }
@@ -403,6 +414,8 @@ namespace HellgateEditor
         /// <param name="joinType">Join type.</param>
         public void Create (JsonImportType type, string[] ignores = null, TResultDelegate<Type> joinType = null)
         {
+            EditorUtil.AddLogMessageReceived ();
+
             book = FileStream ();
             if (book == null) {
                 return;

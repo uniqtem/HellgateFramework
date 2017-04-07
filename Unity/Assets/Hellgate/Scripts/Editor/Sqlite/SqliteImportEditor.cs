@@ -59,12 +59,6 @@ namespace HellgateEditor
             }
         }
 
-        [MenuItem ("Window/Hellgate/Json Converter for Sqlite DB", false, 11)]
-        public static void ShowWindow ()
-        {
-            EditorWindow.GetWindow (typeof(SqliteImportEditor));
-        }
-
         /// <summary>
         /// Create this instance.
         /// </summary>

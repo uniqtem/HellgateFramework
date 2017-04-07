@@ -65,12 +65,6 @@ namespace HellgateEditor
             }
         }
 
-        [MenuItem ("Window/Hellgate/Json Converter for Excel", false, 11)]
-        public static void ShowWindow ()
-        {
-            EditorWindow.GetWindow (typeof(ExcelImportEditor));
-        }
-
         /// <summary>
         /// Create the specified extension.
         /// </summary>

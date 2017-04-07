@@ -109,9 +109,10 @@ namespace Hellgate
 #if UNITY_5_4_OR_NEWER
                 uint v = Convert.ToUInt32 (version);
                 using (UnityWebRequest www = UnityWebRequest.GetAssetBundle (url, v, 0)) {
-                    yield return www.Send ();
+//                    yield return www.Send ();
+                    AsyncOperation operation = www.Send ();
 
-                    while (!www.isDone) {
+                    while (!operation.isDone) {
                         progress = www.downloadProgress;
                         yield return null;
                     }

@@ -95,3 +95,5 @@ FIX : JsonUtil.ToJson Array a convert
 NEW : Support UnityWebRequest(Http, AssetBundle)
 NEW : Sqlite Simple Migration
 FIX : EventSystem UGUI
+2.8.0
+NEW : Support Json Convert for Excel OSXEditor xlsx 
